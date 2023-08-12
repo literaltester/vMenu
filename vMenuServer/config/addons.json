@@ -1,16 +1,29 @@
 {
+  // Blacklisted vehicles go here
+  "vehicleblacklist": [
+    "blacklisted1",
+    "blacklisted2"
+  ],
+
+  // Addon Vehicles go here
   "vehicles": [
-    "addonvehiclename1",
-    "addonvehiclename2"
+    "addoncarname1",
+    "addoncarname2"
   ],
+
+  // Addon Peds go here
   "peds": [
-    "addonpedname1",
-    "addonpedname2"
+    "addonpedmodel1",
+    "addonpedmodel2"
   ],
+
+  // Addon Weapons go here
   "weapons": [
     "addonweaponname1",
     "addonweaponname2"
   ],
+
+  // Addon Weapon attachments go here
   "weapon_components": [
     "weapon_component_name_1",
     "weapon_component_name_2"

@@ -31,12 +31,12 @@ namespace vMenuClient.menus
         public bool HideRadar { get; private set; } = false;
         public bool ShowLocation { get; private set; } = UserDefaults.MiscShowLocation;
         public bool DeathNotifications { get; private set; } = UserDefaults.MiscDeathNotifications;
-        public bool JoinQuitNotifications { get; private set; } = UserDefaults.MiscJoinQuitNotifications;
+        public bool JoinQuitNotifications { get; private set; } = false;
         public bool LockCameraX { get; private set; } = false;
         public bool LockCameraY { get; private set; } = false;
         public bool ShowLocationBlips { get; private set; } = UserDefaults.MiscLocationBlips;
-        public bool ShowPlayerBlips { get; private set; } = UserDefaults.MiscShowPlayerBlips;
-        public bool MiscShowOverheadNames { get; private set; } = UserDefaults.MiscShowOverheadNames;
+        public bool ShowPlayerBlips { get; private set; } = true;
+        public bool MiscShowOverheadNames { get; private set; } = true;
         public bool ShowVehicleModelDimensions { get; private set; } = false;
         public bool ShowPedModelDimensions { get; private set; } = false;
         public bool ShowPropModelDimensions { get; private set; } = false;
@@ -55,6 +55,10 @@ namespace vMenuClient.menus
         internal int LastTimeCycleModifierIndex { get; private set; } = UserDefaults.MiscLastTimeCycleModifierIndex;
         internal int LastTimeCycleModifierStrength { get; private set; } = UserDefaults.MiscLastTimeCycleModifierStrength;
 
+        /// <summary>
+        /// The current language used by the player.
+        /// </summary>
+        public static string CurrentLanguage { get; private set; } = !string.IsNullOrEmpty(UserDefaults.MiscCurrentLanguage) ? UserDefaults.MiscCurrentLanguage : GetResourceMetadata(GetCurrentResourceName(), "default_language", 0);
 
         // keybind states
         public bool KbTpToWaypoint { get; private set; } = UserDefaults.KbTpToWaypoint;
@@ -67,6 +71,8 @@ namespace vMenuClient.menus
         public bool KbPointKeys { get; private set; } = UserDefaults.KbPointKeys;
 
         internal static List<vMenuShared.ConfigManager.TeleportLocation> TpLocations = new();
+
+        private static readonly LanguageManager Lm = new LanguageManager();
 
         /// <summary>
         /// Creates the menu.
@@ -86,9 +92,9 @@ namespace vMenuClient.menus
 
             // Create the menu.
             menu = new Menu(Game.Player.Name, "Misc Settings");
-            teleportOptionsMenu = new Menu(Game.Player.Name, "Teleport Options");
-            developerToolsMenu = new Menu(Game.Player.Name, "Development Tools");
-            entitySpawnerMenu = new Menu(Game.Player.Name, "Entity Spawner");
+            teleportOptionsMenu = Lm.GetMenu(new Menu(Game.Player.Name, "Teleport Options"));
+            developerToolsMenu = Lm.GetMenu(new Menu(Game.Player.Name, "Development Tools"));
+            entitySpawnerMenu = Lm.GetMenu(new Menu(Game.Player.Name, "Entity Spawner"));
 
             // teleport menu
             var teleportMenu = new Menu(Game.Player.Name, "Teleport Locations");
@@ -97,7 +103,7 @@ namespace vMenuClient.menus
             MenuController.BindMenuItem(menu, teleportMenu, teleportMenuBtn);
 
             // keybind settings menu
-            var keybindMenu = new Menu(Game.Player.Name, "Keybind Settings");
+            var keybindMenu = Lm.GetMenu(new Menu(Game.Player.Name, "Keybind Settings"));
             var keybindMenuBtn = new MenuItem("Keybind Settings", "Enable or disable keybinds for some options.");
             MenuController.AddSubmenu(menu, keybindMenu);
             MenuController.BindMenuItem(menu, keybindMenu, keybindMenuBtn);
@@ -121,6 +127,12 @@ namespace vMenuClient.menus
             var hideHud = new MenuCheckboxItem("Hide Hud", "Hide all hud elements.", HideHud);
             var showLocation = new MenuCheckboxItem("Location Display", "Shows your current location and heading, as well as the nearest cross road. Similar like PLD. ~r~Warning: This feature (can) take(s) up to -4.6 FPS when running at 60 Hz.", ShowLocation) { LeftIcon = MenuItem.Icon.WARNING };
             var drawTime = new MenuCheckboxItem("Show Time On Screen", "Shows you the current time on screen.", DrawTimeOnScreen);
+            var languageList = new List<string>();
+            for (var i = 0; i < LanguageManager.Languages.Keys.Count; i++)
+            {
+                languageList.Add(LanguageManager.Languages.Keys.ToArray()[i]);
+            }
+            var changeLanguage = new MenuListItem("Change Language", languageList, languageList.IndexOf(CurrentLanguage), "Choose your preferred language.");
             var saveSettings = new MenuItem("Save Personal Settings", "Save your current settings. All saving is done on the client side, if you re-install windows you will lose your settings. Settings are shared across all servers using vMenu.")
             {
                 RightIcon = MenuItem.Icon.TICK
@@ -148,7 +160,7 @@ namespace vMenuClient.menus
             var cancelEntity = new MenuItem("Cancel", "Deletes current entity and cancels its placement");
             var confirmAndDuplicate = new MenuItem("Confirm Entity Position And Duplicate", "Stops placing entity and sets it at it current location and creates new one to place.");
 
-            var connectionSubmenu = new Menu(Game.Player.Name, "Connection Options");
+            var connectionSubmenu = Lm.GetMenu(new Menu(Game.Player.Name, "Connection Options"));
             var connectionSubmenuBtn = new MenuItem("Connection Options", "Server connection/game quit options.");
 
             var quitSession = new MenuItem("Quit Session", "Leaves you connected to the server, but quits the network session. ~r~Can not be used when you are the host.");
@@ -291,7 +303,6 @@ namespace vMenuClient.menus
                             Notify.Error(CommonErrors.InvalidInput);
                             return;
                         }
-
 
                         if (!float.TryParse(x, out var posX))
                         {
@@ -518,6 +529,7 @@ namespace vMenuClient.menus
                 var entSpawnerMenuBtn = new MenuItem("Entity Spawner", "Spawn and move entities") { Label = "→→→" };
                 developerToolsMenu.AddMenuItem(entSpawnerMenuBtn);
                 MenuController.BindMenuItem(developerToolsMenu, entitySpawnerMenu, entSpawnerMenuBtn);
+                
 
                 entitySpawnerMenu.AddMenuItem(spawnNewEntity);
                 entitySpawnerMenu.AddMenuItem(confirmEntityPosition);
@@ -649,6 +661,7 @@ namespace vMenuClient.menus
             {
                 menu.AddMenuItem(exportData);
             }
+            menu.AddMenuItem(changeLanguage);
             menu.AddMenuItem(saveSettings);
 
             // Handle checkbox changes.
@@ -759,6 +772,19 @@ namespace vMenuClient.menus
                     RestorePlayerWeapons = _checked;
                 }
 
+            };
+
+            // Language Settings
+            menu.OnListItemSelect += (menu, listItem, selectedIndex, itemIndex) =>
+            {
+                if (listItem == changeLanguage)
+                {
+                    if (!listItem.ListItems[selectedIndex].Equals("N/A"))
+                    {
+                        CurrentLanguage = listItem.ListItems[selectedIndex];
+                        LanguageManager.TranslateMenus();
+                    }
+                }
             };
 
             // Handle button presses.

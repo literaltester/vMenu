@@ -1,4 +1,4 @@
-using CitizenFX.Core;
+﻿using CitizenFX.Core;
 
 using MenuAPI;
 
@@ -25,7 +25,7 @@ namespace vMenuClient.menus
             var openPmGallery = new MenuItem("Open Gallery", "Opens the Pause Menu gallery.");
             var startRec = new MenuItem("Start Recording", "Start a new game recording using GTA V's built in recording.");
             var stopRec = new MenuItem("Stop Recording", "Stop and save your current recording.");
-            var openEditor = new MenuItem("Rockstar Editor", "Open the rockstar editor, note you might want to quit the session first before doing this to prevent some issues.");
+            var openEditor = new MenuItem("Rockstar Editor", "Open the Rockstar Editor, note you might want to quit the session first before doing this to prevent some issues.");
 
             menu.AddMenuItem(takePic);
             menu.AddMenuItem(openPmGallery);

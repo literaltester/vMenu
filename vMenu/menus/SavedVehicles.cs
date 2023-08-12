@@ -17,14 +17,16 @@ namespace vMenuClient.menus
     {
         // Variables
         private Menu menu;
-        private readonly Menu selectedVehicleMenu = new("Manage Vehicle", "Manage this saved vehicle.");
-        private readonly Menu unavailableVehiclesMenu = new("Missing Vehicles", "Unavailable Saved Vehicles");
+        private readonly Menu selectedVehicleMenu = Lm.GetMenu(new Menu("Manage Vehicle", "Manage this saved vehicle."));
+        private readonly Menu unavailableVehiclesMenu = Lm.GetMenu(new Menu("Missing Vehicles", "Unavailable Saved Vehicles"));
         private Dictionary<string, VehicleInfo> savedVehicles = new();
         private readonly List<Menu> subMenus = new();
         private Dictionary<MenuItem, KeyValuePair<string, VehicleInfo>> svMenuItems = new();
         private KeyValuePair<string, VehicleInfo> currentlySelectedVehicle = new();
         private int deleteButtonPressedCount = 0;
         private int replaceButtonPressedCount = 0;
+
+        private static readonly LanguageManager Lm = new LanguageManager();
 
         /// <summary>
         /// Creates the menu.

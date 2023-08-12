@@ -23,9 +23,10 @@ namespace vMenuClient.menus
         // Menu variable, will be defined in CreateMenu()
         private Menu menu;
 
-        readonly Menu playerMenu = new("Online Players", "Player:");
+        readonly Menu playerMenu = Lm.GetMenu(new("Online Players", "Player:"));
         IPlayer currentPlayer = new NativePlayer(Game.Player);
 
+        private static readonly LanguageManager Lm = new LanguageManager();
 
         /// <summary>
         /// Creates the menu.
