@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 using CitizenFX.Core;
@@ -34,6 +34,7 @@ namespace vMenuShared
             vmenu_player_names_distance,
             vmenu_disable_entity_outlines_tool,
             vmenu_disable_player_stats_setup,
+            pfvmenu_moshnotify_setting,
 
             // Vehicle Chameleon Colours
             vmenu_using_chameleon_colours,
@@ -243,9 +244,49 @@ namespace vMenuShared
             }
         }
         #endregion
+
+        #region Get all the languages from the appropriate json file
+
+        /// <summary>
+        /// Gets and stores the languages from the multiple .json's.
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<string, Dictionary<string, string>> GetLanguages()
+        {
+            Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>>();
+
+            var metaData = GetResourceMetadata(GetCurrentResourceName(), "languages", GetNumResourceMetadata(GetCurrentResourceName(), "languages") - 1).Replace(" ", "");
+            if (!string.IsNullOrEmpty(metaData))
+            {
+                var languages = metaData.Split(',');
+                foreach (var lang in languages)
+                {
+                    try
+                    {
+                        string jsonFile = LoadResourceFile(GetCurrentResourceName(), $"config/languages/{lang}.json");
+                        if (!string.IsNullOrEmpty(jsonFile))
+                        {
+                            data.Add(lang, JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonFile));
+                        }
+                        else
+                        {
+                            #if CLIENT
+                            vMenuClient.Notify.Error($"Unable to load {lang}.json");
+                            #endif
+                        }
+                    }
+                    catch
+                    {
+                        #if CLIENT
+                        vMenuClient.Notify.Error($"Unable to load {lang}.json");
+                        #endif
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        #endregion
     }
-
-
-
-
 }

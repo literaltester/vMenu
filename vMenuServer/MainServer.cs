@@ -232,6 +232,18 @@ namespace vMenuServer
                     Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your addons.json file contains a problem! Error details: {ex.Message}\n\n");
                 }
 
+                // check extras file for errors
+                string extras = LoadResourceFile(GetCurrentResourceName(), "config/extras.json") ?? "{}";
+                try
+                {
+                    JsonConvert.DeserializeObject<Dictionary<string, Dictionary<int, string>>>(extras);
+                    // If the above crashes, then the json is invalid and it'll throw warnings in the console.
+                }
+                catch (JsonReaderException ex)
+                {
+                    Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your extras.json file contains a problem! Error details: {ex.Message}\n\n");
+                }
+
                 // check if permissions are setup (correctly)
                 if (!GetSettingsBool(Setting.vmenu_use_permissions))
                 {
@@ -965,6 +977,48 @@ namespace vMenuServer
                 }
             }
         }
+        #endregion
+
+        #region Language template dumper
+
+        [EventHandler("vMenu:DumpLanguageTemplate:Server")]
+        private void DumpLangaugeTemplate(string data)
+        {
+            try
+            {
+                bool successful = SaveResourceFile(GetCurrentResourceName(), "config/languages/TEMPLATE.json", data, -1);
+                if (successful)
+                {
+                    Debug.WriteLine($"\n\n^2[vMenu] [SUCCESS] ^7Template created successfully!\n\n");
+                }
+                else
+                {
+                    Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Could not save the language template!\n\n");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your TEMPLATE.json file could not be created or accessed! Error details: {e.Message}\n\n");
+            }
+        }
+
+        #endregion
+
+        #region Set drift suspension
+
+        [EventHandler("vMenu:SetDriftSuspension")]
+        private void SetDriftSuspension(int vehNetId)
+        {
+            Entity vehEntity = Entity.FromNetworkId(vehNetId);
+            if (vehEntity == null) return;
+
+            StateBag vehState = vehEntity.State;
+            bool? reduceDriftSuspension = vehState["Set:ReduceDriftSuspension"] ?? false;
+
+            vehEntity.State["Set:ReduceDriftSuspension"] = reduceDriftSuspension.Value ? false : true;
+            TriggerClientEvent( "vMenu:SetDriftSuspension", vehNetId, vehEntity.State["Set:ReduceDriftSuspension"] );
+        }
+
         #endregion
     }
 }

@@ -1234,7 +1234,19 @@ namespace vMenuClient
                 speed = GetEntitySpeedVector(tmpOldVehicle.Handle, true).Y; // get forward/backward speed only
                 rpm = tmpOldVehicle.CurrentRPM;
             }
+            string jsonData = LoadResourceFile(GetCurrentResourceName(), "config/addons.json") ?? "{}";
+            var addons = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(jsonData);
 
+
+            foreach (string addon in addons["vehicleblacklist"])
+            {
+                uint vehicleblackist = (uint)GetHashKey(addon);
+                if ((vehicleHash == vehicleblackist) && !IsAllowed(Permission.VOVehiclesBlacklist))
+                    {
+                        Notify.Alert("You are not allowed to spawn this vehicle, because it is restricted.");
+                        return 0;     
+                    }
+                }
             var modelClass = GetVehicleClassFromName(vehicleHash);
             if (!VehicleSpawner.allowedCategories[modelClass])
             {
@@ -1252,6 +1264,7 @@ namespace vMenuClient
                     return 0;
                 }
             }
+
 
             Log("Spawning of vehicle is NOT cancelled, if this model is invalid then there's something wrong.");
 
@@ -1368,7 +1381,10 @@ namespace vMenuClient
             if (!vehicle.Model.IsTrain) // to be extra fucking safe
             {
                 // workaround of retarded feature above:
+                if (spawnInside || IsAllowed(Permission.BPCarlaunch))
+                {
                 SetVehicleForwardSpeed(vehicle.Handle, speed);
+                }
             }
             vehicle.CurrentRPM = rpm;
 
@@ -1632,8 +1648,39 @@ namespace vMenuClient
             }
 
             // update the saved vehicles menu list to reflect the new saved car.
-            MainMenu.SavedVehiclesMenu?.UpdateMenuAvailableCategories();
+            if (MainMenu.SavedVehiclesMenu != null)
+            {
+                MainMenu.SavedVehiclesMenu?.UpdateMenuAvailableCategories();
+            }
 
+        }
+        #endregion
+
+        #region Set Reduce Drift Suspension
+        public static void SetVehicleDriftSuspension()
+        {
+            // Only continue if the player is in a vehicle.
+            if (Game.PlayerPed.IsInVehicle())
+            {
+                // Get the vehicle.
+                Vehicle veh = GetVehicle();
+
+                // If the vehicle as the requirement to do this.
+                var StrAdvancedFlags = GetVehicleHandlingInt( veh.Handle, "CCarHandlingData", "strAdvancedFlags" );
+                if (StrAdvancedFlags == 0) 
+                {
+                    Notify.Error("This vehicle doesn't have the requirement to do this.", true, false);
+                    return;
+                }
+
+                // We send to all client
+                BaseScript.TriggerServerEvent("vMenu:SetDriftSuspension", veh.NetworkId);
+            }
+            // The player is not inside a vehicle.
+            else
+            {
+                Notify.Error(CommonErrors.NoVehicle);
+            }
         }
         #endregion
 
@@ -1675,8 +1722,21 @@ namespace vMenuClient
             // and add it to the dictionary above, with the vehicle save name as the key.
             foreach (var saveName in savedVehicleNames)
             {
-                vehiclesList.Add(saveName, StorageManager.GetSavedVehicleInfo(saveName));
+            string jsonData = LoadResourceFile(GetCurrentResourceName(), "config/addons.json") ?? "{}";
+            var addons = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(jsonData); 
+            var vehicleblacklist = new List<string>();
+            foreach (string addon in addons["vehicleblacklist"])
+            {
+                    uint veh = (uint)GetHashKey(addon);
+                    vehicleblacklist.Add(veh.ToString());
             }
+                if (!vehicleblacklist.Any(x => x == StorageManager.GetSavedVehicleInfo(saveName).model.ToString() && !IsAllowed(Permission.VOVehiclesBlacklist)) )
+                    {
+
+                        vehiclesList.Add(saveName, StorageManager.GetSavedVehicleInfo(saveName));
+                        
+                    }
+                }                                
             // Return the vehicle dictionary containing all vehicle save names (keys) linked to the correct vehicle
             // including all vehicle mods/customization parts.
             return vehiclesList;
@@ -2784,6 +2844,8 @@ namespace vMenuClient
                         Components = new Dictionary<string, uint>(),
                         CurrentAmmo = GetAmmoInPedWeapon(Game.PlayerPed.Handle, vw.Hash)
                     };
+
+                    weapon.CurrentAmmo = GetAmmoInPedWeapon(Game.PlayerPed.Handle, vw.Hash);
 
 
                     // Check for and add components if applicable.

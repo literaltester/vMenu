@@ -19,6 +19,7 @@ namespace vMenuShared
             DontBanMe,
             NoClip,
             Staff,
+            DumpLang,
             #endregion
 
             // Online Players
@@ -100,8 +101,11 @@ namespace vMenuShared
             VOFlashHighbeamsOnHonk,
             VODisableTurbulence,
             VOInfiniteFuel,
+            VOReduceDriftSuspension,
             VOFlares,
             VOPlaneBombs,
+            VOVehiclesBlacklist,
+            VOAllowOpenWheel,
             #endregion
 
             // Vehicle Spawner
@@ -167,6 +171,16 @@ namespace vMenuShared
             PASpawnSaved,
             PASpawnNew,
             PAAddonPeds,
+            #endregion
+
+            // Teleport Options
+            #region teleport options
+            TPMenu,
+            TPAll,
+            TPTeleportToWp,
+            TPTeleportToCoord,
+            TPTeleportLocations,
+            TPTeleportSaveLocation,
             #endregion
 
             // Time Options
@@ -292,18 +306,16 @@ namespace vMenuShared
             WPUnarmed,
             WPVintagePistol,
             WPWrench,
-            WPPlasmaPistol,
-            WPPlasmaCarbine,
-            WPPlasmaMinigun,
-            WPStoneHatchet,
-            // MPHEIST3 DLC (v 1868)
-            WPCeramicPistol,
-            WPNavyRevolver,
-            WPHazardCan,
-            // MPHEIST4 DLC (v 2189)
-            WPPericoPistol,
-            WPMilitaryRifle,
-            WPCombatShotgun,
+            WPPlasmaPistol, // xmas 2018 dlc (1604)
+            WPPlasmaCarbine, // xmas 2018 dlc (1604)
+            WPPlasmaMinigun, // xmas 2018 dlc (1604)
+            WPStoneHatchet, // xmas 2018 dlc (1604)
+            WPCeramicPistol, // xmas 2019 dlc (1868)
+            WPNavyRevolver, // xmas 2019 dlc (1868)
+            WPHazardCan, // xmas 2019 dlc (1868) (Does not have label text)
+            WPPericoPistol, // xmas 2020 dlc (2189)
+            WPMilitaryRifle, // xmas 2020 dlc (2189)
+            WPCombatShotgun, // xmas 2020 dlc (2189)
             // MPSECURITY DLC (v 2545)
             WPEMPLauncher,
             WPHeavyRifle,
@@ -312,11 +324,12 @@ namespace vMenuShared
             // MPSUM2 DLC (v 2699)
             WPPrecisionRifle,
             WPTacticalRifle,
-            // MPCHRISTMAS3 DLC (V 2802)
-            WPPistolXM3,
-            WPCandyCane,
-            WPRailgunXM3,
+            // MPCHRISTMAS3 DLC (v 2802)
             WPAcidPackage,
+            WPCandyCane,
+            WPPistolXM3,
+            WPRailgunXM3,
+            // MP2023_01 DLC (V 2944)
             WPTecPistol,
             #endregion
 
@@ -326,6 +339,15 @@ namespace vMenuShared
             WLAll,
             WLEquip,
             WLEquipOnRespawn,
+            #endregion
+
+            // Enhanced Camera Menu
+            #region enhanced camera
+            ECMenu,
+            ECAll,
+            ECLeadCamera,
+            ECChaseCamera,
+            ECDroneCamera,
             #endregion
 
             // Misc Settings
@@ -360,8 +382,19 @@ namespace vMenuShared
             VCShowSpeaker,
             VCStaffChannel,
             #endregion
-        };
 
+            // Plugin Menu
+            #region plugin menu
+            PNMenu,
+            PNAll,
+            PNEasyDrift,
+            #endregion
+
+            // Bug Prevention
+            #region bug prevention
+            BPCarlaunch,
+            #endregion
+        }
         public static Dictionary<Permission, bool> Permissions { get; private set; } = new Dictionary<Permission, bool>();
         public static bool ArePermissionsSetup { get; set; } = false;
 
@@ -551,6 +584,7 @@ namespace vMenuShared
 
             // Also tell the client to do the addons setup.
             player.TriggerEvent("vMenu:SetAddons");
+            player.TriggerEvent("vMenu:SetExtras");
             player.TriggerEvent("vMenu:UpdateTeleportLocations", Newtonsoft.Json.JsonConvert.SerializeObject(ConfigManager.GetTeleportLocationsData()));
         }
 #endif
@@ -621,6 +655,18 @@ namespace vMenuShared
                     break;
                 case "VC":
                     prefix += "VoiceChat";
+                    break;
+                case "TP":
+                    prefix += "TeleportOptions";
+                    break;
+                case "PN":
+                    prefix += "PluginMenu";
+                    break;
+                case "BP":
+                    prefix += "BugPrevention";
+                    break;
+                case "EC":
+                    prefix += "EnhancedCamera";
                     break;
                 default:
                     return prefix + name;

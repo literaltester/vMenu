@@ -21,15 +21,15 @@ namespace vMenuClient.menus
     {
         // Variables
         private Menu menu;
-        public Menu createCharacterMenu = new("Create Character", "Create A New Character");
-        public Menu savedCharactersMenu = new("vMenu", "Manage Saved Characters");
-        public Menu inheritanceMenu = new("vMenu", "Character Inheritance Options");
-        public Menu appearanceMenu = new("vMenu", "Character Appearance Options");
-        public Menu faceShapeMenu = new("vMenu", "Character Face Shape Options");
-        public Menu tattoosMenu = new("vMenu", "Character Tattoo Options");
-        public Menu clothesMenu = new("vMenu", "Character Clothing Options");
-        public Menu propsMenu = new("vMenu", "Character Props Options");
-        private readonly Menu manageSavedCharacterMenu = new("vMenu", "Manage MP Character");
+        public Menu createCharacterMenu = Lm.GetMenu(new("Create Character", "Create A New Character"));
+        public Menu savedCharactersMenu = Lm.GetMenu(new("vMenu", "Manage Saved Characters"));
+        public Menu inheritanceMenu = Lm.GetMenu(new("vMenu", "Character Inheritance Options"));
+        public Menu appearanceMenu = Lm.GetMenu(new("vMenu", "Character Appearance Options"));
+        public Menu faceShapeMenu = Lm.GetMenu(new("vMenu", "Character Face Shape Options"));
+        public Menu tattoosMenu = Lm.GetMenu(new("vMenu", "Character Tattoo Options"));
+        public Menu clothesMenu = Lm.GetMenu(new("vMenu", "Character Clothing Options"));
+        public Menu propsMenu = Lm.GetMenu(new("vMenu", "Character Props Options"));
+        private Menu manageSavedCharacterMenu = Lm.GetMenu(new Menu("vMenu", "Manage MP Character"));
 
         // Need to be able to disable/enable these buttons from another class.
         internal MenuItem createMaleBtn = new("Create Male Character", "Create a new male character.") { Label = "→→→" };
@@ -43,6 +43,8 @@ namespace vMenuClient.menus
         private readonly List<string> facial_expressions = new() { "mood_Normal_1", "mood_Happy_1", "mood_Angry_1", "mood_Aiming_1", "mood_Injured_1", "mood_stressed_1", "mood_smug_1", "mood_sulk_1", };
 
         private MultiplayerPedData currentCharacter = new();
+
+        private static readonly LanguageManager Lm = new LanguageManager();
 
 
 
