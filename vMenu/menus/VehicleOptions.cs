@@ -1902,7 +1902,7 @@ namespace vMenuClient.menus
                 // Add the checkboxes to the menu.
                 VehicleModMenu.AddMenuItem(toggleCustomWheels);
                 VehicleModMenu.AddMenuItem(xenonHeadlights);
-                var currentHeadlightColor = _GetHeadlightsColorFromVehicle(veh);
+                var currentHeadlightColor = GetHeadlightsColorForVehicle(veh);
                 if (currentHeadlightColor < 0 || currentHeadlightColor > 12)
                 {
                     currentHeadlightColor = 13;
@@ -2168,11 +2168,11 @@ namespace vMenuClient.menus
                     {
                         if (newIndex == 13) // default
                         {
-                            _SetHeadlightsColorOnVehicle(veh, 255);
+                            SetHeadlightsColorForVehicle(veh, 255);
                         }
                         else if (newIndex > -1 && newIndex < 13)
                         {
-                            _SetHeadlightsColorOnVehicle(veh, newIndex);
+                            SetHeadlightsColorForVehicle(veh, newIndex);
                         }
                     }
                     #endregion
@@ -2227,6 +2227,7 @@ namespace vMenuClient.menus
             }
             return -1;
         }
+
         #endregion
 
         #region GetColorFromIndex function (underglow)
