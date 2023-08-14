@@ -49,6 +49,9 @@
     <None Update="storage.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="*.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="plugins/*.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
