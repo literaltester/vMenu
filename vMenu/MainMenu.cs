@@ -443,7 +443,7 @@ namespace vMenuClient
             }
 
 
-            if (!(GetSettingsInt(Setting.vmenu_noclip_toggle_key) == null))
+            if (!(GetSettingsString(Setting.vmenu_noclip_toggle_key) == null))
             {
                 NoClipKey = GetSettingsString(Setting.vmenu_noclip_toggle_key);
             }
