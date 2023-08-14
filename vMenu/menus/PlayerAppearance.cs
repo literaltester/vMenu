@@ -342,7 +342,7 @@ namespace vMenuClient.menus
                 spawnPedsMenu.AddMenuItem(otherPedsBtn);
 
                 MenuController.BindMenuItem(spawnPedsMenu, mainPedsMenu, mainPedsBtn);
-                if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.vmenu_enable_animals_spawn_menu))
+                if (IsAllowed(Permission.PAAnimalPeds))
                 {
                     MenuController.BindMenuItem(spawnPedsMenu, animalsPedsMenu, animalPedsBtn);
                 }

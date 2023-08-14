@@ -176,7 +176,7 @@ namespace vMenuClient
             {
                 Tick += PersonalVehicleOptions;
             }
-            if (GetSettingsBool(Setting.vmenu_enable_animals_spawn_menu))
+            if (IsAllowed(Permission.PAAnimalPeds))
             {
                 Tick += AnimalPedCameraChangeBlocker;
             }

@@ -171,6 +171,7 @@ namespace vMenuShared
             PASpawnSaved,
             PASpawnNew,
             PAAddonPeds,
+            PAAnimalPeds
             #endregion
 
             // Teleport Options
