@@ -171,6 +171,8 @@ namespace vMenuShared
             PASpawnSaved,
             PASpawnNew,
             PAAddonPeds,
+            PAAnimalPeds,
+            PASpawnAsDefault,
             #endregion
 
             // Teleport Options
@@ -372,6 +374,7 @@ namespace vMenuShared
             MSRestoreWeapons,
             MSDriftMode,
             MSEntitySpawner,
+            MSDevTools,
             #endregion
 
             // Voice Chat

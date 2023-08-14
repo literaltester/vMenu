@@ -107,7 +107,7 @@ namespace vMenuClient
             }
 
             // Configuration based
-            if (!GetSettingsBool(Setting.vmenu_disable_spawning_as_default_character))
+            if (!IsAllowed(Permission.PASpawnAsDefault))
             {
                 Tick += RestorePlayerAfterBeingDead;
             }
@@ -176,7 +176,7 @@ namespace vMenuClient
             {
                 Tick += PersonalVehicleOptions;
             }
-            if (GetSettingsBool(Setting.vmenu_enable_animals_spawn_menu))
+            if (IsAllowed(Permission.PAAnimalPeds))
             {
                 Tick += AnimalPedCameraChangeBlocker;
             }
@@ -1051,7 +1051,7 @@ namespace vMenuClient
                 {
                     if (Game.CurrentInputMode == InputMode.MouseAndKeyboard)
                     {
-                        var recordKey = MainMenu.MenuToggleKey == Control.ReplayStartStopRecording ? Control.SaveReplayClip : Control.ReplayStartStopRecording;
+                        var recordKey = 0 == Control.ReplayStartStopRecording ? Control.SaveReplayClip : Control.ReplayStartStopRecording;
                         if (!IsRecording())
                         {
                             if (Game.IsControlJustReleased(0, recordKey))

@@ -404,7 +404,12 @@ namespace vMenuClient.menus
             #region dev tools menu
 
             var devToolsBtn = new MenuItem("Developer Tools", "Various development/debug tools.") { Label = "→→→" };
+
+            if (IsAllowed(Permission.MSDevTools))
+            {
             menu.AddMenuItem(devToolsBtn);
+            }
+
             MenuController.AddSubmenu(menu, developerToolsMenu);
             MenuController.BindMenuItem(menu, developerToolsMenu, devToolsBtn);
 
