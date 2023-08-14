@@ -105,7 +105,7 @@ namespace vMenuClient
 
                     BeginScaleformMovieMethod(Scale, "SET_DATA_SLOT");
                     ScaleformMovieMethodAddParamInt(6);
-                    PushScaleformMovieMethodParameterString(GetControlInstructionalButton(0, MainMenu.NoClipKey, 1));
+                    PushScaleformMovieMethodParameterString("~INPUT_F975668C~");
                     PushScaleformMovieMethodParameterString($"Toggle NoClip");
                     EndScaleformMovieMethod();
 

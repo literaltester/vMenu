@@ -24,7 +24,7 @@ namespace vMenuClient
         public static bool PermissionsSetupComplete => ArePermissionsSetup;
         public static bool ConfigOptionsSetupComplete = false;
         
-        public static int NoClipKey { get; private set; } = 289; // F2 by default (ReplayStartStopRecordingSecondary)
+        public static string NoClipKey { get; private set; } = "F2"; // F2 by default (ReplayStartStopRecordingSecondary)
         public static Menu Menu { get; private set; }
         public static Menu PlayerSubmenu { get; private set; }
         public static Menu VehicleSubmenu { get; private set; }
@@ -443,11 +443,14 @@ namespace vMenuClient
             }
 
 
-            if (GetSettingsInt(Setting.vmenu_noclip_toggle_key) != -1)
+            if (!(GetSettingsInt(Setting.vmenu_noclip_toggle_key) == null))
             {
-                NoClipKey = GetSettingsInt(Setting.vmenu_noclip_toggle_key);
+                NoClipKey = GetSettingsString(Setting.vmenu_noclip_toggle_key);
             }
-
+            else
+            {
+                NoClipKey = "F2";
+            }
             // Create the main menu.
             Menu = Lm.GetMenu(new Menu(Game.Player.Name, "Main Menu"));
             PlayerSubmenu = Lm.GetMenu(new Menu(Game.Player.Name, "Player Related Options"));
@@ -499,6 +502,29 @@ namespace vMenuClient
         /// <returns></returns>
         private async Task OnTick()
         {
+            RegisterCommand("vMenu:NoClip", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+               {
+                    if ( IsAllowed(Permission.NoClip) )
+                    {
+                        if (Game.PlayerPed.IsInVehicle())
+                        {
+                            var veh = GetVehicle();
+                            if (veh != null && veh.Exists() && veh.Driver == Game.PlayerPed)
+                            {
+                                NoClipEnabled = !NoClipEnabled;
+                            }
+                            else
+                            {
+                                NoClipEnabled = false;
+                                Notify.Error("This vehicle does not exist (somehow) or you need to be the driver of this vehicle to enable noclip!");
+                            }
+                        }
+                        else
+                        {
+                            NoClipEnabled = !NoClipEnabled;
+                        }
+                    }
+               }), false);
 
             RegisterCommand("vMenu:toggle", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
                {
@@ -522,6 +548,9 @@ namespace vMenuClient
             {
                 vMenuKey = "M";
             }
+
+            RegisterKeyMapping("vMenu:NoClip", "vMenu NoClip Toggle Button", "keyboard", NoClipKey);
+
             RegisterKeyMapping("vMenu:toggle", "vMenu Toggle Button", "keyboard", vMenuKey);
             // If the setup (permissions) is done, and it's not the first tick, then do this:
             if (ConfigOptionsSetupComplete)
@@ -567,29 +596,7 @@ namespace vMenuClient
                     Notify.Alert("You must save your ped first before exiting, or click the ~r~Exit Without Saving~s~ button.");
                 }
 
-                if (Game.CurrentInputMode == InputMode.MouseAndKeyboard)
-                {
-                    if (Game.IsControlJustPressed(0, (Control)NoClipKey) && IsAllowed(Permission.NoClip) && UpdateOnscreenKeyboard() != 0)
-                    {
-                        if (Game.PlayerPed.IsInVehicle())
-                        {
-                            var veh = GetVehicle();
-                            if (veh != null && veh.Exists() && veh.Driver == Game.PlayerPed)
-                            {
-                                NoClipEnabled = !NoClipEnabled;
-                            }
-                            else
-                            {
-                                NoClipEnabled = false;
-                                Notify.Error("This vehicle does not exist (somehow) or you need to be the driver of this vehicle to enable noclip!");
-                            }
-                        }
-                        else
-                        {
-                            NoClipEnabled = !NoClipEnabled;
-                        }
-                    }
-                }
+
 
                 #endregion
 
