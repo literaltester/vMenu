@@ -107,7 +107,7 @@ namespace vMenuClient
             }
 
             // Configuration based
-            if (!GetSettingsBool(Setting.vmenu_disable_spawning_as_default_character))
+            if (!IsAllowed(Permission.PASpawnAsDefault))
             {
                 Tick += RestorePlayerAfterBeingDead;
             }

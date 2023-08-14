@@ -26,8 +26,6 @@ namespace vMenuShared
             vmenu_server_info_message,
             vmenu_server_info_website_url,
             vmenu_teleport_to_wp_keybind_key,
-            vmenu_disable_spawning_as_default_character,
-            vmenu_enable_animals_spawn_menu,
             vmenu_pvp_mode,
             keep_player_head_props,
             vmenu_disable_server_info_convars,
