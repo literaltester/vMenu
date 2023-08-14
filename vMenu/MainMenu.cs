@@ -500,7 +500,7 @@ namespace vMenuClient
         private async Task OnTick()
         {
 
-            RegisterCommand("vMenu", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+            RegisterCommand("vMenu:toggle", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
                {
                    if (vMenuEnabled)
                    {
@@ -522,7 +522,7 @@ namespace vMenuClient
             {
                 vMenuKey = "M";
             }
-            RegisterKeyMapping("vMenu", "vMenu Toggle Button", "keyboard", vMenuKey);
+            RegisterKeyMapping("vMenu:toggle", "vMenu Toggle Button", "keyboard", vMenuKey);
             // If the setup (permissions) is done, and it's not the first tick, then do this:
             if (ConfigOptionsSetupComplete)
             {
