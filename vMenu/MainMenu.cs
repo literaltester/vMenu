@@ -23,8 +23,7 @@ namespace vMenuClient
 
         public static bool PermissionsSetupComplete => ArePermissionsSetup;
         public static bool ConfigOptionsSetupComplete = false;
-
-        public static Control MenuToggleKey { get { return MenuController.MenuToggleKey; } private set { MenuController.MenuToggleKey = value; } } // M by default (InteractionMenu)
+        
         public static int NoClipKey { get; private set; } = 289; // F2 by default (ReplayStartStopRecordingSecondary)
         public static Menu Menu { get; private set; }
         public static Menu PlayerSubmenu { get; private set; }
@@ -57,10 +56,14 @@ namespace vMenuClient
 
         public static bool DebugMode = GetResourceMetadata(GetCurrentResourceName(), "client_debug_mode", 0) == "true";
         public static bool EnableExperimentalFeatures = (GetResourceMetadata(GetCurrentResourceName(), "experimental_features_enabled", 0) ?? "0") == "1";
+        private string vMenuKey;
+
         public static string Version { get { return GetResourceMetadata(GetCurrentResourceName(), "version", 0); } }
 
         public static bool DontOpenMenus { get { return MenuController.DontOpenAnyMenu; } set { MenuController.DontOpenAnyMenu = value; } }
         public static bool DisableControls { get { return MenuController.DisableMenuButtons; } set { MenuController.DisableMenuButtons = value; } }
+
+        public static bool vMenuEnabled { get; private set; } = true;
 
         private const int currentCleanupVersion = 2;
         private static readonly LanguageManager Lm = new LanguageManager();
@@ -301,6 +304,7 @@ namespace vMenuClient
 
             // Request server state from the server.
             TriggerServerEvent("vMenu:RequestServerState");
+            MenuController.MenuToggleKey = (Control)(-1); // disables the menu toggle key
         }
 
         #region Infinity bits
@@ -434,15 +438,11 @@ namespace vMenuClient
                 MenuController.MainMenu = null;
                 MenuController.DisableMenuButtons = true;
                 MenuController.DontOpenAnyMenu = true;
-                MenuController.MenuToggleKey = (Control)(-1); // disables the menu toggle key
+                vMenuEnabled = false;
                 return;
             }
 
-            if (GetSettingsInt(Setting.vmenu_menu_toggle_key) != -1)
-            {
-                MenuToggleKey = (Control)GetSettingsInt(Setting.vmenu_menu_toggle_key);
-                //MenuToggleKey = GetSettingsInt(Setting.vmenu_menu_toggle_key);
-            }
+
             if (GetSettingsInt(Setting.vmenu_noclip_toggle_key) != -1)
             {
                 NoClipKey = GetSettingsInt(Setting.vmenu_noclip_toggle_key);
@@ -499,6 +499,30 @@ namespace vMenuClient
         /// <returns></returns>
         private async Task OnTick()
         {
+
+            RegisterCommand("vMenu", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+               {
+                   if (vMenuEnabled)
+                   {
+                       if (!MenuController.IsAnyMenuOpen())
+                       {
+                           Menu.OpenMenu();
+                       }
+                       else
+                       {
+                           MenuController.CloseAllMenus();
+                       }
+                   }
+               }), false);
+            if (!(GetSettingsString(Setting.vmenu_menu_toggle_key) == null))
+            {
+                vMenuKey = GetSettingsString(Setting.vmenu_menu_toggle_key);
+            }
+            else
+            {
+                vMenuKey = "M";
+            }
+            RegisterKeyMapping("vMenu", "vMenu Toggle Button", "keyboard", vMenuKey);
             // If the setup (permissions) is done, and it's not the first tick, then do this:
             if (ConfigOptionsSetupComplete)
             {
@@ -569,8 +593,7 @@ namespace vMenuClient
 
                 #endregion
 
-                // Menu toggle button.
-                Game.DisableControlThisFrame(0, MenuToggleKey);
+
             }
         }
 
