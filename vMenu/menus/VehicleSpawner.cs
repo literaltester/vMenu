@@ -466,6 +466,13 @@ namespace vMenuClient.menus
 
                 #region Add vehicles per class
                 // Loop through all the vehicles in the vehicle class.
+                string blacklistdta = LoadResourceFile(GetCurrentResourceName(), "config/addons.json") ?? "{}";
+                var addons = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(blacklistdta);
+                var disablefromdefaultlist = new List<string>();
+                foreach (string addon in addons["disablefromdefaultlist"])
+                {
+                    disablefromdefaultlist.Add(addon.ToLower().ToString());
+                }
                 foreach (var veh in VehicleData.Vehicles.VehicleClasses[className])
                 {
                     // Convert the model name to start with a Capital letter, converting the other characters to lowercase. 
@@ -480,7 +487,6 @@ namespace vMenuClient.menus
                     var acceleration = Map(GetVehicleModelAcceleration(model), 0f, accelerationValues[vehClass], 0f, 1f);
                     var maxBraking = Map(GetVehicleModelMaxBraking(model), 0f, brakingValues[vehClass], 0f, 1f);
                     var maxTraction = Map(GetVehicleModelMaxTraction(model), 0f, tractionValues[vehClass], 0f, 1f);
-
                     // Loop through all the menu items and check each item's title/text and see if it matches the current vehicle (display) name.
                     var duplicate = false;
                     for (var itemIndex = 0; itemIndex < vehicleClassMenu.Size; itemIndex++)
@@ -506,6 +512,53 @@ namespace vMenuClient.menus
                             vehName += $" ({duplicateVehNames[vehName]})";
 
                             // Then create and add a new button for this vehicle.
+                            if (!(disablefromdefaultlist.Any(x => x == veh.ToLower().ToString()) && !IsAllowed(Permission.VODisableFromDefaultList)))
+                            {
+                                if (DoesModelExist(veh))
+                                {
+                                    var vehBtn = new MenuItem(vehName)
+                                    {
+                                        Enabled = true,
+                                        Label = $"({vehModelName.ToLower()})",
+                                        ItemData = new float[4] { topSpeed, acceleration, maxBraking, maxTraction }
+                                    };
+                                    vehicleClassMenu.AddMenuItem(vehBtn);
+                                }
+                                else
+                                {
+                                    var vehBtn = new MenuItem(vehName, "This vehicle is not available because the model could not be found in your game files. If this is a DLC vehicle, make sure the server is streaming it.")
+                                    {
+                                        Enabled = false,
+                                        Label = $"({vehModelName.ToLower()})",
+                                        ItemData = new float[4] { 0f, 0f, 0f, 0f }
+                                    };
+                                    vehicleClassMenu.AddMenuItem(vehBtn);
+                                    vehBtn.RightIcon = MenuItem.Icon.LOCK;
+                                }
+                            }
+                            else
+                            {
+                                var vehBtn = new MenuItem(vehName, "This vehicle Has Been blocked by the server administration.")
+                                {
+                                    Enabled = false,
+                                    Label = $"({vehModelName.ToLower()})",
+                                    ItemData = new float[4] { 0f, 0f, 0f, 0f }
+                                };
+                                vehicleClassMenu.AddMenuItem(vehBtn);
+                                vehBtn.RightIcon = MenuItem.Icon.LOCK;
+                            }                              
+                            // Mark duplicate as true and break from the loop because we already found the duplicate.
+                            duplicate = true;
+                            break;
+                        }
+                    }
+
+                    // If it's not a duplicate, add the model name.
+                    if (!duplicate)
+                    {
+
+                        if (!(disablefromdefaultlist.Any(x => x == veh.ToLower().ToString()) && !IsAllowed(Permission.VODisableFromDefaultList)))
+                        {
 
                             if (DoesModelExist(veh))
                             {
@@ -528,29 +581,10 @@ namespace vMenuClient.menus
                                 vehicleClassMenu.AddMenuItem(vehBtn);
                                 vehBtn.RightIcon = MenuItem.Icon.LOCK;
                             }
-
-                            // Mark duplicate as true and break from the loop because we already found the duplicate.
-                            duplicate = true;
-                            break;
-                        }
-                    }
-
-                    // If it's not a duplicate, add the model name.
-                    if (!duplicate)
-                    {
-                        if (DoesModelExist(veh))
-                        {
-                            var vehBtn = new MenuItem(vehName)
-                            {
-                                Enabled = true,
-                                Label = $"({vehModelName.ToLower()})",
-                                ItemData = new float[4] { topSpeed, acceleration, maxBraking, maxTraction }
-                            };
-                            vehicleClassMenu.AddMenuItem(vehBtn);
                         }
                         else
                         {
-                            var vehBtn = new MenuItem(vehName, "This vehicle is not available because the model could not be found in your game files. If this is a DLC vehicle, make sure the server is streaming it.")
+                            var vehBtn = new MenuItem(vehName, "This vehicle Has Been blocked by the server administration.")
                             {
                                 Enabled = false,
                                 Label = $"({vehModelName.ToLower()})",
@@ -558,7 +592,7 @@ namespace vMenuClient.menus
                             };
                             vehicleClassMenu.AddMenuItem(vehBtn);
                             vehBtn.RightIcon = MenuItem.Icon.LOCK;
-                        }
+                        }                    
                     }
                 }
                 #endregion

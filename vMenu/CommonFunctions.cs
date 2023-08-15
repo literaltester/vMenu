@@ -1247,6 +1247,15 @@ namespace vMenuClient
                         return 0;     
                     }
                 }
+            foreach (string addon in addons["disablefromdefaultlist"])
+            {
+                uint removedefaultlist = (uint)GetHashKey(addon.ToLower());
+                if ((vehicleHash == removedefaultlist) && !IsAllowed(Permission.VODisableFromDefaultList))
+                    {
+                        Notify.Alert("You are not allowed to spawn this vehicle, because it is restricted.");
+                        return 0;     
+                    }
+                }
             var modelClass = GetVehicleClassFromName(vehicleHash);
             if (!VehicleSpawner.allowedCategories[modelClass])
             {

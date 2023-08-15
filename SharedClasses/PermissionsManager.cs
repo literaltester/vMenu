@@ -105,6 +105,7 @@ namespace vMenuShared
             VOFlares,
             VOPlaneBombs,
             VOVehiclesBlacklist,
+            VODisableFromDefaultList,
             VOAllowOpenWheel,
             #endregion
 
@@ -508,7 +509,7 @@ namespace vMenuShared
                 // if the first 2 characters are both uppercase
                 if (permStr.Substring(0, 2).ToUpper() == permStr.Substring(0, 2))
                 {
-                    if (permStr.Substring(2) is not ("All" or "Menu"))
+                    if (permStr.Substring(2) is not ("All" or "Menu" or "VehiclesBlacklist" or "DisableFromDefaultList" or "AllowOpenWheel"))
                     {
                         list.AddRange(Enum.GetValues(typeof(Permission)).Cast<Permission>().Where(a => a.ToString() == permStr.Substring(0, 2) + "All"));
                     }
