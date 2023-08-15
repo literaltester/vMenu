@@ -502,7 +502,7 @@ namespace vMenuClient
         /// <returns></returns>
         private async Task OnTick()
         {
-            RegisterCommand("vMenu:NoClip", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+            RegisterCommand($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:NoClip", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
                {
                     if ( IsAllowed(Permission.NoClip) )
                     {
@@ -526,7 +526,7 @@ namespace vMenuClient
                     }
                }), false);
 
-            RegisterCommand("vMenu:toggle", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+            RegisterCommand($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:toggle", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
                {
                    if (vMenuEnabled)
                    {
@@ -549,9 +549,9 @@ namespace vMenuClient
                 vMenuKey = "M";
             }
 
-            RegisterKeyMapping("vMenu:NoClip", "vMenu NoClip Toggle Button", "keyboard", NoClipKey);
+            RegisterKeyMapping($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:NoClip", "vMenu NoClip Toggle Button", "keyboard", NoClipKey);
 
-            RegisterKeyMapping("vMenu:toggle", "vMenu Toggle Button", "keyboard", vMenuKey);
+            RegisterKeyMapping($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:toggle", "vMenu Toggle Button", "keyboard", vMenuKey);
             // If the setup (permissions) is done, and it's not the first tick, then do this:
             if (ConfigOptionsSetupComplete)
             {

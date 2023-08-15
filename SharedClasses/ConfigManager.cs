@@ -14,6 +14,9 @@ namespace vMenuShared
     {
         public enum Setting
         {
+            // Id for RegisterKeyMapping
+            vmenu_individual_server_id,
+
             // General settings
             vmenu_use_permissions,
             vmenu_menu_staff_only,
