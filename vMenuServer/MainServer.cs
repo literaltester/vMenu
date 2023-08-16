@@ -189,7 +189,7 @@ namespace vMenuServer
         public MainServer()
         {
             // name check
-            Debug.WriteLine(GetSettingsString(Setting.vmenu_individual_server_id));
+            Debug.WriteLine($"Server ID: {GetSettingsString(Setting.vmenu_individual_server_id)}");
             if (GetSettingsString(Setting.vmenu_individual_server_id) == "" || GetSettingsString(Setting.vmenu_individual_server_id) == null || GetSettingsString(Setting.vmenu_individual_server_id) == "null")
             {
                 var InvalidServerId = new Exception("\r\n\r\n^1 Invalid Server Id! change or add 'setr vmenu_individual_server_id' to your server cfg or permission cfg \r\n\r\n\r\n^7");
