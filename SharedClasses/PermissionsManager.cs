@@ -106,7 +106,6 @@ namespace vMenuShared
             VOPlaneBombs,
             VOVehiclesBlacklist,
             VODisableFromDefaultList,
-            VOAllowOpenWheel,
             #endregion
 
             // Vehicle Spawner

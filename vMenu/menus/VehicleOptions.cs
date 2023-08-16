@@ -2075,27 +2075,11 @@ namespace vMenuClient.menus
                     // Wheel types
                     else if (item2 == vehicleWheelType)
                     {
-                        // 6 should be used for bikes only.
-                        if ((newIndex == 6 && veh.Model.IsBike) || (newIndex != 6 && !veh.Model.IsBike))
-                        {
-                            // Set the wheel type
-                            SetVehicleWheelType(veh.Handle, newIndex);
-
-                            bool customWheels = GetVehicleModVariation(veh.Handle, 23);
-
-                            // Reset the wheel mod index for front wheels
-                            SetVehicleMod(veh.Handle, 23, -1, customWheels);
-
-                            // If the model is a bike, do the same thing for the rear wheels.
-                            if (veh.Model.IsBike)
-                            {
-                                SetVehicleMod(veh.Handle, 24, -1, customWheels);
-                            }
-
-                            // Refresh the menu with the item index so that the view doesn't change
-                            UpdateMods(selectedIndex: itemIndex);
-                        }
-                        else
+                        var vehicleClass = GetVehicleClass(veh.Handle);
+                        var isBikeOrOpenWheel = (newIndex == 6 && veh.Model.IsBike) ;
+                        var isNotBikeNorOpenWheel = newIndex != 6 && !veh.Model.IsBike;
+                        var isCorrectVehicleType = isBikeOrOpenWheel || isNotBikeNorOpenWheel;
+                        if (!isCorrectVehicleType)
                         {
                             // Go past the index if it's not a bike.
                             if (!veh.Model.IsBike)
@@ -2112,9 +2096,25 @@ namespace vMenuClient.menus
                             // Reset the index to 6 if it is a bike
                             else
                             {
-                                item2.ListIndex = 6;
+                                item2.ListIndex = veh.Model.IsBike ? 6 : 6;
                             }
                         }
+                        // Set the wheel type
+                        SetVehicleWheelType(veh.Handle, item2.ListIndex);
+
+                        var customWheels = GetVehicleModVariation(veh.Handle, 23);
+
+                        // Reset the wheel mod index for front wheels
+                        SetVehicleMod(veh.Handle, 23, -1, customWheels);
+
+                        // If the model is a bike, do the same thing for the rear wheels.
+                        if (veh.Model.IsBike)
+                        {
+                            SetVehicleMod(veh.Handle, 24, -1, customWheels);
+                        }
+
+                        // Refresh the menu with the item index so that the view doesn't change
+                        UpdateMods(selectedIndex: itemIndex);
                     }
                     // Tire smoke
                     else if (item2 == tireSmoke)
