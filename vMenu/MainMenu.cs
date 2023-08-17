@@ -895,7 +895,7 @@ namespace vMenuClient
             {
                 PluginSettingsMenu = new PluginSettings();
                 var menu = PluginSettingsMenu.GetMenu();
-                var button = new MenuItem("Plugins Menu", "Miscellaneous vMenu options/settings can be configured here. You can also save your settings in this menu.")
+                var button = new MenuItem("Plugins Menu", "Plugins settings/status.")
                 {
                     Label = "→→→"
                 };
