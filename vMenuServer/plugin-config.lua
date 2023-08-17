@@ -24,3 +24,5 @@ ConfigShared.vehiclelistwm = { -- per vehicle config
 }
 
 
+-- fh4 speedometer config
+ConfigShared.FH4SpeedOMeter = true -- toggle the FH4 Speed O' Meter plugin
