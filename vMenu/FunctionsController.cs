@@ -2318,12 +2318,12 @@ namespace vMenuClient
                                 }
                                 else
                                 {
-                                    gamerTags[p] = CreateMpGamerTag(p.Character.Handle, p.Name + $" [{p.ServerId}]", false, false, "", 0);
+                                    gamerTags[p] = CreateMpGamerTag(p.Character.Handle, $" #{p.ServerId} | " + p.Name, false, false, "", 0);
                                 }
                             }
                             else if (closeEnough)
                             {
-                                gamerTags.Add(p, CreateMpGamerTag(p.Character.Handle, p.Name + $" [{p.ServerId}]", false, false, "", 0));
+                                gamerTags.Add(p, CreateMpGamerTag(p.Character.Handle, $" #{p.ServerId} | " + p.Name, false, false, "", 0));
                             }
                             if (closeEnough && gamerTags.ContainsKey(p))
                             {
