@@ -1438,8 +1438,33 @@ namespace vMenuClient
                 ToggleVehicleMod(vehicle.Handle, 20, vehicleInfo.tyreSmoke);
                 ToggleVehicleMod(vehicle.Handle, 22, vehicleInfo.xenonHeadlights);
                 SetVehicleLivery(vehicle.Handle, vehicleInfo.livery);
-
+                Debug.WriteLine($"{vehicleInfo.colors["primary"] == 1100110}");
+                if (!(vehicleInfo.colors["primary"] == 1100110))
+                {
+                if (vehicleInfo.colors["secondary"] == 1100110)
+                {
+                SetVehicleColours(vehicle.Handle, vehicleInfo.colors["primary"], 0);
+                SetVehicleCustomSecondaryColour(vehicle.Handle, vehicleInfo.colors["secondaryr"], vehicleInfo.colors["secondaryg"] , vehicleInfo.colors["secondaryb"]);
+                SetVehicleModColor_2(vehicle.Handle, vehicleInfo.colors["secondaryf"], 0);
+                }
+                else
                 SetVehicleColours(vehicle.Handle, vehicleInfo.colors["primary"], vehicleInfo.colors["secondary"]);
+                }
+                else
+                {
+                if (vehicleInfo.colors["secondary"] == 1100110)
+                {
+                SetVehicleColours(vehicle.Handle, 0, 0);
+                SetVehicleCustomSecondaryColour(vehicle.Handle, vehicleInfo.colors["secondaryr"], vehicleInfo.colors["secondaryg"] , vehicleInfo.colors["secondaryb"]);
+                SetVehicleModColor_2(vehicle.Handle, vehicleInfo.colors["secondaryf"], 0);
+                }
+                else
+                SetVehicleColours(vehicle.Handle, 0, vehicleInfo.colors["secondary"]);
+
+                SetVehicleModColor_1(vehicle.Handle, vehicleInfo.colors["primaryf"], 0, 0);
+                SetVehicleCustomPrimaryColour(vehicle.Handle, vehicleInfo.colors["primaryr"], vehicleInfo.colors["primaryg"] , vehicleInfo.colors["primaryb"]);
+                }
+
                 SetVehicleInteriorColour(vehicle.Handle, vehicleInfo.colors["trim"]);
                 SetVehicleDashboardColour(vehicle.Handle, vehicleInfo.colors["dash"]);
 
@@ -1541,17 +1566,73 @@ namespace vMenuClient
                     #region colors
                     var colors = new Dictionary<string, int>();
                     var primaryColor = 0;
+                    var primaryColorred = 0;
+                    var primaryColorgreen = 0;
+                    var primaryColorblue = 0;
+                    var primaryFinish = 0;
+                    var primaryFinishUseless = 0;
+                    var primaryFinishUseless2 = 0;
+
                     var secondaryColor = 0;
+                    var secondaryColorred = 0;
+                    var secondaryColorgreen = 0;
+                    var secondaryColorblue = 0;
+                    var secondaryFinish = 0;
+                    var secondaryFinishUseless = 0;
+
                     var pearlescentColor = 0;
                     var wheelColor = 0;
                     var dashColor = 0;
                     var trimColor = 0;
                     GetVehicleExtraColours(veh.Handle, ref pearlescentColor, ref wheelColor);
+                    GetVehicleCustomPrimaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
+                    GetVehicleModColor_1(veh.Handle, ref primaryFinish, ref primaryFinishUseless, ref primaryFinishUseless2);
+                    Debug.WriteLine($"{((primaryColorred +primaryColorgreen + primaryColorblue) == 0 + primaryFinish ) }");
+                    if (!(!((primaryColorred +primaryColorgreen + primaryColorblue ) == 0 ) ||  !(primaryFinish == 0)))
+                    {
                     GetVehicleColours(veh.Handle, ref primaryColor, ref secondaryColor);
+                    }
+                    else
+                    {
+                        GetVehicleColours(veh.Handle, ref primaryColor, ref secondaryColor);
+                        primaryColor = 1100110;
+                    }
+
+                    GetVehicleCustomSecondaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
+                    GetVehicleModColor_2(veh.Handle, ref secondaryFinish, ref secondaryFinishUseless);
+                    Debug.WriteLine($"{((secondaryColorred +secondaryColorgreen + secondaryColorblue) == 0 + secondaryFinish ) }");
+                    if (!(!((secondaryColorred +secondaryColorgreen + secondaryColorblue ) == 0 ) ||  !(secondaryFinish == 0)))
+                    {
+                    GetVehicleColours(veh.Handle, ref secondaryColor, ref secondaryColor);
+                    }
+                    else
+                    {   
+                        if (primaryColor == 1100110)
+                        {
+                        secondaryColor = 1100110;   
+                        primaryColor = 1100110;                           
+                        }
+                        else
+                        {
+                        GetVehicleColours(veh.Handle, ref secondaryColor, ref secondaryColor);
+                        secondaryColor = 1100110;                            
+                        }
+                    }
+
                     GetVehicleDashboardColour(veh.Handle, ref dashColor);
                     GetVehicleInteriorColour(veh.Handle, ref trimColor);
                     colors.Add("primary", primaryColor);
+                    colors.Add("primaryr", primaryColorred);
+                    colors.Add("primaryg", primaryColorgreen);
+                    colors.Add("primaryb", primaryColorblue);
+                    colors.Add("primaryf", primaryFinish);
+
                     colors.Add("secondary", secondaryColor);
+                    colors.Add("secondaryr", secondaryColorred);
+                    colors.Add("secondaryg", secondaryColorgreen);
+                    colors.Add("secondaryb", secondaryColorblue);
+                    colors.Add("secondaryf", secondaryFinish);
+
                     colors.Add("pearlescent", pearlescentColor);
                     colors.Add("wheels", wheelColor);
                     colors.Add("dash", dashColor);
