@@ -15,7 +15,7 @@ ui_page 'storage.html'
 default_language "English"
 
 -- Add the names of the jsons added to config/languages here in the current format
-languages 'English, Spanish'
+languages 'English'
 
 -- Adds additional logging, useful when debugging issues.
 client_debug_mode 'false'

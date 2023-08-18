@@ -1847,6 +1847,10 @@ namespace vMenuClient.menus
 
                         // Create the name (again, converting to proper case), then add the name.
                         name = mod.GetLocalizedModName(x) != "" ? $"{ToProperString(mod.GetLocalizedModName(x))} {currentItem}" : $"{typeName} #{x} {currentItem}";
+                        
+                        if (name == "Engine #4 [6/6]")
+                        modlist.Add("EMS Upgrade, Level 5 [6/6]");
+                        else
                         modlist.Add(name);
                     }
 

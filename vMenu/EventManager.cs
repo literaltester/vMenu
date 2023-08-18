@@ -52,12 +52,12 @@ namespace vMenuClient
             EventHandlers.Add("vMenu:PrivateMessage", new Action<string, string>(PrivateMessage));
             EventHandlers.Add("vMenu:UpdateTeleportLocations", new Action<string>(UpdateTeleportLocations));
 
-            if (GetSettingsBool(Setting.vmenu_enable_weather_sync))
+            if (!((!GetSettingsBool(Setting.vmenu_enable_weather_sync))||( false )))
             {
                 Tick += WeatherSync;
             }
 
-            if (GetSettingsBool(Setting.vmenu_enable_time_sync))
+            if (!((!GetSettingsBool(Setting.vmenu_enable_time_sync))||( false )))
             {
                 Tick += TimeSync;
             }
@@ -275,15 +275,22 @@ namespace vMenuClient
         /// <returns></returns>
         private async Task WeatherSync()
         {
-            await UpdateWeatherParticles();
-            SetArtificialLightsState(IsBlackoutEnabled);
-            SetArtificialLightsStateAffectsVehicles(false);
-            if (GetNextWeatherType() != GetHashKey(GetServerWeather))
-            {
-                SetWeatherTypeOvertimePersist(GetServerWeather, (float)WeatherChangeTime);
-                await Delay((WeatherChangeTime * 1000) + 2000);
 
-                TriggerEvent("vMenu:WeatherChangeComplete", GetServerWeather);
+            if (MainMenu.PlayerTimeWeatherOptionsMenu != null)
+            {
+                if (!MainMenu.PlayerTimeWeatherOptionsMenu.ClientWeatherTimeBool)
+                {
+                    await UpdateWeatherParticles();
+                    SetArtificialLightsState(IsBlackoutEnabled);
+                    SetArtificialLightsStateAffectsVehicles(false);
+                    if (GetNextWeatherType() != GetHashKey(GetServerWeather))
+                    {
+                        SetWeatherTypeOvertimePersist(GetServerWeather, (float)WeatherChangeTime);
+                        await Delay((WeatherChangeTime * 1000) + 2000);
+        
+                        TriggerEvent("vMenu:WeatherChangeComplete", GetServerWeather);
+                    }
+                }
             }
             await Delay(1000);
         }
@@ -294,14 +301,20 @@ namespace vMenuClient
         /// <returns></returns>
         private async Task TimeSync()
         {
-            NetworkOverrideClockTime(GetServerHours, GetServerMinutes, 0);
-            if (IsServerTimeFrozen || IsServerTimeSyncedWithMachineTime)
+            if (MainMenu.PlayerTimeWeatherOptionsMenu != null)
             {
-                await Delay(5);
-            }
-            else
-            {
-                await Delay(MathUtil.Clamp(GetServerMinuteDuration, 100, 2000));
+                if (!MainMenu.PlayerTimeWeatherOptionsMenu.ClientWeatherTimeBool)
+                {
+                    NetworkOverrideClockTime(GetServerHours, GetServerMinutes, 0);
+                    if (IsServerTimeFrozen || IsServerTimeSyncedWithMachineTime)
+                    {
+                        await Delay(5);
+                    }
+                    else
+                    {
+                        await Delay(MathUtil.Clamp(GetServerMinuteDuration, 100, 2000));
+                    }
+                }
             }
         }
 
