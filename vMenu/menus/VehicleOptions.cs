@@ -1306,6 +1306,7 @@ namespace vMenuClient.menus
                 BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
 
             };
+            var HexColorPrimary  = new MenuItem("Primary Hex", "Set primary color with hex code.");
             MenuSliderItem FinishSliderPrimary = new MenuSliderItem($"Color Finish Normal", 0, 5, 0, false)
             {
                 BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
@@ -1315,6 +1316,7 @@ namespace vMenuClient.menus
             primaryColorsMenuRGB.AddMenuItem(RedSliderPrimary);
             primaryColorsMenuRGB.AddMenuItem(GreenSliderPrimary);
             primaryColorsMenuRGB.AddMenuItem(BlueSliderPrimary);
+            primaryColorsMenuRGB.AddMenuItem(HexColorPrimary);
             primaryColorsMenuRGB.AddMenuItem(FinishSliderPrimary);
             primaryColorsMenu.OnItemSelect += (sender, item, index) =>
             {
@@ -1327,6 +1329,10 @@ namespace vMenuClient.menus
             var primaryFinishUseless2 = 0;
             GetVehicleCustomPrimaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
             GetVehicleModColor_1(veh.Handle, ref primaryFinish, ref primaryFinishUseless, ref primaryFinishUseless2);
+                
+                if (primaryFinish > 5)
+                    primaryFinish = 0;
+
             RedSliderPrimary.Position = primaryColorred;
             GreenSliderPrimary.Position = primaryColorgreen;
             BlueSliderPrimary.Position = primaryColorblue;
@@ -1343,8 +1349,45 @@ namespace vMenuClient.menus
             GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
             BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
             FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+            string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
+            HexColorPrimary.Label = $"{hexValue}";
             };
 
+            primaryColorsMenuRGB.OnItemSelect += async (sender, item, index) =>
+            {
+                if (item == HexColorPrimary)
+                {
+                    var result = await GetUserInput(windowTitle: "Enter Color Hex");
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        Debug.WriteLine($"{result}");
+                        int RGBint = Convert.ToInt32(result, 16);
+                        byte Red = (byte)((RGBint >> 16) & 255);
+                        byte Green = (byte)((RGBint >> 8) & 255);
+                        byte Blue = (byte)(RGBint & 255);
+                        Debug.WriteLine($"{Red} {Green} {Blue}");
+                        RedSliderPrimary.Text = $"Red Color {Red}";
+                        GreenSliderPrimary.Text = $"Green Color {Green}";
+                        BlueSliderPrimary.Text = $"Blue Color {Blue}";
+                        RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        RedSliderPrimary.Position = Red;
+                        GreenSliderPrimary.Position = Green;
+                        BlueSliderPrimary.Position = Blue;
+                        RedPrimary = Red;
+                        GreenPrimary = Green;
+                        BluePrimary = Blue;
+                        string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
+                        Debug.WriteLine($"{hexValue}");
+                        HexColorPrimary.Label = $"{hexValue}";
+                        var veh = GetVehicle(); 
+                        SetVehicleCustomPrimaryColour(veh.Handle, Red, Green, Blue);
+                   }
+
+                }
+            };
 
             primaryColorsMenuRGB.OnSliderPositionChange += (m, sliderItem, oldPosition, newPosition, itemIndex) =>
             {
@@ -1393,6 +1436,8 @@ namespace vMenuClient.menus
                 if ((sliderItem == RedSliderPrimary) || (sliderItem == GreenSliderPrimary) || (sliderItem == BlueSliderPrimary) || (sliderItem == FinishSliderPrimary))
                 {
                     var veh = GetVehicle();
+                    string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
+                    HexColorPrimary.Label = $"{hexValue}";
                     SetVehicleModColor_1(veh.Handle, FinishPrimary, 0, 0);
                     SetVehicleCustomPrimaryColour(veh.Handle, RedPrimary, GreenPrimary, BluePrimary);
 
@@ -1424,6 +1469,7 @@ namespace vMenuClient.menus
                 BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
 
             };
+            var HexColorSecondary = new MenuItem("Primary Hex", "Set primary color with hex code.");
             MenuSliderItem FinishSliderSecondary = new MenuSliderItem($"Color Finish Normal", 0, 5, 0, false)
             {
                 BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
@@ -1441,6 +1487,8 @@ namespace vMenuClient.menus
             var secondaryFinishUseless = 0;
             GetVehicleCustomSecondaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
             GetVehicleModColor_2(veh.Handle, ref secondaryFinish, ref secondaryFinishUseless);
+                    if (secondaryFinish > 5)
+                    secondaryFinish = 0;
             RedSliderSecondary.Position = secondaryColorred;
             GreenSliderSecondary.Position = secondaryColorgreen;
             BlueSliderSecondary.Position = secondaryColorblue;
@@ -1457,12 +1505,49 @@ namespace vMenuClient.menus
             GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
             BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
             FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+            string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");
+            HexColorSecondary.Label = $"{hexValue}";
             };
+            SecondaryColorsMenuRGB.OnItemSelect += async (sender, item, index) =>
+            {
+                if (item == HexColorSecondary)
+                {
+                    var result = await GetUserInput(windowTitle: "Enter Color Hex");
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        Debug.WriteLine($"{result}");
+                        int RGBint = Convert.ToInt32(result, 16);
+                        byte Red = (byte)((RGBint >> 16) & 255);
+                        byte Green = (byte)((RGBint >> 8) & 255);
+                        byte Blue = (byte)(RGBint & 255);
+                        Debug.WriteLine($"{Red} {Green} {Blue}");
+                        RedSliderSecondary.Text = $"Red Color {Red}";
+                        GreenSliderSecondary.Text = $"Green Color {Green}";
+                        BlueSliderSecondary.Text = $"Blue Color {Blue}";
+                        RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                        RedSliderSecondary.Position = Red;
+                        GreenSliderSecondary.Position = Green;
+                        BlueSliderSecondary.Position = Blue;
+                        RedSecondary = Red;
+                        GreenSecondary = Green;
+                        BlueSecondary = Blue;
+                        string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");
+                        Debug.WriteLine($"{hexValue}");
+                        HexColorSecondary.Label = $"{hexValue}";
+                        var veh = GetVehicle(); 
+                        SetVehicleCustomSecondaryColour(veh.Handle, Red, Green, Blue);
+                   }
 
+                }
+            };
 
             SecondaryColorsMenuRGB.AddMenuItem(RedSliderSecondary);
             SecondaryColorsMenuRGB.AddMenuItem(GreenSliderSecondary);
             SecondaryColorsMenuRGB.AddMenuItem(BlueSliderSecondary);
+            SecondaryColorsMenuRGB.AddMenuItem(HexColorSecondary);
             SecondaryColorsMenuRGB.AddMenuItem(FinishSliderSecondary);
 
             SecondaryColorsMenuRGB.OnSliderPositionChange += (m, sliderItem, oldPosition, newPosition, itemIndex) =>
@@ -1514,7 +1599,8 @@ namespace vMenuClient.menus
                     var veh = GetVehicle();
                     SetVehicleModColor_2(veh.Handle, FinishSecondary, 0);
                     SetVehicleCustomSecondaryColour(veh.Handle,  RedSecondary, GreenSecondary, BlueSecondary);
-
+                        string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");
+                        HexColorSecondary.Label = $"{hexValue}";
                 }
                                 
             };
