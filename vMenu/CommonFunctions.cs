@@ -1618,7 +1618,9 @@ namespace vMenuClient
                         secondaryColor = 1100110;                            
                         }
                     }
-
+                    GetVehicleModColor_1(veh.Handle, ref primaryFinish, ref primaryFinishUseless, ref primaryFinishUseless2);
+                    GetVehicleModColor_2(veh.Handle, ref secondaryFinish, ref secondaryFinishUseless);
+                    
                     GetVehicleDashboardColour(veh.Handle, ref dashColor);
                     GetVehicleInteriorColour(veh.Handle, ref trimColor);
                     colors.Add("primary", primaryColor);

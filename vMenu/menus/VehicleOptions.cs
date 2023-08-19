@@ -1469,7 +1469,7 @@ namespace vMenuClient.menus
                 BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
 
             };
-            var HexColorSecondary = new MenuItem("Primary Hex", "Set primary color with hex code.");
+            var HexColorSecondary = new MenuItem("Secondary Hex", "Set secondary color with hex code.");
             MenuSliderItem FinishSliderSecondary = new MenuSliderItem($"Color Finish Normal", 0, 5, 0, false)
             {
                 BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
