@@ -1309,20 +1309,49 @@ namespace vMenuClient.menus
                 BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
 
             };
-
             primaryColorsMenuRGB.AddMenuItem(RedSliderPrimary);
             primaryColorsMenuRGB.AddMenuItem(GreenSliderPrimary);
             primaryColorsMenuRGB.AddMenuItem(BlueSliderPrimary);
             primaryColorsMenuRGB.AddMenuItem(FinishSliderPrimary);
+            primaryColorsMenu.OnItemSelect += (sender, item, index) =>
+            {
+            var veh = GetVehicle();
+            var primaryColorred = 0;
+            var primaryColorgreen = 0;
+            var primaryColorblue = 0;
+            var primaryFinish = 0;
+            var primaryFinishUseless = 0;
+            var primaryFinishUseless2 = 0;
+            GetVehicleCustomPrimaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
+            GetVehicleModColor_1(veh.Handle, ref primaryFinish, ref primaryFinishUseless, ref primaryFinishUseless2);
+            RedSliderPrimary.Position = primaryColorred;
+            GreenSliderPrimary.Position = primaryColorgreen;
+            BlueSliderPrimary.Position = primaryColorblue;
+            FinishSliderPrimary.Position = primaryFinish;
+            RedPrimary = primaryColorred;
+            GreenPrimary = primaryColorgreen;
+            BluePrimary = primaryColorblue;
+            FinishPrimary = primaryFinish;
+            RedSliderPrimary.Text = $"Red Color {primaryColorred}";
+            GreenSliderPrimary.Text = $"Green Color {primaryColorgreen}";
+            BlueSliderPrimary.Text = $"Blue Color {primaryColorblue}";
+            FinishSliderPrimary.Text = $"Color Finish {ColorFInishes[primaryFinish]}";
+            RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+            GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+            BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+            FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+            };
+
 
             primaryColorsMenuRGB.OnSliderPositionChange += (m, sliderItem, oldPosition, newPosition, itemIndex) =>
             {
                 if (sliderItem == RedSliderPrimary)
                 {
                     RedPrimary = newPosition;
-                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
                     RedSliderPrimary.Text = $"Red Color {RedPrimary}";
 
                     
@@ -1330,18 +1359,20 @@ namespace vMenuClient.menus
                 if (sliderItem == GreenSliderPrimary)
                 {
                     GreenPrimary = newPosition;
-                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
                     GreenSliderPrimary.Text = $"Green Color {GreenPrimary}";
 
                 }
                 if (sliderItem == BlueSliderPrimary)
                 {
                     BluePrimary = newPosition;
-                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
                     BlueSliderPrimary.Text = $"Blue Color {BluePrimary}";
                     
                 }
@@ -1349,10 +1380,10 @@ namespace vMenuClient.menus
                 if (sliderItem == FinishSliderPrimary)
                 {
                     FinishPrimary = newPosition;
-                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
-                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(155, RedPrimary, GreenPrimary, BluePrimary);
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
                     FinishSliderPrimary.Text = $"Color Finish {ColorFInishes[FinishPrimary]}";
 
                 }
@@ -1397,6 +1428,35 @@ namespace vMenuClient.menus
 
             };
 
+            secondaryColorsMenu.OnItemSelect += (sender, item, index) =>
+            {
+            var veh = GetVehicle();
+            var secondaryColorred = 0;
+            var secondaryColorgreen = 0;
+            var secondaryColorblue = 0;
+            var secondaryFinish = 0;
+            var secondaryFinishUseless = 0;
+            GetVehicleCustomSecondaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
+            GetVehicleModColor_2(veh.Handle, ref secondaryFinish, ref secondaryFinishUseless);
+            RedSliderSecondary.Position = secondaryColorred;
+            GreenSliderSecondary.Position = secondaryColorgreen;
+            BlueSliderSecondary.Position = secondaryColorblue;
+            FinishSliderSecondary.Position = secondaryFinish;
+            RedSecondary = secondaryColorred;
+            GreenSecondary = secondaryColorgreen;
+            BlueSecondary = secondaryColorblue;
+            FinishSecondary = secondaryFinish;
+            RedSliderSecondary.Text = $"Red Color {RedSecondary}";
+            GreenSliderSecondary.Text = $"Green Color {GreenSecondary}";
+            BlueSliderSecondary.Text = $"Blue Color {BlueSecondary}";
+            FinishSliderSecondary.Text = $"Color Finish {ColorFInishes[secondaryFinish]}";
+            RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+            GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+            BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+            FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+            };
+
+
             SecondaryColorsMenuRGB.AddMenuItem(RedSliderSecondary);
             SecondaryColorsMenuRGB.AddMenuItem(GreenSliderSecondary);
             SecondaryColorsMenuRGB.AddMenuItem(BlueSliderSecondary);
@@ -1407,9 +1467,10 @@ namespace vMenuClient.menus
                 if (sliderItem == RedSliderSecondary)
                 {
                     RedSecondary = newPosition;
-                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
                     RedSliderSecondary.Text = $"Red Color {RedSecondary}";
 
                     
@@ -1417,18 +1478,20 @@ namespace vMenuClient.menus
                 if (sliderItem == GreenSliderSecondary)
                 {
                     GreenSecondary = newPosition;
-                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
                     GreenSliderSecondary.Text = $"Green Color {GreenSecondary}";
 
                 }
                 if (sliderItem == BlueSliderSecondary)
                 {
                     BlueSecondary = newPosition;
-                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
                     BlueSliderSecondary.Text = $"Blue Color {BlueSecondary}";
                     
                 }
@@ -1436,10 +1499,10 @@ namespace vMenuClient.menus
                 if (sliderItem == FinishSliderSecondary)
                 {
                     FinishSecondary = newPosition;
-                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
-                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(155, RedSecondary, GreenSecondary, BlueSecondary);
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
                     FinishSliderSecondary.Text = $"Color Finish {ColorFInishes[FinishSecondary]}";
                     
                 }
