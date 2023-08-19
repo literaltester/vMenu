@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 using CitizenFX.Core;
 
@@ -1360,10 +1361,11 @@ namespace vMenuClient.menus
             {
                 if (item == HexColorPrimary)
                 {
-                    var result = await GetUserInput(windowTitle: "Enter Color Hex");
+                    var result = await GetUserInput(windowTitle: "Enter Color Hex", defaultText: HexColorPrimary.Label , maxInputLength: 6);
                     if (!string.IsNullOrEmpty(result))
                     {
-
+                        if (IsHex(result))
+                        {
                         int RGBint = Convert.ToInt32(result, 16);
                         byte Red = (byte)((RGBint >> 16) & 255);
                         byte Green = (byte)((RGBint >> 8) & 255);
@@ -1387,6 +1389,9 @@ namespace vMenuClient.menus
                         HexColorPrimary.Label = $"{hexValue}";
                         var veh = GetVehicle(); 
                         SetVehicleCustomPrimaryColour(veh.Handle, Red, Green, Blue);
+                        }
+                        else
+                        Notify.Error($"{result} is not a valid hex code");
                    }
                 }
                 if (item == SecondaryMatchColorPrimary)
@@ -1551,32 +1556,37 @@ namespace vMenuClient.menus
             {
                 if (item == HexColorSecondary)
                 {
-                    var result = await GetUserInput(windowTitle: "Enter Color Hex");
+                    var result = await GetUserInput(windowTitle: "Enter Color Hex", defaultText: HexColorSecondary.Label , maxInputLength: 6);
                     if (!string.IsNullOrEmpty(result))
                     {
-                        
-                        int RGBint = Convert.ToInt32(result, 16);
-                        byte Red = (byte)((RGBint >> 16) & 255);
-                        byte Green = (byte)((RGBint >> 8) & 255);
-                        byte Blue = (byte)(RGBint & 255);
-                        
-                        RedSliderSecondary.Text = $"Red Color {Red}";
-                        GreenSliderSecondary.Text = $"Green Color {Green}";
-                        BlueSliderSecondary.Text = $"Blue Color {Blue}";
-                        RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
-                        GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
-                        BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
-                        FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
-                        RedSliderSecondary.Position = Red;
-                        GreenSliderSecondary.Position = Green;
-                        BlueSliderSecondary.Position = Blue;
-                        RedSecondary = Red;
-                        GreenSecondary = Green;
-                        BlueSecondary = Blue;
-                        string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");                
-                        HexColorSecondary.Label = $"{hexValue}";
-                        var veh = GetVehicle(); 
-                        SetVehicleCustomSecondaryColour(veh.Handle, Red, Green, Blue);
+                        if (IsHex(result))
+                        {
+                            int RGBint = Convert.ToInt32(result, 16);
+                            byte Red = (byte)((RGBint >> 16) & 255);
+                            byte Green = (byte)((RGBint >> 8) & 255);
+                            byte Blue = (byte)(RGBint & 255);
+                            
+                            RedSliderSecondary.Text = $"Red Color {Red}";
+                            GreenSliderSecondary.Text = $"Green Color {Green}";
+                            BlueSliderSecondary.Text = $"Blue Color {Blue}";
+                            RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            RedSliderSecondary.Position = Red;
+                            GreenSliderSecondary.Position = Green;
+                            BlueSliderSecondary.Position = Blue;
+                            RedSecondary = Red;
+                            GreenSecondary = Green;
+                            BlueSecondary = Blue;
+                            string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");                
+                            HexColorSecondary.Label = $"{hexValue}";
+                            var veh = GetVehicle(); 
+                            SetVehicleCustomSecondaryColour(veh.Handle, Red, Green, Blue);
+                        }
+                        else
+                        Notify.Error($"{result} is not a valid hex code");
+
                    }
 
                 }
@@ -2635,7 +2645,20 @@ namespace vMenuClient.menus
                 }
             }
         }
-
+        private bool IsHex(IEnumerable<char> chars)
+        {
+            bool isHex; 
+            foreach(var c in chars)
+            {
+                isHex = ((c >= '0' && c <= '9') || 
+                         (c >= 'a' && c <= 'f') || 
+                         (c >= 'A' && c <= 'F'));
+        
+                if(!isHex)
+                    return false;
+            }
+            return true;
+        }
         internal static int GetHeadlightsColorForVehicle(Vehicle vehicle)
         {
             if (vehicle != null && vehicle.Exists())
