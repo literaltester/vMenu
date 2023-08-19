@@ -1080,6 +1080,7 @@ namespace vMenuClient.menus
                     if (item == chrome)
                     {
                         ClearVehicleCustomPrimaryColour(veh.Handle);
+                        ClearVehicleCustomSecondaryColour(veh.Handle);
                         SetVehicleColours(veh.Handle, 120, 120); // chrome is index 120
                     }
                 }
@@ -1163,6 +1164,7 @@ namespace vMenuClient.menus
                                 SetVehicleModKit(veh.Handle, 0);
                             }
                         }
+                        ClearVehicleCustomSecondaryColour(veh.Handle);
                         ClearVehicleCustomPrimaryColour(veh.Handle);
                         SetVehicleColours(veh.Handle, primaryColor, secondaryColor);
                     }
@@ -1190,6 +1192,7 @@ namespace vMenuClient.menus
                                 secondaryColor = VehicleData.WornColors[newIndex].id;
                                 break;
                         }
+                        ClearVehicleCustomSecondaryColour(veh.Handle);
                         ClearVehicleCustomPrimaryColour(veh.Handle);
                         SetVehicleColours(veh.Handle, primaryColor, secondaryColor);
                     }
@@ -1449,7 +1452,7 @@ namespace vMenuClient.menus
             RedSliderSecondary.Text = $"Red Color {RedSecondary}";
             GreenSliderSecondary.Text = $"Green Color {GreenSecondary}";
             BlueSliderSecondary.Text = $"Blue Color {BlueSecondary}";
-            FinishSliderSecondary.Text = $"Color Finish {ColorFInishes[secondaryFinish]}";
+            FinishSliderSecondary.Text = $"Color Finish {ColorFInishes[FinishSecondary]}";
             RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
             GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
             BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
