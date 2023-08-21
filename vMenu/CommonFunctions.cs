@@ -1445,7 +1445,7 @@ namespace vMenuClient
                 {
                 SetVehicleColours(vehicle.Handle, vehicleInfo.colors["primary"], 0);
                 SetVehicleCustomSecondaryColour(vehicle.Handle, vehicleInfo.colors["secondaryr"], vehicleInfo.colors["secondaryg"] , vehicleInfo.colors["secondaryb"]);
-                SetVehicleModColor_2(vehicle.Handle, vehicleInfo.colors["secondaryf"], 0);
+                SetMaterial.SetSecondaryMaterial(vehicle.Handle, vehicleInfo.colors["secondaryf"]);
                 }
                 else
                 SetVehicleColours(vehicle.Handle, vehicleInfo.colors["primary"], vehicleInfo.colors["secondary"]);
@@ -1456,12 +1456,14 @@ namespace vMenuClient
                 {
                 SetVehicleColours(vehicle.Handle, 0, 0);
                 SetVehicleCustomSecondaryColour(vehicle.Handle, vehicleInfo.colors["secondaryr"], vehicleInfo.colors["secondaryg"] , vehicleInfo.colors["secondaryb"]);
-                SetVehicleModColor_2(vehicle.Handle, vehicleInfo.colors["secondaryf"], 0);
+                 SetMaterial.SetSecondaryMaterial(vehicle.Handle, vehicleInfo.colors["secondaryf"]);
+
                 }
                 else
                 SetVehicleColours(vehicle.Handle, 0, vehicleInfo.colors["secondary"]);
 
-                SetVehicleModColor_1(vehicle.Handle, vehicleInfo.colors["primaryf"], 0, 0);
+                    SetMaterial.SetPrimaryMaterial(vehicle.Handle, vehicleInfo.colors["primaryf"]);
+                
                 SetVehicleCustomPrimaryColour(vehicle.Handle, vehicleInfo.colors["primaryr"], vehicleInfo.colors["primaryg"] , vehicleInfo.colors["primaryb"]);
                 }
 
@@ -1569,24 +1571,23 @@ namespace vMenuClient
                     var primaryColorred = 0;
                     var primaryColorgreen = 0;
                     var primaryColorblue = 0;
-                    var primaryFinish = 0;
-                    var primaryFinishUseless = 0;
-                    var primaryFinishUseless2 = 0;
+                    var primaryFinish = await GetMaterial.GetPrimaryMaterialAsync(veh.Handle);
 
                     var secondaryColor = 0;
                     var secondaryColorred = 0;
                     var secondaryColorgreen = 0;
                     var secondaryColorblue = 0;
-                    var secondaryFinish = 0;
-                    var secondaryFinishUseless = 0;
+                    var secondaryFinish = await GetMaterial.GetSecondaryMaterialAsync(veh.Handle);
+
 
                     var pearlescentColor = 0;
                     var wheelColor = 0;
                     var dashColor = 0;
                     var trimColor = 0;
+     
                     GetVehicleExtraColours(veh.Handle, ref pearlescentColor, ref wheelColor);
                     GetVehicleCustomPrimaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
-                    GetVehicleModColor_1(veh.Handle, ref primaryFinish, ref primaryFinishUseless, ref primaryFinishUseless2);
+                   
                     Debug.WriteLine($"{((primaryColorred +primaryColorgreen + primaryColorblue) == 0 + primaryFinish ) }");
                     if (!(!((primaryColorred +primaryColorgreen + primaryColorblue ) == 0 ) ||  !(primaryFinish == 0)))
                     {
@@ -1599,7 +1600,7 @@ namespace vMenuClient
                     }
 
                     GetVehicleCustomSecondaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
-                    GetVehicleModColor_2(veh.Handle, ref secondaryFinish, ref secondaryFinishUseless);
+                   
                     Debug.WriteLine($"{((secondaryColorred +secondaryColorgreen + secondaryColorblue) == 0 + secondaryFinish ) }");
                     if (!(!((secondaryColorred +secondaryColorgreen + secondaryColorblue ) == 0 ) ||  !(secondaryFinish == 0)))
                     {
@@ -1618,8 +1619,8 @@ namespace vMenuClient
                         secondaryColor = 1100110;                            
                         }
                     }
-                    GetVehicleModColor_1(veh.Handle, ref primaryFinish, ref primaryFinishUseless, ref primaryFinishUseless2);
-                    GetVehicleModColor_2(veh.Handle, ref secondaryFinish, ref secondaryFinishUseless);
+          
+                   
                     
                     GetVehicleDashboardColour(veh.Handle, ref dashColor);
                     GetVehicleInteriorColour(veh.Handle, ref trimColor);
