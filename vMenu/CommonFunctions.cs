@@ -1438,7 +1438,7 @@ namespace vMenuClient
                 ToggleVehicleMod(vehicle.Handle, 20, vehicleInfo.tyreSmoke);
                 ToggleVehicleMod(vehicle.Handle, 22, vehicleInfo.xenonHeadlights);
                 SetVehicleLivery(vehicle.Handle, vehicleInfo.livery);
-                Debug.WriteLine($"{vehicleInfo.colors["primary"] == 1100110}");
+                
                 if (!(vehicleInfo.colors["primary"] == 1100110))
                 {
                 if (vehicleInfo.colors["secondary"] == 1100110)
@@ -1588,7 +1588,7 @@ namespace vMenuClient
                     GetVehicleExtraColours(veh.Handle, ref pearlescentColor, ref wheelColor);
                     GetVehicleCustomPrimaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
                    
-                    Debug.WriteLine($"{((primaryColorred +primaryColorgreen + primaryColorblue) == 0 + primaryFinish ) }");
+                   
                     if (!(!((primaryColorred +primaryColorgreen + primaryColorblue ) == 0 ) ||  !(primaryFinish == 0)))
                     {
                     GetVehicleColours(veh.Handle, ref primaryColor, ref secondaryColor);
@@ -1601,7 +1601,7 @@ namespace vMenuClient
 
                     GetVehicleCustomSecondaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
                    
-                    Debug.WriteLine($"{((secondaryColorred +secondaryColorgreen + secondaryColorblue) == 0 + secondaryFinish ) }");
+                   
                     if (!(!((secondaryColorred +secondaryColorgreen + secondaryColorblue ) == 0 ) ||  !(secondaryFinish == 0)))
                     {
                     GetVehicleColours(veh.Handle, ref secondaryColor, ref secondaryColor);
