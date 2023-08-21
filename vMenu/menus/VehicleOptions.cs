@@ -1308,6 +1308,7 @@ namespace vMenuClient.menus
                 BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
 
             };
+            var pearlescentListPrimary = new MenuListItem("Pearlescent", classic, 0);
             var HexColorPrimary = new MenuItem("Primary Hex", "Set primary color with hex code.");
             MenuSliderItem FinishSliderPrimary = new MenuSliderItem($"Color Finish Normal", 0, 5, 0, false)
             {
@@ -1321,6 +1322,7 @@ namespace vMenuClient.menus
             primaryColorsMenuRGB.AddMenuItem(BlueSliderPrimary);
             primaryColorsMenuRGB.AddMenuItem(HexColorPrimary);
             primaryColorsMenuRGB.AddMenuItem(FinishSliderPrimary);
+            primaryColorsMenuRGB.AddMenuItem(pearlescentListPrimary);
             primaryColorsMenuRGB.AddMenuItem(SecondaryMatchColorPrimary);
 
             primaryColorsMenu.OnItemSelect += async (sender, item, index) =>
@@ -1357,6 +1359,19 @@ namespace vMenuClient.menus
                 FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
                 string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
                 HexColorPrimary.Label = $"{hexValue}";
+            };
+
+            primaryColorsMenuRGB.OnListIndexChange += (sender, item, oldIndex, newIndex, itemIndex) => 
+            {
+                if (item == pearlescentListPrimary)
+                {
+                    var veh = GetVehicle();
+                 var pearlColorReset = 0;
+                 var wheelColorReset = 0;
+                GetVehicleExtraColours(veh.Handle, ref pearlColorReset, ref wheelColorReset);
+                SetVehicleExtraColours(veh.Handle, VehicleData.ClassicColors[newIndex].id, wheelColorReset);
+
+                }
             };
 
             primaryColorsMenuRGB.OnItemSelect += async (sender, item, index) =>
@@ -2754,24 +2769,47 @@ namespace vMenuClient.menus
     }
     public static class SetMaterial
     {
+        public static int lastSecondaryMaterial { get; private set; }
+        public static int lastSecondaryVehicle { get; private set; }
+
         public static void SetSecondaryMaterial(int vehicle, int material)
         {
+            var pearlColorReset = 0;
+            var wheelColorReset = 0;
+            GetVehicleExtraColours(vehicle, ref pearlColorReset, ref wheelColorReset);
             SetVehicleModColor_2(vehicle, material, 0);
-          
+            SetVehicleExtraColours(vehicle, pearlColorReset, wheelColorReset);
 
+            if (!(material == lastSecondaryMaterial) || !(vehicle == lastSecondaryVehicle))
+            {
             TriggerServerEvent("vMenu:SetSecondaryMaterial_Sync", VehToNet(vehicle), material);
+            lastSecondaryMaterial = material;
+            lastSecondaryVehicle = vehicle;
+            }
         }
+        public static int lastPrimaryMaterial { get; private set; }
+        public static int lastPrimaryVehicle { get; private set; }
+
         public static void SetPrimaryMaterial(int vehicle, int material)
         {
+            var pearlColorReset = 0;
+            var wheelColorReset = 0;
+            GetVehicleExtraColours(vehicle, ref pearlColorReset, ref wheelColorReset);
             SetVehicleModColor_1(vehicle, material, 0, 0);
-           
-
+            SetVehicleExtraColours(vehicle, pearlColorReset, wheelColorReset);
+  
+            if (!(material == lastPrimaryMaterial) || !(vehicle == lastPrimaryVehicle))
+            {
             TriggerServerEvent("vMenu:SetPrimaryMaterial_Sync", VehToNet(vehicle), material);
+            lastPrimaryMaterial = material;
+            lastPrimaryVehicle = vehicle;
+            }
         }
     };
     public static class GetMaterial 
     {
         public static int argSecondary { get; private set; }
+        
         public static bool EventSecondaryran { get; private set; }
 
         public static async Task<int> GetSecondaryMaterialAsync(int vehicle)
