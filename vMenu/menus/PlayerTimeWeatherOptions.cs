@@ -33,9 +33,9 @@ namespace vMenuClient
         /// </summary>
         private void CreateMenu()
         {
-            menu = new Menu("Time & Weather Options", "Time & Weather Options");
+            menu = new Menu("Time & Weather", "Time & Weather Options");
 
-            clientSidedEnabled = new MenuCheckboxItem("Client-Sided Time & Weather", "Enable or disable client-sided time and weather changes.", false);
+            clientSidedEnabled = new MenuCheckboxItem("Client-Sided Time & Weather", "Enable or disable client-sided time and weather changes. \n\nPlease do note that this menu will be revamped in a future update, to replicate the World Related Options menu.", false);
             menu.AddMenuItem(clientSidedEnabled);
 
             List<string> timeData = new List<string>();
