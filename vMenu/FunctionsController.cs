@@ -567,8 +567,7 @@ namespace vMenuClient
                         MainMenu.VehicleOptionsMenu.VehicleComponentsMenu,
                         MainMenu.VehicleOptionsMenu.VehicleDoorsMenu,
                         MainMenu.VehicleOptionsMenu.VehicleLiveriesMenu,
-                        MainMenu.VehicleOptionsMenu.VehicleModMenu,
-                        MainMenu.VehicleOptionsMenu.VehicleUnderglowMenu,
+                        MainMenu.VehicleOptionsMenu.VehicleModMenu,              
                         MainMenu.VehicleOptionsMenu.VehicleWindowsMenu,
                     };
                 foreach (var m in subMenus)

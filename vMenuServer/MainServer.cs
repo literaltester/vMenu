@@ -743,7 +743,7 @@ namespace vMenuServer
         {
             CurrentHours = CurrentHours;
             CurrentMinutes = CurrentMinutes;
-
+            FreezeTime = true;
             while (newHours != CurrentHours)
             {
                 if ((CurrentMinutes + 1) > 59)
@@ -762,7 +762,7 @@ namespace vMenuServer
                 {
                     CurrentMinutes=CurrentMinutes+5;
                 }
-                await Delay(1);
+                await Delay(0);
             }
             CurrentHours = newHours;
             CurrentMinutes = newMinutes;
