@@ -739,11 +739,35 @@ namespace vMenuServer
         /// <param name="newMinutes"></param>
         /// <param name="freezeTimeNew"></param>
         [EventHandler("vMenu:UpdateServerTime")]
-        internal void UpdateTime(int newHours, int newMinutes, bool freezeTimeNew)
+        internal async void UpdateTime(int newHours, int newMinutes, bool freezeTimeNew)
         {
+            CurrentHours = CurrentHours;
+            CurrentMinutes = CurrentMinutes;
+
+            while (newHours != CurrentHours)
+            {
+                if ((CurrentMinutes + 1) > 59)
+                {
+                    CurrentMinutes = 0;
+                    if ((CurrentHours + 1) > 23)
+                    {
+                        CurrentHours = 0;
+                    }
+                    else
+                    {
+                        CurrentHours ++;
+                    }
+                }
+                else
+                {
+                    CurrentMinutes=CurrentMinutes+5;
+                }
+                await Delay(1);
+            }
             CurrentHours = newHours;
             CurrentMinutes = newMinutes;
             FreezeTime = freezeTimeNew;
+            
         }
         #endregion
 
