@@ -107,7 +107,7 @@ namespace vMenuClient
             }
 
             // Configuration based
-            if (!IsAllowed(Permission.PASpawnAsDefault))
+            if (IsAllowed(Permission.PASpawnAsDefault))
             {
                 Tick += RestorePlayerAfterBeingDead;
             }
