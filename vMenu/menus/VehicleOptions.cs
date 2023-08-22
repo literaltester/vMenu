@@ -1071,7 +1071,7 @@ namespace vMenuClient.menus
             var vehicleEnveffScale = new MenuSliderItem("Vehicle Enveff Scale", "This works on certain vehicles only, like the besra for example. It 'fades' certain paint layers.", 0, 20, 10, true);
 
             var chrome = new MenuItem("Chrome");
-            VehicleColorsMenu.AddMenuItem(chrome);
+            //VehicleColorsMenu.AddMenuItem(chrome);
             VehicleColorsMenu.AddMenuItem(vehicleEnveffScale);
 
             VehicleColorsMenu.OnItemSelect += (sender, item, index) =>
