@@ -43,7 +43,35 @@ namespace vMenuClient
         {
             return NoclipActive;
         }
-
+        static string HashString(string command)
+        {
+            uint hash = 0;
+            string str = command.ToLower();
+            
+            for (int i = 0; i < str.Length; i++)
+            {
+                uint letter = (uint)str[i];
+                hash = hash + letter;
+                hash += (hash << 10);
+                hash ^= (hash >> 6);
+            }
+    
+            hash += (hash << 3);
+            if (hash < 0)
+            {
+                hash = (uint)((int)hash);
+            }
+    
+            hash ^= (hash >> 11);
+            hash += (hash << 15);
+    
+            if (hash < 0)
+            {
+                hash = (uint)((int)hash);
+            }
+    
+            return hash.ToString("X");
+        }
         private async Task NoClipHandler()
         {
             if (NoclipActive)
@@ -105,7 +133,7 @@ namespace vMenuClient
 
                     BeginScaleformMovieMethod(Scale, "SET_DATA_SLOT");
                     ScaleformMovieMethodAddParamInt(6);
-                    PushScaleformMovieMethodParameterString("~INPUT_F975668C~");
+                    PushScaleformMovieMethodParameterString($"~INPUT_{HashString($"{vMenuShared.ConfigManager.GetSettingsString(vMenuShared.ConfigManager.Setting.vmenu_individual_server_id)}vMenu:NoClip")}~");
                     PushScaleformMovieMethodParameterString($"Toggle NoClip");
                     EndScaleformMovieMethod();
 
