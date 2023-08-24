@@ -19,7 +19,8 @@ The original vMenu was lacking on options and new content. I made this version a
 If you want to help out provide translations to vMenu, you can [click here](https://github.com/ProjectFairnessLabs/GroupTranslationDB) and do a pull request!
 
 --------
-# Developers
+# Credits
+## Developers
 - Ribbitpoison/Venom
 - RickyB505
 - TristenCommunity
@@ -40,11 +41,11 @@ If you want to help out provide translations to vMenu, you can [click here](http
 - Lincoln HUX
 
 
-# Feature Suggestions
+## Feature Suggestions
 - TayMcKenzieNZ
 - zwrks
 
-# Original Author
+## Original Author
 - Vespura
 --------
 # Discord
