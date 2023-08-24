@@ -32,6 +32,12 @@ If you want to help out provide translations to vMenu, you can [click here](http
 - AlexR32
 - Freedy69
 - AvaNOX
+- RickyB505
+- UnsayingCheetah
+- ChatGGS/gg781
+- L'kid & Proky0
+- zwrks
+- Shrimpy
 - TayMcKenzieNZ
 - Vespura
 --------
