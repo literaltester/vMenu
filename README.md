@@ -20,7 +20,7 @@ If you want to help out provide translations to vMenu, you can [click here](http
 
 --------
 # Developers
-- Ribbitpoison/Venom
+- Ribbitpoison
 - RickyB505
 - TristenCommunity
 - 1Mosheba
