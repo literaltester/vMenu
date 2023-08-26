@@ -21,9 +21,11 @@ namespace vMenuClient
         public Menu EnhancedCameraMenu { get; private set; }
 
         // Menu variable, will be defined in CreateMenu()
+#pragma warning disable CS0649 // remove warnings
         private static MenuCheckboxItem leadCam;
         private static MenuCheckboxItem chaseCam;
         private static MenuCheckboxItem droneCam;
+#pragma warning restore CS0649 // remove warnings
         private static Control MenuToggleControl;
         private static bool chaseCameraConfigEnabled;
         private static bool droneCameraConfigEnabled;
