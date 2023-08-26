@@ -176,6 +176,10 @@ namespace vMenuClient
             {
                 Tick += PersonalVehicleOptions;
             }
+            if (IsAllowed(Permission.PVAddBlip))
+            {
+                Tick += PersonalVehicleBlip;
+            }
             if (IsAllowed(Permission.PAAnimalPeds))
             {
                 Tick += AnimalPedCameraChangeBlocker;
@@ -2891,6 +2895,38 @@ namespace vMenuClient
             {
                 await Delay(100);
             }
+            await Task.FromResult(0);
+        }
+        #endregion
+
+        #region personal vehicle blip
+        /// <summary>
+        /// tick to check if player is in personal vehicle and remove blip
+        /// </summary>
+        /// <returns></returns>
+
+        private async Task PersonalVehicleBlip()
+        {
+            if (MainMenu.PersonalVehicleMenu.enableBlip.Checked)
+            {
+                if (Game.PlayerPed.IsInVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle))
+                {
+                    if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Exists() && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                    {
+                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Delete();
+                    }
+                }
+                else
+                {
+                    if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip == null || !MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                    {
+                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachBlip();
+                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Sprite = BlipSprite.PersonalVehicleCar;
+                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Name = "Personal Vehicle";
+                    }
+                }
+            }   
+            await Delay(1000);
             await Task.FromResult(0);
         }
         #endregion

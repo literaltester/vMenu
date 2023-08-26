@@ -624,7 +624,207 @@ namespace vMenuClient
                 Lm.GetMenu(submenu);
         }
         #endregion
+        #region
+        public static void RecreateMenus()
+        {
+            Menu.ClearMenuItems(true);
+            Menu.RefreshIndex();
+            if (IsAllowed(Permission.PVMenu))
+            {
+                var menu = PersonalVehicleMenu.GetMenu();
+                var button = new MenuItem("~r~~h~Personal Vehicle~h~~s~ ", "Settings for your set personal vehicle, and control some things about that vehicle when you're not inside.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+            if (IsAllowed(Permission.OPMenu))
+            {
+              
+                var menu = OnlinePlayersMenu.GetMenu();
+                var button = new MenuItem("Online Players", "All currently connected players.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+                Menu.OnItemSelect += async (sender, item, index) =>
+                {
+                    if (item == button)
+                    {
+                        PlayersList.RequestPlayerList();
 
+                        await OnlinePlayersMenu.UpdatePlayerlist();
+                        menu.RefreshIndex();
+                    }
+                };
+            }
+            if (IsAllowed(Permission.OPUnban) || IsAllowed(Permission.OPViewBannedPlayers))
+            {
+                var menu = BannedPlayersMenu.GetMenu();
+                var button = new MenuItem("Banned Players", "View and manage all banned players in this menu.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+                Menu.OnItemSelect += (sender, item, index) =>
+                {
+                    if (item == button)
+                    {
+                        TriggerServerEvent("vMenu:RequestBanList", Game.Player.Handle);
+                        menu.RefreshIndex();
+                    }
+                };
+            }
+
+            var playerSubmenuBtn = new MenuItem("Player Related Options", "Open this submenu for player related subcategories.") { Label = "→→→" };
+            Menu.AddMenuItem(playerSubmenuBtn);
+
+
+
+            var vehicleSubmenuBtn = new MenuItem("Vehicle Related Options", "Open this submenu for vehicle related subcategories.") { Label = "→→→" };
+            Menu.AddMenuItem(vehicleSubmenuBtn);
+            // Add the vehicle options Menu.
+
+
+            var worldSubmenuBtn = new MenuItem("World Related Options", "Open this submenu for world related subcategories.") { Label = "→→→" };
+            Menu.AddMenuItem(worldSubmenuBtn);
+
+            {
+                var menu2 = PlayerTimeWeatherOptionsMenu.GetMenu();
+                var button2 = new MenuItem("Time & Weather Options", "Change all time & weather related options here.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu2, button2);
+            }
+
+            // Add Teleport Menu.
+            if (IsAllowed(Permission.TPMenu))
+            {
+                //TeleportOptionsMenu = new TeleportOptions();
+                var menu = TeleportOptionsMenu.GetMenu();
+                var button = new MenuItem("Teleport Related Options", "Open this submenu for teleport options.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+
+            // Add Voice Chat Menu.
+            if (IsAllowed(Permission.VCMenu))
+            {
+                var menu = VoiceChatSettingsMenu.GetMenu();
+                var button = new MenuItem("Voice Chat Settings", "Change Voice Chat options here.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+            {
+                var menu = RecordingMenu.GetMenu();
+                var button = new MenuItem("Recording Options", "In-game recording options.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+            // Add a Spacer Here
+            var spacer = GetSpacerMenuItem("~y~↓ Miscellaneous ↓");
+            Menu.AddMenuItem(spacer);
+
+            // Add enhanced camera menu.
+            if (IsAllowed(Permission.ECMenu))
+            {
+                var menu = EnhancedCameraMenu.GetMenu();
+                var button = new MenuItem("Enhanced Camera", "Opens the enhanced camera menu.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+            // Add Plugin Settings Menu
+            if (IsAllowed(Permission.PNMenu))
+            {
+                var menu = PluginSettingsMenu.GetMenu();
+                var button = new MenuItem("Plugins Menu", "Plugins settings/status.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+            // Add misc settings menu.
+            {
+                var menu = MiscSettingsMenu.GetMenu();
+                var button = new MenuItem("Misc Settings", "Miscellaneous vMenu options/settings can be configured here. You can also save your settings in this menu.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+            Menu.OnIndexChange += (_menu, _oldItem, _newItem, _oldIndex, _newIndex) =>
+            {
+                if (spacer == _newItem)
+                {
+                    if (_oldIndex < _newIndex)
+                    {
+                    Menu.GoDown();
+                    }
+                    else
+                    {
+                    Menu.GoUp();
+                    }
+                }   
+            };
+            // Add About Menu.
+            var sub = AboutMenu.GetMenu();
+            var btn = new MenuItem("About vMenu", "Information about vMenu.")
+            {
+                Label = "→→→"
+            };
+            AddMenu(Menu, sub, btn);
+            if (!GetSettingsBool(Setting.vmenu_use_permissions))
+            {
+                Notify.Alert("vMenu is set up to ignore permissions, default permissions will be used.");
+            }
+
+            if (PlayerSubmenu.Size > 0)
+            {
+                MenuController.BindMenuItem(Menu, PlayerSubmenu, playerSubmenuBtn);
+            }
+            else
+            {
+                Menu.RemoveMenuItem(playerSubmenuBtn);
+            }
+
+            if (VehicleSubmenu.Size > 0)
+            {
+                MenuController.BindMenuItem(Menu, VehicleSubmenu, vehicleSubmenuBtn);
+            }
+            else
+            {
+                Menu.RemoveMenuItem(vehicleSubmenuBtn);
+            }
+
+            if (WorldSubmenu.Size > 0)
+            {
+                MenuController.BindMenuItem(Menu, WorldSubmenu, worldSubmenuBtn);
+            }
+            else
+            {
+                Menu.RemoveMenuItem(worldSubmenuBtn);
+            }
+
+            if (MiscSettingsMenu != null)
+            {
+                MenuController.EnableMenuToggleKeyOnController = !MiscSettingsMenu.MiscDisableControllerSupport;
+            }
+        }
+        #endregion
         #region Create Submenus
         /// <summary>
         /// Creates all the submenus depending on the permissions of the user.
@@ -912,7 +1112,20 @@ namespace vMenuClient
                 };
                 AddMenu(Menu, menu, button);
             }
-
+            Menu.OnIndexChange += (_menu, _oldItem, _newItem, _oldIndex, _newIndex) =>
+            {
+                if (spacer == _newItem)
+                {
+                    if (_oldIndex < _newIndex)
+                    {
+                    Menu.GoDown();
+                    }
+                    else
+                    {
+                    Menu.GoUp();
+                    }
+                }   
+            };
             // Add About Menu.
             AboutMenu = new About();
             var sub = AboutMenu.GetMenu();

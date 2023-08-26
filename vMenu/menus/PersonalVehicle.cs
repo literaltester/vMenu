@@ -24,6 +24,8 @@ namespace vMenuClient.menus
 
         public Menu VehicleDoorsMenu { get; internal set; } = null;
 
+        public MenuCheckboxItem enableBlip;
+
         private static readonly LanguageManager Lm = new LanguageManager();
 
 
@@ -50,7 +52,7 @@ namespace vMenuClient.menus
             };
             var soundHorn = new MenuItem("Sound Horn", "Sounds the horn of the vehicle.");
             var toggleAlarm = new MenuItem("Toggle Alarm Sound", "Toggles the vehicle alarm sound on or off. This does not set an alarm. It only toggles the current sounding status of the alarm.");
-            var enableBlip = new MenuCheckboxItem("Add Blip For Personal Vehicle", "Enables or disables the blip that gets added when you mark a vehicle as your personal vehicle.", EnableVehicleBlip) { Style = MenuCheckboxItem.CheckboxStyle.Cross };
+            enableBlip = new MenuCheckboxItem("Add Blip For Personal Vehicle", "Enables or disables the blip that gets added when you mark a vehicle as your personal vehicle.", EnableVehicleBlip) { Style = MenuCheckboxItem.CheckboxStyle.Cross };
             var exclusiveDriver = new MenuCheckboxItem("Exclusive Driver", "If enabled, then you will be the only one that can enter the drivers seat. Other players will not be able to drive the car, however, they can still be passengers.", false) { Style = MenuCheckboxItem.CheckboxStyle.Cross };
             //submenu
             VehicleDoorsMenu = Lm.GetMenu(new Menu("Vehicle Doors", "Vehicle Doors Management"));
@@ -262,6 +264,7 @@ namespace vMenuClient.menus
                                     name = veh.DisplayName;
                                 }
                                 item.Label = $"Current Vehicle: {name}";
+                                MainMenu.RecreateMenus();
                             }
                             else
                             {

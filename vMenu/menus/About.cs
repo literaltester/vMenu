@@ -13,7 +13,7 @@ namespace vMenuClient.menus
             menu = new Menu("vMenu", "About PF-vMenu");
 
             // Create menu items.
-            var version = new MenuItem("vMenu Version", $"This server is using vMenu ~b~~h~{MainMenu.Version}~h~~s~.")
+            var version = new MenuItem("PF-vMenu Version", $"This server is using PF-vMenu ~b~~h~{MainMenu.Version}~h~~s~. \n\nDownload PF-vMenu: ~b~~h~github.com/ProjectFairnessLabs/PF-vMenu~h~~s~")
             {
                 Label = $"~h~{MainMenu.Version}~h~"
             };
