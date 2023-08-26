@@ -632,7 +632,7 @@ namespace vMenuClient
             if (IsAllowed(Permission.PVMenu))
             {
                 var menu = PersonalVehicleMenu.GetMenu();
-                var button = new MenuItem("~r~~h~Personal Vehicle Options~h~~s~ ", "Settings for your set personal vehicle.")
+                var button = new MenuItem("~g~Personal Vehicle Options~s~", "Opens the personal vehicle submenu.")
                 {
                     Label = "→→→"
                 };
