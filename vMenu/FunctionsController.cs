@@ -2907,7 +2907,7 @@ namespace vMenuClient
 
         private async Task PersonalVehicleBlip()
         {
-            if (MainMenu.PersonalVehicleMenu.enableBlip.Checked)
+            if (MainMenu.PersonalVehicleMenu.enableBlip.Checked  && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null)
             {
                 if (Game.PlayerPed.IsInVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle))
                 {
