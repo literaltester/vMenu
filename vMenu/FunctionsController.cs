@@ -2921,7 +2921,7 @@ namespace vMenuClient
                     if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip == null || !MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
                     {
                         MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachBlip();
-                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Sprite = BlipSprite.PersonalVehicleCar;
+                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Sprite = (BlipSprite)BlipInfo.GetBlipSpriteForVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle);
                         MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Name = "Personal Vehicle";
                     }
                 }

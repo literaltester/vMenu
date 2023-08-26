@@ -189,7 +189,7 @@ namespace vMenuClient.menus
                             {
                                 CurrentPersonalVehicle.AttachBlip();
                             }
-                            CurrentPersonalVehicle.AttachedBlip.Sprite = BlipSprite.PersonalVehicleCar;
+                            CurrentPersonalVehicle.AttachedBlip.Sprite = (BlipSprite)data.BlipInfo.GetBlipSpriteForVehicle(CurrentPersonalVehicle.Handle);
                             CurrentPersonalVehicle.AttachedBlip.Name = "Personal Vehicle";
                         }
                         else
@@ -246,6 +246,8 @@ namespace vMenuClient.menus
                         {
                             if (Game.PlayerPed == veh.Driver)
                             {
+                                if (CurrentPersonalVehicle != null)
+                                CurrentPersonalVehicle.AttachedBlip.Delete();
                                 CurrentPersonalVehicle = veh;
                                 veh.PreviouslyOwnedByPlayer = true;
                                 veh.IsPersistent = true;
@@ -255,7 +257,7 @@ namespace vMenuClient.menus
                                     {
                                         veh.AttachBlip();
                                     }
-                                    veh.AttachedBlip.Sprite = BlipSprite.PersonalVehicleCar;
+                                    veh.AttachedBlip.Sprite = (BlipSprite)data.BlipInfo.GetBlipSpriteForVehicle(CurrentPersonalVehicle.Handle);
                                     veh.AttachedBlip.Name = "Personal Vehicle";
                                 }
                                 var name = GetLabelText(veh.DisplayName);

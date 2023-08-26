@@ -42,7 +42,7 @@ namespace vMenuClient.data
                 //
                 { (uint)GetHashKey("apc"), 558 },
                 { (uint)GetHashKey("oppressor"), 559 },
-                { (uint)GetHashKey("oppressor2"), 559 },
+                { (uint)GetHashKey("oppressor2"), 639 },
                 { (uint)GetHashKey("halftrack"), 560 },
                 { (uint)GetHashKey("dune3"), 561 },
                 { (uint)GetHashKey("tampa3"), 562 },
@@ -74,6 +74,7 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("barrage"), 601 },
                 { (uint)GetHashKey("akula"), 602 },
                 { (uint)GetHashKey("chernobog"), 603 },
+                { (uint)GetHashKey("buffalo4"), 825 },
             };
 
             if (sprites.ContainsKey(model))
