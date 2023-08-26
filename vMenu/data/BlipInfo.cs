@@ -114,7 +114,7 @@ namespace vMenuClient.data
                 //
                 { (uint)GetHashKey("everon"), 734 },
                 { (uint)GetHashKey("outlaw"), 735 },
-                { (uint)GetHashKey("everon"), 736 },
+                { (uint)GetHashKey("vagrant"), 736 },
                 { (uint)GetHashKey("zhaba"), 737 },
                 //
                 { (uint)GetHashKey("buffalo4"), 825 },
