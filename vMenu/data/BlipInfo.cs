@@ -63,6 +63,7 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("tula"), 585 },
                 //
                 { (uint)GetHashKey("avenger"), 589 },
+                { (uint)GetHashKey("avenger2"), 589 },
                 //
                 { (uint)GetHashKey("stromberg"), 595 },
                 { (uint)GetHashKey("deluxo"), 596 },
@@ -153,6 +154,12 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("deity"), 823 },
                 { (uint)GetHashKey("champion"), 824 },
                 { (uint)GetHashKey("buffalo4"), 825 },
+                //
+                { (uint)GetHashKey("avenger3"), 589 },
+                { (uint)GetHashKey("avenger4"), 589 },
+                { (uint)GetHashKey("raiju"), 861 },
+                { (uint)GetHashKey("conada2"), 862 },
+                { (uint)GetHashKey("streamer216"), 865 },
             };
 
             if (sprites.ContainsKey(model))
