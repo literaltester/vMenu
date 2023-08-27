@@ -781,6 +781,17 @@ namespace vMenuClient
                     }
                 }   
             };
+            Menu.OnMenuClose += (sender) =>
+            {
+                if (MainMenu.MiscSettingsMenu.ResetIndex.Checked)
+                {
+                    Menu.RefreshIndex();
+                    MenuController.Menus.ForEach(delegate (Menu m)
+                    {
+                        m.RefreshIndex();
+                    });
+                }
+            };
             // Add About Menu.
             var sub = AboutMenu.GetMenu();
             var btn = new MenuItem("About vMenu", "Information about vMenu.")
