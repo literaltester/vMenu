@@ -121,7 +121,7 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("slamvan4"), 668 },
                 { (uint)GetHashKey("slamvan5"), 668 },
                 { (uint)GetHashKey("slamvan6"), 668 },
-                { (uint)GetHashKey("zr380"), 668 },
+                { (uint)GetHashKey("zr380"), 669 },
                 { (uint)GetHashKey("zr3802"), 669 },
                 { (uint)GetHashKey("zr3803"), 669 },
                 //
