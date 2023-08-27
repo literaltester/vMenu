@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 
 using CitizenFX.Core;
@@ -1125,6 +1126,17 @@ namespace vMenuClient
                     Menu.GoUp();
                     }
                 }   
+            };
+            Menu.OnMenuClose += (sender) =>
+            {
+                if (MainMenu.MiscSettingsMenu.ResetIndex.Checked)
+                {
+                    Menu.RefreshIndex();
+                    MenuController.Menus.ForEach(delegate (Menu m)
+                    {
+                        m.RefreshIndex();
+                    });
+                }
             };
             // Add About Menu.
             AboutMenu = new About();

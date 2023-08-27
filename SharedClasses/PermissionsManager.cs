@@ -397,6 +397,12 @@ namespace vMenuShared
             #region bug prevention
             BPCarlaunch,
             #endregion
+
+            #region  reset index
+            // ResetIndex Permission
+            ResetIndex,
+            #endregion
+
         }
         public static Dictionary<Permission, bool> Permissions { get; private set; } = new Dictionary<Permission, bool>();
         public static bool ArePermissionsSetup { get; set; } = false;

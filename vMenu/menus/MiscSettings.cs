@@ -51,6 +51,8 @@ namespace vMenuClient.menus
         public bool MiscDisablePrivateMessages { get; private set; } = UserDefaults.MiscDisablePrivateMessages;
         public bool MiscDisableControllerSupport { get; private set; } = UserDefaults.MiscDisableControllerSupport;
 
+        public MenuCheckboxItem ResetIndex;
+
         internal bool TimecycleEnabled { get; private set; } = false;
         internal int LastTimeCycleModifierIndex { get; private set; } = UserDefaults.MiscLastTimeCycleModifierIndex;
         internal int LastTimeCycleModifierStrength { get; private set; } = UserDefaults.MiscLastTimeCycleModifierStrength;
@@ -153,6 +155,8 @@ namespace vMenuClient.menus
             var clearArea = new MenuItem("Clear Area", "Clears the area around your player (100 meters). Damage, dirt, peds, props, vehicles, etc. Everything gets cleaned up, fixed and reset to the default world state.");
             var lockCamX = new MenuCheckboxItem("Lock Camera Horizontal Rotation", "Locks your camera horizontal rotation. Could be useful in helicopters I guess.", false);
             var lockCamY = new MenuCheckboxItem("Lock Camera Vertical Rotation", "Locks your camera vertical rotation. Could be useful in helicopters I guess.", false);
+            
+            ResetIndex = new MenuCheckboxItem("Reset Index", "Resets index once you go to main menu.", false);
 
             // Entity spawner
             var spawnNewEntity = new MenuItem("Spawn New Entity", "Spawns entity into the world and lets you set its position and rotation");
@@ -662,6 +666,10 @@ namespace vMenuClient.menus
             menu.AddMenuItem(hideHud);
             menu.AddMenuItem(lockCamX);
             menu.AddMenuItem(lockCamY);
+            if (IsAllowed(Permission.ResetIndex))
+            {
+            menu.AddMenuItem(ResetIndex);
+            }
             if (MainMenu.EnableExperimentalFeatures)
             {
                 menu.AddMenuItem(exportData);
