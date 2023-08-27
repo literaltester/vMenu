@@ -42,7 +42,6 @@ namespace vMenuClient.data
                 //
                 { (uint)GetHashKey("apc"), 558 },
                 { (uint)GetHashKey("oppressor"), 559 },
-                { (uint)GetHashKey("oppressor2"), 639 },
                 { (uint)GetHashKey("halftrack"), 560 },
                 { (uint)GetHashKey("dune3"), 561 },
                 { (uint)GetHashKey("tampa3"), 562 },
@@ -74,6 +73,20 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("barrage"), 601 },
                 { (uint)GetHashKey("akula"), 602 },
                 { (uint)GetHashKey("chernobog"), 603 },
+                //
+                { (uint)GetHashKey("seasparrow"), 612 },
+                { (uint)GetHashKey("caracara"), 613 },
+                //
+                { (uint)GetHashKey("pbus2"), 631 },
+                { (uint)GetHashKey("terbyte"), 632 },
+                { (uint)GetHashKey("menacer"), 633 },
+                { (uint)GetHashKey("scramjet"), 634 },
+                { (uint)GetHashKey("pounder2"), 635 },
+                { (uint)GetHashKey("mule4"), 636 },
+                { (uint)GetHashKey("speedo4"), 637 },
+                { (uint)GetHashKey("blimp3"), 638 },
+                { (uint)GetHashKey("oppressor2"), 639 },
+                { (uint)GetHashKey("strikeforce"), 640 },
                 //
                 { (uint)GetHashKey("bruiser"), 658 },
                 { (uint)GetHashKey("bruiser2"), 658 },
@@ -110,7 +123,7 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("slamvan6"), 668 },
                 { (uint)GetHashKey("zr380"), 668 },
                 { (uint)GetHashKey("zr3802"), 669 },
-                { (uint)GetHashKey("zr383"), 669 },
+                { (uint)GetHashKey("zr3803"), 669 },
                 //
                 { (uint)GetHashKey("everon"), 734 },
                 { (uint)GetHashKey("outlaw"), 735 },
