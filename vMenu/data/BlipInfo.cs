@@ -132,7 +132,6 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("squaddie"), 757 },
                 { (uint)GetHashKey("alkonost"), 758 },
                 { (uint)GetHashKey("annihilator2"), 759 },
-                { (uint)GetHashKey("annihilator2"), 759 },
                 { (uint)GetHashKey("kosatka"), 760 },
                 //
                 { (uint)GetHashKey("buffalo4"), 825 },
