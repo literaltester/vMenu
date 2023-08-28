@@ -254,6 +254,30 @@ namespace vMenuServer
                 }
 
                 // check extras file for errors
+                string vehname = LoadResourceFile(GetCurrentResourceName(), "config/vehname.json") ?? "{}";
+                try
+                {
+                    JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(vehname);
+                    // If the above crashes, then the json is invalid and it'll throw warnings in the console.
+                }
+                catch (JsonReaderException ex)
+                {
+                    Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your vehname.json file contains a problem! Error details: {ex.Message}\n\n");
+                }
+
+                // check veh blips file for errors
+                string vehblips = LoadResourceFile(GetCurrentResourceName(), "config/vehblips.json") ?? "{}";
+                try
+                {
+                    JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, int>>>(vehblips);
+                    // If the above crashes, then the json is invalid and it'll throw warnings in the console.
+                }
+                catch (JsonReaderException ex)
+                {
+                    Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your vehblips.json file contains a problem! Error details: {ex.Message}\n\n");
+                }
+
+                // check extras file for errors
                 string extras = LoadResourceFile(GetCurrentResourceName(), "config/extras.json") ?? "{}";
                 try
                 {

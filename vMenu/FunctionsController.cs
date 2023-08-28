@@ -2909,23 +2909,27 @@ namespace vMenuClient
         {
             if (MainMenu.PersonalVehicleMenu.enableBlip.Checked  && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null)
             {
-                if (Game.PlayerPed.IsInVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle))
+                if (DoesEntityExist(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle))
                 {
-                    if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Exists() && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+
+                    if (Game.PlayerPed.IsInVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle))
                     {
-                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Delete();
+                        if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Exists() && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                        {
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Delete();
+                        }
+                    }
+                    else
+                    {
+                        if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip == null || !MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                        {
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachBlip();
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Sprite = (BlipSprite)BlipInfo.GetBlipSpriteForVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle);
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Name = "Personal Vehicle";
+                        }
                     }
                 }
-                else
-                {
-                    if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip == null || !MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
-                    {
-                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachBlip();
-                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Sprite = (BlipSprite)BlipInfo.GetBlipSpriteForVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle);
-                        MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Name = "Personal Vehicle";
-                    }
-                }
-            }   
+            }
             await Delay(1000);
             await Task.FromResult(0);
         }

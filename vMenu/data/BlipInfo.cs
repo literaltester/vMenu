@@ -1,5 +1,7 @@
 ﻿﻿using System.Collections.Generic;
 
+using Newtonsoft.Json;
+
 using static CitizenFX.Core.Native.API;
 
 namespace vMenuClient.data
@@ -161,6 +163,16 @@ namespace vMenuClient.data
                 { (uint)GetHashKey("conada2"), 862 },
                 { (uint)GetHashKey("streamer216"), 865 },
             };
+
+            string jsonData = LoadResourceFile(GetCurrentResourceName(), "config/vehblips.json") ?? "{}";
+            var vehblips = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, int>>>(jsonData);
+
+            foreach (var blips in vehblips["vehblips"])
+            {
+                    uint veh = (uint)GetHashKey(blips.Key);
+                    sprites[veh] = blips.Value;
+            }
+
 
             if (sprites.ContainsKey(model))
             {

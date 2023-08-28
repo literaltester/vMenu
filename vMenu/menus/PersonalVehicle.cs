@@ -246,8 +246,6 @@ namespace vMenuClient.menus
                         {
                             if (Game.PlayerPed == veh.Driver)
                             {
-                                if (CurrentPersonalVehicle != null && DoesEntityExist(CurrentPersonalVehicle.Handle))
-                                CurrentPersonalVehicle.AttachedBlip.Delete();
                                 CurrentPersonalVehicle = veh;
                                 veh.PreviouslyOwnedByPlayer = true;
                                 veh.IsPersistent = true;
