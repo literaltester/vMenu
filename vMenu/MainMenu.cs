@@ -782,10 +782,14 @@ namespace vMenuClient
                 }   
             };
             Menu.OnMenuClose += (sender) =>
-            {            
+            {
                 if (MainMenu.MiscSettingsMenu.ResetIndex.Checked)
                 {
-                    MenuController.ResetAllMenuIndex();
+                    Menu.RefreshIndex();
+                    MenuController.Menus.ForEach(delegate (Menu m)
+                    {
+                        m.RefreshIndex();
+                    });
                 }
             };
             // Add About Menu.
@@ -1138,7 +1142,11 @@ namespace vMenuClient
             {
                 if (MainMenu.MiscSettingsMenu.ResetIndex.Checked)
                 {
-                    MenuController.ResetAllMenuIndex();
+                    Menu.RefreshIndex();
+                    MenuController.Menus.ForEach(delegate (Menu m)
+                    {
+                        m.RefreshIndex();
+                    });
                 }
             };
             // Add About Menu.
