@@ -408,7 +408,7 @@ namespace vMenuClient.menus
             {
                 menu.AddMenuItem(infiniteFuel);
             }
-            if (IsAllowed(Permission.VOReduceDriftSuspension))
+            if (IsAllowed(Permission.VOReduceDriftSuspension)) // REDUCE DRIFT SUSPENSION
             {
                 menu.AddMenuItem(reduceDriftSuspension);
             }
@@ -556,6 +556,11 @@ namespace vMenuClient.menus
                                 // Set the vehicle invisible or invincivble.
                                 vehicle.IsVisible = !vehicle.IsVisible;
                             }
+                        }
+                        // Reduce Drift Suspension
+                        else if (item == reduceDriftSuspension)
+                        {
+                            SetVehicleDriftSuspension();
                         }
                         // Destroy vehicle engine
                         else if (item == destroyEngine)
