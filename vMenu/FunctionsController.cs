@@ -2859,7 +2859,6 @@ namespace vMenuClient
         }
         private async Task DiscordRichPresence()
         {
-            Debug.WriteLine(GetSettingsString(Setting.vmenu_discord_appid));
             if (!((GetSettingsString(Setting.vmenu_discord_appid) == "") || (GetSettingsString(Setting.vmenu_discord_appid) == null)))
             {
                 SetDiscordAppId(GetSettingsString(Setting.vmenu_discord_appid));
