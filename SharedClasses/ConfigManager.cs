@@ -63,6 +63,19 @@ namespace vMenuShared
             vmenu_current_hour,
             vmenu_current_minute,
             vmenu_sync_to_machine_time,
+
+            // Discord Rich Presence
+            vmenu_discord_appid,
+            vmenu_disable_richpresence,
+            vmenu_discord_link_two,
+            vmenu_discord_link_two_text,
+            vmenu_discord_link_one_text,
+            vmenu_discord_link_one,
+            vmenu_discord_text,
+            vmenu_discord_large_image,
+            vmenu_discord_small_image,
+            vmenu_discord_small_image_text,
+            vmenu_discord_large_image_text,
         }
 
         /// <summary>

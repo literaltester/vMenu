@@ -111,6 +111,10 @@ namespace vMenuClient
             {
                 Tick += RestorePlayerAfterBeingDead;
             }
+            if (!GetSettingsBool(Setting.vmenu_disable_richpresence))
+            {
+                Tick += DiscordRichPresence;
+            }            
             if (!GetSettingsBool(Setting.vmenu_disable_entity_outlines_tool))
             {
                 Tick += SlowMiscTick;
@@ -2794,6 +2798,95 @@ namespace vMenuClient
                     await Delay(0);
                 }
             }
+        }
+        #endregion
+
+        #region discord rich presence
+        /// <summary>
+        /// discord rich presence
+        /// </summary>
+        /// <returns></returns>
+         static string FilterString(string tofilter)
+        {
+            var filter = new Dictionary<string, string>() 
+            {
+            {"^0", ""},
+            {"^1", ""},
+            {"^2", ""},
+            {"^3", ""},
+            {"^4", ""},
+            {"^5", ""},
+            {"^6", ""},
+            {"^7", ""},
+            {"^8", ""},
+            {"^9", ""},
+            {"^*", ""},
+            {"^_", ""},
+            {"^~", ""},
+            {"^*^", ""},
+            {"^r", ""},
+            {"/", ""},
+            {@"\", ""},
+            {"】", "]"},
+            {"【", "["},
+            };
+            foreach ( var filtervl in new Dictionary<string, string>(filter))
+            {
+            tofilter = tofilter.Replace(filtervl.Key, filtervl.Value);           
+            }
+            return tofilter;
+        }
+        static string CheckForSubstitutes(string Substitutes)
+        {
+            var streetName = new uint();
+            var crossingRoad = new uint();
+            var playerloc = GetEntityCoords(Game.PlayerPed.Handle, false);
+            GetStreetNameAtCoord(playerloc.X, playerloc.Y, playerloc.Z, ref streetName, ref crossingRoad);
+            var street = GetStreetNameFromHashKey(streetName);
+            int vehicle = GetVehiclePedIsIn(Game.PlayerPed.Handle, false);
+            var model = (uint)GetEntityModel(vehicle);           
+            string currentvehicle = GetLabelText(GetDisplayNameFromVehicleModel(model));
+
+            Substitutes = Substitutes.Replace("%playercount%", $"{GetActivePlayers().Count}/{GetConvar("sv_maxClients", "48")}");  
+            Substitutes = Substitutes.Replace("%playername%", $"{FilterString(Game.Player.Name)}"); 
+            Substitutes = Substitutes.Replace("%playerid%", $"{Game.Player.ServerId}"); 
+            Substitutes = Substitutes.Replace("%playerstreet%", $"{street}");
+            Substitutes = Substitutes.Replace("%pfversion%", $"{MainMenu.Version}");
+            Substitutes = Substitutes.Replace("%pfversion%", $"{MainMenu.Version}");
+            Substitutes = Substitutes.Replace("%newline%", "\n");
+
+            return Substitutes;
+        }
+        private async Task DiscordRichPresence()
+        {
+            Debug.WriteLine(GetSettingsString(Setting.vmenu_discord_appid));
+            if (!((GetSettingsString(Setting.vmenu_discord_appid) == "") || (GetSettingsString(Setting.vmenu_discord_appid) == null)))
+            {
+                SetDiscordAppId(GetSettingsString(Setting.vmenu_discord_appid));
+                if(!(GetSettingsString(Setting.vmenu_discord_text) == "" || GetSettingsString(Setting.vmenu_discord_text) == null))
+                {
+                    SetRichPresence(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_text)));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_link_one_text) == "" || GetSettingsString(Setting.vmenu_discord_link_one) == null)||(GetSettingsString(Setting.vmenu_discord_link_one_text) == null || GetSettingsString(Setting.vmenu_discord_link_one) == "")))
+                {
+                    SetDiscordRichPresenceAction(0, CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_link_one_text)), GetSettingsString(Setting.vmenu_discord_link_one));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_link_two_text) == "" || GetSettingsString(Setting.vmenu_discord_link_two) == null)||(GetSettingsString(Setting.vmenu_discord_link_two_text) == null || GetSettingsString(Setting.vmenu_discord_link_two) == "")))
+                {
+                    SetDiscordRichPresenceAction(1, CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_link_two_text)), GetSettingsString(Setting.vmenu_discord_link_two));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_large_image) == "" || GetSettingsString(Setting.vmenu_discord_large_image_text) == null)||(GetSettingsString(Setting.vmenu_discord_large_image) == null || GetSettingsString(Setting.vmenu_discord_large_image_text) == "")))
+                {
+                    SetDiscordRichPresenceAsset(GetSettingsString(Setting.vmenu_discord_large_image));
+                    SetDiscordRichPresenceAssetText(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_large_image_text)));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_small_image) == "" || GetSettingsString(Setting.vmenu_discord_small_image_text) == null)||(GetSettingsString(Setting.vmenu_discord_small_image) == null || GetSettingsString(Setting.vmenu_discord_small_image_text) == "")))
+                {
+                    SetDiscordRichPresenceAssetSmall(GetSettingsString(Setting.vmenu_discord_small_image));
+                    SetDiscordRichPresenceAssetSmallText(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_small_image_text)));
+                }
+            }
+            await Delay(15000);
         }
         #endregion
 
