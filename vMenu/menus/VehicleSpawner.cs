@@ -23,6 +23,8 @@ namespace vMenuClient.menus
         public static Dictionary<string, uint> AddonVehicles;
         public bool SpawnInVehicle { get; private set; } = UserDefaults.VehicleSpawnerSpawnInside;
         public bool ReplaceVehicle { get; private set; } = UserDefaults.VehicleSpawnerReplacePrevious;
+        public bool loadcarnames { get; private set; }
+
         public static List<bool> allowedCategories;
 
         private static readonly LanguageManager Lm = new LanguageManager();
@@ -122,7 +124,18 @@ namespace vMenuClient.menus
                         {
                             sortedVehicleBrands.Add("Unknown");
                         }
+                        while (!loadcarnames)
+                        {
+                            string vehname = LoadResourceFile(GetCurrentResourceName(), "config/vehname.json") ?? "{}";
+                            var vehnamejson = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(vehname);
 
+                            foreach (var vehnamedata in vehnamejson["vehname"])
+                            {
+                                AddTextEntry(vehnamedata.Key, vehnamedata.Value);
+                            }
+                            loadcarnames = true;
+                            break;
+                        }
                         foreach (string makeName in sortedVehicleBrands)
                         {
                            
@@ -182,6 +195,7 @@ namespace vMenuClient.menus
                         // Add the models to the "unavailableCars" category
                         foreach (string model in modelsToMoveToUnavailableCars)
                         {
+
                             uint modelHash = (uint)GetHashKey(model);
                             string localizedNameBrandCar = GetLabelText(GetDisplayNameFromVehicleModel(modelHash));
                             string modelname = localizedNameBrandCar != "NULL" ? localizedNameBrandCar : model;
@@ -232,7 +246,18 @@ namespace vMenuClient.menus
                                 return title;
                             })
                             .ToDictionary(pair => pair.Key, pair => pair.Value);
+                        while (!loadcarnames)
+                        {
+                            string vehname = LoadResourceFile(GetCurrentResourceName(), "config/vehname.json") ?? "{}";
+                            var vehnamejson = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(vehname);
 
+                            foreach (var vehnamedata in vehnamejson["vehname"])
+                            {
+                                AddTextEntry(vehnamedata.Key, vehnamedata.Value);
+                            }
+                            loadcarnames = true;
+                            break;
+                        }
 
                         for (var cat = 0; cat < 23; cat++)
                         {

@@ -107,10 +107,14 @@ namespace vMenuClient
             }
 
             // Configuration based
-            if (!IsAllowed(Permission.PASpawnAsDefault))
+            if (IsAllowed(Permission.PASpawnAsDefault))
             {
                 Tick += RestorePlayerAfterBeingDead;
             }
+            if (!GetSettingsBool(Setting.vmenu_disable_richpresence))
+            {
+                Tick += DiscordRichPresence;
+            }            
             if (!GetSettingsBool(Setting.vmenu_disable_entity_outlines_tool))
             {
                 Tick += SlowMiscTick;
@@ -175,6 +179,10 @@ namespace vMenuClient
             if (IsAllowed(Permission.PVLockDoors))
             {
                 Tick += PersonalVehicleOptions;
+            }
+            if (IsAllowed(Permission.PVAddBlip))
+            {
+                Tick += PersonalVehicleBlip;
             }
             if (IsAllowed(Permission.PAAnimalPeds))
             {
@@ -567,8 +575,7 @@ namespace vMenuClient
                         MainMenu.VehicleOptionsMenu.VehicleComponentsMenu,
                         MainMenu.VehicleOptionsMenu.VehicleDoorsMenu,
                         MainMenu.VehicleOptionsMenu.VehicleLiveriesMenu,
-                        MainMenu.VehicleOptionsMenu.VehicleModMenu,
-                        MainMenu.VehicleOptionsMenu.VehicleUnderglowMenu,
+                        MainMenu.VehicleOptionsMenu.VehicleModMenu,              
                         MainMenu.VehicleOptionsMenu.VehicleWindowsMenu,
                     };
                 foreach (var m in subMenus)
@@ -2794,6 +2801,94 @@ namespace vMenuClient
         }
         #endregion
 
+        #region discord rich presence
+        /// <summary>
+        /// discord rich presence
+        /// </summary>
+        /// <returns></returns>
+         static string FilterString(string tofilter)
+        {
+            var filter = new Dictionary<string, string>() 
+            {
+            {"^0", ""},
+            {"^1", ""},
+            {"^2", ""},
+            {"^3", ""},
+            {"^4", ""},
+            {"^5", ""},
+            {"^6", ""},
+            {"^7", ""},
+            {"^8", ""},
+            {"^9", ""},
+            {"^*", ""},
+            {"^_", ""},
+            {"^~", ""},
+            {"^*^", ""},
+            {"^r", ""},
+            {"/", ""},
+            {@"\", ""},
+            {"】", "]"},
+            {"【", "["},
+            };
+            foreach ( var filtervl in new Dictionary<string, string>(filter))
+            {
+            tofilter = tofilter.Replace(filtervl.Key, filtervl.Value);           
+            }
+            return tofilter;
+        }
+        static string CheckForSubstitutes(string Substitutes)
+        {
+            var streetName = new uint();
+            var crossingRoad = new uint();
+            var playerloc = GetEntityCoords(Game.PlayerPed.Handle, false);
+            GetStreetNameAtCoord(playerloc.X, playerloc.Y, playerloc.Z, ref streetName, ref crossingRoad);
+            var street = GetStreetNameFromHashKey(streetName);
+            int vehicle = GetVehiclePedIsIn(Game.PlayerPed.Handle, false);
+            var model = (uint)GetEntityModel(vehicle);           
+            string currentvehicle = GetLabelText(GetDisplayNameFromVehicleModel(model));
+
+            Substitutes = Substitutes.Replace("%playercount%", $"{GetActivePlayers().Count}/{GetConvar("sv_maxClients", "48")}");  
+            Substitutes = Substitutes.Replace("%playername%", $"{FilterString(Game.Player.Name)}"); 
+            Substitutes = Substitutes.Replace("%playerid%", $"{Game.Player.ServerId}"); 
+            Substitutes = Substitutes.Replace("%playerstreet%", $"{street}");
+            Substitutes = Substitutes.Replace("%pfversion%", $"{MainMenu.Version}");
+            Substitutes = Substitutes.Replace("%pfversion%", $"{MainMenu.Version}");
+            Substitutes = Substitutes.Replace("%newline%", "\n");
+
+            return Substitutes;
+        }
+        private async Task DiscordRichPresence()
+        {
+            if (!((GetSettingsString(Setting.vmenu_discord_appid) == "") || (GetSettingsString(Setting.vmenu_discord_appid) == null)))
+            {
+                SetDiscordAppId(GetSettingsString(Setting.vmenu_discord_appid));
+                if(!(GetSettingsString(Setting.vmenu_discord_text) == "" || GetSettingsString(Setting.vmenu_discord_text) == null))
+                {
+                    SetRichPresence(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_text)));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_link_one_text) == "" || GetSettingsString(Setting.vmenu_discord_link_one) == null)||(GetSettingsString(Setting.vmenu_discord_link_one_text) == null || GetSettingsString(Setting.vmenu_discord_link_one) == "")))
+                {
+                    SetDiscordRichPresenceAction(0, CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_link_one_text)), GetSettingsString(Setting.vmenu_discord_link_one));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_link_two_text) == "" || GetSettingsString(Setting.vmenu_discord_link_two) == null)||(GetSettingsString(Setting.vmenu_discord_link_two_text) == null || GetSettingsString(Setting.vmenu_discord_link_two) == "")))
+                {
+                    SetDiscordRichPresenceAction(1, CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_link_two_text)), GetSettingsString(Setting.vmenu_discord_link_two));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_large_image) == "" || GetSettingsString(Setting.vmenu_discord_large_image_text) == null)||(GetSettingsString(Setting.vmenu_discord_large_image) == null || GetSettingsString(Setting.vmenu_discord_large_image_text) == "")))
+                {
+                    SetDiscordRichPresenceAsset(GetSettingsString(Setting.vmenu_discord_large_image));
+                    SetDiscordRichPresenceAssetText(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_large_image_text)));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_small_image) == "" || GetSettingsString(Setting.vmenu_discord_small_image_text) == null)||(GetSettingsString(Setting.vmenu_discord_small_image) == null || GetSettingsString(Setting.vmenu_discord_small_image_text) == "")))
+                {
+                    SetDiscordRichPresenceAssetSmall(GetSettingsString(Setting.vmenu_discord_small_image));
+                    SetDiscordRichPresenceAssetSmallText(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_small_image_text)));
+                }
+            }
+            await Delay(15000);
+        }
+        #endregion
+
         #region Slow misc tick
         internal static float entityRange = 2000f;
         /// <summary>
@@ -2892,6 +2987,42 @@ namespace vMenuClient
             {
                 await Delay(100);
             }
+            await Task.FromResult(0);
+        }
+        #endregion
+
+        #region personal vehicle blip
+        /// <summary>
+        /// tick to check if player is in personal vehicle and remove blip
+        /// </summary>
+        /// <returns></returns>
+
+        private async Task PersonalVehicleBlip()
+        {
+            if (MainMenu.PersonalVehicleMenu.enableBlip.Checked  && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null)
+            {
+                if (DoesEntityExist(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle))
+                {
+
+                    if (Game.PlayerPed.IsInVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle))
+                    {
+                        if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Exists() && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                        {
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Delete();
+                        }
+                    }
+                    else
+                    {
+                        if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip == null || !MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                        {
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachBlip();
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Sprite = (BlipSprite)BlipInfo.GetBlipSpriteForVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle);
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Name = "Personal Vehicle";
+                        }
+                    }
+                }
+            }
+            await Delay(1000);
             await Task.FromResult(0);
         }
         #endregion
@@ -3243,4 +3374,3 @@ namespace vMenuClient
         }
     }
 }
-

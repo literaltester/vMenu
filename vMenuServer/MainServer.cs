@@ -254,6 +254,30 @@ namespace vMenuServer
                 }
 
                 // check extras file for errors
+                string vehname = LoadResourceFile(GetCurrentResourceName(), "config/vehname.json") ?? "{}";
+                try
+                {
+                    JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(vehname);
+                    // If the above crashes, then the json is invalid and it'll throw warnings in the console.
+                }
+                catch (JsonReaderException ex)
+                {
+                    Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your vehname.json file contains a problem! Error details: {ex.Message}\n\n");
+                }
+
+                // check veh blips file for errors
+                string vehblips = LoadResourceFile(GetCurrentResourceName(), "config/vehblips.json") ?? "{}";
+                try
+                {
+                    JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, int>>>(vehblips);
+                    // If the above crashes, then the json is invalid and it'll throw warnings in the console.
+                }
+                catch (JsonReaderException ex)
+                {
+                    Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your vehblips.json file contains a problem! Error details: {ex.Message}\n\n");
+                }
+
+                // check extras file for errors
                 string extras = LoadResourceFile(GetCurrentResourceName(), "config/extras.json") ?? "{}";
                 try
                 {
@@ -739,11 +763,35 @@ namespace vMenuServer
         /// <param name="newMinutes"></param>
         /// <param name="freezeTimeNew"></param>
         [EventHandler("vMenu:UpdateServerTime")]
-        internal void UpdateTime(int newHours, int newMinutes, bool freezeTimeNew)
+        internal async void UpdateTime(int newHours, int newMinutes, bool freezeTimeNew)
         {
+            CurrentHours = CurrentHours;
+            CurrentMinutes = CurrentMinutes;
+            FreezeTime = true;
+            while (newHours != CurrentHours)
+            {
+                if ((CurrentMinutes + 1) > 59)
+                {
+                    CurrentMinutes = 0;
+                    if ((CurrentHours + 1) > 23)
+                    {
+                        CurrentHours = 0;
+                    }
+                    else
+                    {
+                        CurrentHours ++;
+                    }
+                }
+                else
+                {
+                    CurrentMinutes=CurrentMinutes+5;
+                }
+                await Delay(0);
+            }
             CurrentHours = newHours;
             CurrentMinutes = newMinutes;
             FreezeTime = freezeTimeNew;
+            
         }
         #endregion
 

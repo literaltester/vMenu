@@ -37,6 +37,12 @@
     <None Update="config\addons.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="config\vehname.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\vehblips.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="config\extras.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

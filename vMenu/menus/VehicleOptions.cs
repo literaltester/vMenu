@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using CitizenFX.Core;
 
@@ -12,6 +13,7 @@ using static CitizenFX.Core.Native.API;
 using static vMenuClient.CommonFunctions;
 using static vMenuShared.ConfigManager;
 using static vMenuShared.PermissionsManager;
+
 
 namespace vMenuClient.menus
 {
@@ -30,7 +32,7 @@ namespace vMenuClient.menus
         public Menu VehicleLiveriesMenu { get; private set; }
         public Menu VehicleColorsMenu { get; private set; }
         public Menu DeleteConfirmMenu { get; private set; }
-        public Menu VehicleUnderglowMenu { get; private set; }
+        public Menu UnderglowColorsMenu { get; private set; }
 
         // Public variables (getters only), return the private variables.
         public bool VehicleGodMode { get; private set; } = UserDefaults.VehicleGodMode;
@@ -57,6 +59,17 @@ namespace vMenuClient.menus
         public float VehicleTorqueMultiplierAmount { get; private set; } = 2f;
         public float VehiclePowerMultiplierAmount { get; private set; } = 2f;
         public bool isCorrectVehicleType { get; private set; }
+        public int RedPrimary { get; private set; } = 0;
+        public int GreenPrimary { get; private set; } = 0;
+        public int BluePrimary { get; private set; } = 0;
+        public int FinishPrimary { get; private set; } = 0;
+        public int RedSecondary { get; private set; } = 0;
+        public int GreenSecondary { get; private set; } = 0;
+        public int BlueSecondary { get; private set; } = 0;
+        public int FinishSecondary { get; private set; } = 0;
+        public object RedUnderglow { get; private set; }
+        public object GreenUnderglow { get; private set; }
+        public object BlueUnderglow { get; private set; }
 
         private static readonly LanguageManager Lm = new LanguageManager();
 
@@ -120,14 +133,14 @@ namespace vMenuClient.menus
             {
                 Label = "→→→"
             };
-            var colorsMenuBtn = new MenuItem("Vehicle Colors", "Style your vehicle even further by giving it some ~g~Snailsome ~s~colors!")
+            var colorsMenuBtn = new MenuItem("Vehicle Colours", "Style your vehicle even further by giving it an ~g~awesome ~s~paint job!")
             {
                 Label = "→→→"
             };
-            var underglowMenuBtn = new MenuItem("Vehicle Neon Kits", "Make your vehicle shine with some fancy neon underglow!")
-            {
-                Label = "→→→"
-            };
+            //var underglowMenuBtn = new MenuItem("Vehicle Neon Kits", "Make your vehicle shine with some fancy neon underglow!")
+            //{
+            //    Label = "→→→"
+            //};
             var vehicleInvisible = new MenuItem("Toggle Vehicle Visibility", "Makes your vehicle visible/invisible. ~r~Your vehicle will be made visible again as soon as you leave the vehicle. Otherwise you would not be able to get back in.");
             var flipVehicle = new MenuItem("Flip Vehicle", "Sets your current vehicle on all 4 wheels.");
             var vehicleAlarm = new MenuItem("Toggle Vehicle Alarm", "Starts/stops your vehicle's alarm.");
@@ -220,9 +233,9 @@ namespace vMenuClient.menus
             VehicleWindowsMenu = Lm.GetMenu(new Menu("Vehicle Windows", "Vehicle Windows Management"));
             VehicleComponentsMenu = Lm.GetMenu(new Menu("Vehicle Extras", "Vehicle Extras/Components"));
             VehicleLiveriesMenu = Lm.GetMenu(new Menu("Vehicle Liveries", "Vehicle Liveries"));
-            VehicleColorsMenu = Lm.GetMenu(new Menu("Vehicle Colors", "Vehicle Colors"));
+            VehicleColorsMenu = Lm.GetMenu(new Menu("Vehicle Colours", "Vehicle Colours"));
             DeleteConfirmMenu = Lm.GetMenu(new Menu("Confirm Action", "Delete Vehicle, are you sure?"));
-            VehicleUnderglowMenu = Lm.GetMenu(new Menu("Vehicle Neon Kits", "Vehicle Neon Underglow Options"));
+            //VehicleUnderglowMenu = Lm.GetMenu(new Menu("Vehicle Neon Kits", "Vehicle Neon Underglow Options"));
 
             MenuController.AddSubmenu(menu, VehicleModMenu);
             MenuController.AddSubmenu(menu, VehicleDoorsMenu);
@@ -231,7 +244,7 @@ namespace vMenuClient.menus
             MenuController.AddSubmenu(menu, VehicleLiveriesMenu);
             MenuController.AddSubmenu(menu, VehicleColorsMenu);
             MenuController.AddSubmenu(menu, DeleteConfirmMenu);
-            MenuController.AddSubmenu(menu, VehicleUnderglowMenu);
+           
             #endregion
 
             #region Add items to the menu.
@@ -308,8 +321,8 @@ namespace vMenuClient.menus
             }
             if (IsAllowed(Permission.VOUnderglow)) // UNDERGLOW EFFECTS
             {
-                menu.AddMenuItem(underglowMenuBtn);
-                MenuController.BindMenuItem(menu, VehicleUnderglowMenu, underglowMenuBtn);
+               // menu.AddMenuItem(underglowMenuBtn);
+               // MenuController.BindMenuItem(menu, VehicleUnderglowMenu, underglowMenuBtn);
             }
             if (IsAllowed(Permission.VOLiveries)) // LIVERIES MENU
             {
@@ -395,7 +408,7 @@ namespace vMenuClient.menus
             {
                 menu.AddMenuItem(infiniteFuel);
             }
-            if (IsAllowed(Permission.VOReduceDriftSuspension))
+            if (IsAllowed(Permission.VOReduceDriftSuspension)) // REDUCE DRIFT SUSPENSION
             {
                 menu.AddMenuItem(reduceDriftSuspension);
             }
@@ -543,6 +556,11 @@ namespace vMenuClient.menus
                                 // Set the vehicle invisible or invincivble.
                                 vehicle.IsVisible = !vehicle.IsVisible;
                             }
+                        }
+                        // Reduce Drift Suspension
+                        else if (item == reduceDriftSuspension)
+                        {
+                            SetVehicleDriftSuspension();
                         }
                         // Destroy vehicle engine
                         else if (item == destroyEngine)
@@ -971,23 +989,31 @@ namespace vMenuClient.menus
             };
             #endregion
 
-            #region Vehicle Colors Submenu Stuff
+            #region Vehicle Colours Submenu Stuff
             // primary menu
-            var primaryColorsMenu = Lm.GetMenu(new Menu("Vehicle Colors", "Primary Colors"));
+            var primaryColorsMenu = Lm.GetMenu(new Menu("Vehicle Colours", "Primary Colours"));
             MenuController.AddSubmenu(VehicleColorsMenu, primaryColorsMenu);
 
-            var primaryColorsBtn = new MenuItem("Primary Color") { Label = "→→→" };
+            var primaryColorsBtn = new MenuItem("Primary Colour") { Label = "→→→" };
             VehicleColorsMenu.AddMenuItem(primaryColorsBtn);
             MenuController.BindMenuItem(VehicleColorsMenu, primaryColorsMenu, primaryColorsBtn);
 
             // secondary menu
-            var secondaryColorsMenu = Lm.GetMenu(new Menu("Vehicle Colors", "Secondary Colors"));
+            var secondaryColorsMenu = Lm.GetMenu(new Menu("Vehicle Colours", "Secondary Colours"));
             MenuController.AddSubmenu(VehicleColorsMenu, secondaryColorsMenu);
 
-            var secondaryColorsBtn = new MenuItem("Secondary Color") { Label = "→→→" };
+            var secondaryColorsBtn = new MenuItem("Secondary Colour") { Label = "→→→" };
             VehicleColorsMenu.AddMenuItem(secondaryColorsBtn);
             MenuController.BindMenuItem(VehicleColorsMenu, secondaryColorsMenu, secondaryColorsBtn);
-
+            var ColorFInishes = new List<string>()
+            {
+                "Normal",
+                "Metallic",
+                "Pearl",
+                "Matte",
+                "Metal",
+                "Chrome",
+            };
             // color lists
             var classic = new List<string>();
             var matte = new List<string>();
@@ -1047,13 +1073,13 @@ namespace vMenuClient.menus
                 wheelColors.AddRange(classic);
             }
 
-            var wheelColorsList = new MenuListItem("Wheel Color", wheelColors, 0);
-            var dashColorList = new MenuListItem("Dashboard Color", classic, 0);
-            var intColorList = new MenuListItem("Interior / Trim Color", classic, 0);
+            var wheelColorsList = new MenuListItem("Wheel Colour", wheelColors, 0);
+            var dashColorList = new MenuListItem("Dashboard Colour", classic, 0);
+            var intColorList = new MenuListItem("Interior / Trim Colour", classic, 0);
             var vehicleEnveffScale = new MenuSliderItem("Vehicle Enveff Scale", "This works on certain vehicles only, like the besra for example. It 'fades' certain paint layers.", 0, 20, 10, true);
 
             var chrome = new MenuItem("Chrome");
-            VehicleColorsMenu.AddMenuItem(chrome);
+            //VehicleColorsMenu.AddMenuItem(chrome);
             VehicleColorsMenu.AddMenuItem(vehicleEnveffScale);
 
             VehicleColorsMenu.OnItemSelect += (sender, item, index) =>
@@ -1063,6 +1089,8 @@ namespace vMenuClient.menus
                 {
                     if (item == chrome)
                     {
+                        ClearVehicleCustomPrimaryColour(veh.Handle);
+                        ClearVehicleCustomSecondaryColour(veh.Handle);
                         SetVehicleColours(veh.Handle, 120, 120); // chrome is index 120
                     }
                 }
@@ -1086,10 +1114,43 @@ namespace vMenuClient.menus
                     Notify.Error("You need to be the driver of a driveable vehicle to change this slider.");
                 }
             };
-
             VehicleColorsMenu.AddMenuItem(dashColorList);
             VehicleColorsMenu.AddMenuItem(intColorList);
             VehicleColorsMenu.AddMenuItem(wheelColorsList);
+
+            // Underglow menu
+            var UnderglowColorsMenu = Lm.GetMenu(new Menu("Underglow Colours", "Underglow Colours"));
+            MenuController.AddSubmenu(VehicleColorsMenu, UnderglowColorsMenu);
+
+            var UnderglowColorsBtn = new MenuItem("Underglow Colour") { Label = "→→→" };
+            VehicleColorsMenu.AddMenuItem(UnderglowColorsBtn);
+            MenuController.BindMenuItem(VehicleColorsMenu, UnderglowColorsMenu, UnderglowColorsBtn);
+
+            MenuSliderItem RedSliderUnderglow = new MenuSliderItem($"Red Colour ({RedUnderglow})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~r~Red~r~ ~w~colour.~w~",
+
+            };
+
+            MenuSliderItem GreenSliderUnderglow = new MenuSliderItem($"Green Colour ({GreenUnderglow})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~g~Green~g~ ~w~colour.~w~",
+
+            };
+
+            MenuSliderItem BlueSliderUnderglow = new MenuSliderItem($"Blue Colour ({BlueUnderglow})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~b~Blue~b~ ~w~colour.~w~",
+
+            };
+
+
 
             VehicleColorsMenu.OnListIndexChange += HandleListIndexChanges;
 
@@ -1147,7 +1208,8 @@ namespace vMenuClient.menus
                                 SetVehicleModKit(veh.Handle, 0);
                             }
                         }
-
+                        ClearVehicleCustomSecondaryColour(veh.Handle);
+                        ClearVehicleCustomPrimaryColour(veh.Handle);
                         SetVehicleColours(veh.Handle, primaryColor, secondaryColor);
                     }
                     else if (sender == secondaryColorsMenu)
@@ -1174,6 +1236,8 @@ namespace vMenuClient.menus
                                 secondaryColor = VehicleData.WornColors[newIndex].id;
                                 break;
                         }
+                        ClearVehicleCustomSecondaryColour(veh.Handle);
+                        ClearVehicleCustomPrimaryColour(veh.Handle);
                         SetVehicleColours(veh.Handle, primaryColor, secondaryColor);
                     }
                     else if (sender == VehicleColorsMenu)
@@ -1209,7 +1273,7 @@ namespace vMenuClient.menus
                 }
                 else
                 {
-                    Notify.Error("You need to be the driver of a vehicle in order to change the vehicle colors.");
+                    Notify.Error("You need to be the driver of a vehicle in order to change the vehicle colours.");
                 }
             }
 
@@ -1259,6 +1323,448 @@ namespace vMenuClient.menus
                     secondaryColorsMenu.OnListIndexChange += HandleListIndexChanges;
                 }
             }
+
+            var primaryColorsMenuRGB = Lm.GetMenu(new Menu("Primary RGB Colours", "Primary RGB Colours"));
+            MenuController.AddSubmenu(primaryColorsMenu, primaryColorsMenuRGB);
+
+            var primaryColorsRGBBtn = new MenuItem("Primary Colour RGB") { Label = "→→→" };
+            primaryColorsMenu.AddMenuItem(primaryColorsRGBBtn);
+            MenuController.BindMenuItem(primaryColorsMenu, primaryColorsMenuRGB, primaryColorsRGBBtn);
+            MenuSliderItem RedSliderPrimary = new MenuSliderItem($"Red Colour ({RedPrimary})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~r~Red~r~ ~w~colour.~w~",
+
+            };
+
+            MenuSliderItem GreenSliderPrimary = new MenuSliderItem($"Green Colour ({GreenPrimary})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~g~Green~g~ ~w~colour.~w~",
+
+            };
+
+            MenuSliderItem BlueSliderPrimary = new MenuSliderItem($"Blue Colour ({BluePrimary})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~b~Blue~b~ ~w~colour.~w~",
+
+            };
+            var pearlescentListPrimary = new MenuListItem("Pearlescent", classic, 0);
+            var HexColorPrimary = new MenuItem("Primary Hex", "Set primary colour with hex code.");
+            MenuSliderItem FinishSliderPrimary = new MenuSliderItem($"Colour Finish (Normal)", 0, 5, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Select a paint finish for your Primary paint job.",
+
+            };
+            var SecondaryMatchColorPrimary = new MenuItem("Match from Secondary", "Copies the Secondary Colour's colour data.");
+            primaryColorsMenuRGB.AddMenuItem(RedSliderPrimary);
+            primaryColorsMenuRGB.AddMenuItem(GreenSliderPrimary);
+            primaryColorsMenuRGB.AddMenuItem(BlueSliderPrimary);
+            primaryColorsMenuRGB.AddMenuItem(HexColorPrimary);
+            primaryColorsMenuRGB.AddMenuItem(FinishSliderPrimary);
+            primaryColorsMenuRGB.AddMenuItem(pearlescentListPrimary);
+            primaryColorsMenuRGB.AddMenuItem(SecondaryMatchColorPrimary);
+
+            primaryColorsMenu.OnItemSelect += async (sender, item, index) =>
+            {
+
+                var veh = GetVehicle();
+                var primaryColorred = 0;
+                var primaryColorgreen = 0;
+                var primaryColorblue = 0;
+                var primaryPaintFinish = await GetMaterial.GetPrimaryMaterialAsync(veh.Handle);
+
+
+                GetVehicleCustomPrimaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
+
+              
+;
+                if (primaryPaintFinish > 5)
+                    primaryPaintFinish = 0;
+
+                RedSliderPrimary.Position = primaryColorred;
+                GreenSliderPrimary.Position = primaryColorgreen;
+                BlueSliderPrimary.Position = primaryColorblue;
+                FinishSliderPrimary.Position = primaryPaintFinish;
+                RedPrimary = primaryColorred;
+                GreenPrimary = primaryColorgreen;
+                BluePrimary = primaryColorblue;
+                FinishPrimary = primaryPaintFinish;
+                RedSliderPrimary.Text = $"Red Colour ({primaryColorred})";
+                GreenSliderPrimary.Text = $"Green Colour ({primaryColorgreen})";
+                BlueSliderPrimary.Text = $"Blue Colour ({primaryColorblue})";
+                FinishSliderPrimary.Text = $"Colour Finish ({ColorFInishes[primaryPaintFinish]})";
+                RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
+                HexColorPrimary.Label = $"#{hexValue}";
+            };
+
+            primaryColorsMenuRGB.OnListIndexChange += (sender, item, oldIndex, newIndex, itemIndex) => 
+            {
+                if (item == pearlescentListPrimary)
+                {
+                    var veh = GetVehicle();
+                 var pearlColorReset = 0;
+                 var wheelColorReset = 0;
+                GetVehicleExtraColours(veh.Handle, ref pearlColorReset, ref wheelColorReset);
+                SetVehicleExtraColours(veh.Handle, VehicleData.ClassicColors[newIndex].id, wheelColorReset);
+
+                }
+            };
+
+            primaryColorsMenuRGB.OnItemSelect += async (sender, item, index) =>
+            {
+                if (item == HexColorPrimary)
+                {
+                    var result = await GetUserInput(windowTitle: "Enter Colour Hex", defaultText: (HexColorPrimary.Label).Replace("#", ""), maxInputLength: 6);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        if (IsHex(result))
+                        {
+                            int RGBint = Convert.ToInt32(result, 16);
+                            byte Red = (byte)((RGBint >> 16) & 255);
+                            byte Green = (byte)((RGBint >> 8) & 255);
+                            byte Blue = (byte)(RGBint & 255);
+
+                            RedSliderPrimary.Text = $"Red Colour ({Red})";
+                            GreenSliderPrimary.Text = $"Green Colour ({Green})";
+                            BlueSliderPrimary.Text = $"Blue Colour ({Blue})";
+                            RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            RedSliderPrimary.Position = Red;
+                            GreenSliderPrimary.Position = Green;
+                            BlueSliderPrimary.Position = Blue;
+                            RedPrimary = Red;
+                            GreenPrimary = Green;
+                            BluePrimary = Blue;
+                            string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
+
+                            HexColorPrimary.Label = $"#{hexValue}";
+                            var veh = GetVehicle();
+                        
+                            SetVehicleCustomPrimaryColour(veh.Handle, Red, Green, Blue);
+                        }
+                        else
+                            Notify.Error($"#{result} is not a valid hex code!");
+                    }
+                }
+                if (item == SecondaryMatchColorPrimary)
+                {
+                    var veh = GetVehicle();
+                    var primaryColorred = 0;
+                    var primaryColorgreen = 0;
+                    var primaryColorblue = 0;
+                    var secondaryFinish = await GetMaterial.GetSecondaryMaterialAsync(veh.Handle);
+
+                    GetVehicleCustomSecondaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
+                   
+
+                    if (secondaryFinish > 5)
+                        secondaryFinish = 0;
+                    RedSliderPrimary.Position = primaryColorred;
+                    GreenSliderPrimary.Position = primaryColorgreen;
+                    BlueSliderPrimary.Position = primaryColorblue;
+                    FinishSliderPrimary.Position = secondaryFinish;
+                    RedPrimary = primaryColorred;
+                    GreenPrimary = primaryColorgreen;
+                    BluePrimary = primaryColorblue;
+                    FinishPrimary = secondaryFinish;
+                    RedSliderPrimary.Text = $"Red Colour ({primaryColorred})";
+                    GreenSliderPrimary.Text = $"Green Colour ({primaryColorgreen})";
+                    BlueSliderPrimary.Text = $"Blue Colour ({primaryColorblue})";
+                    FinishSliderPrimary.Text = $"Colour Finish ({ColorFInishes[secondaryFinish]})";
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, primaryColorred, primaryColorgreen, primaryColorblue);
+                    string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
+                    HexColorPrimary.Label = $"#{hexValue}";
+                    SetMaterial.SetPrimaryMaterial(veh.Handle, secondaryFinish);                
+                    SetVehicleCustomPrimaryColour(veh.Handle, RedPrimary, GreenPrimary, BluePrimary);
+
+                }
+            };
+
+            primaryColorsMenuRGB.OnSliderPositionChange += (m, sliderItem, oldPosition, newPosition, itemIndex) =>
+            {
+                if (sliderItem == RedSliderPrimary)
+                {
+                    RedPrimary = newPosition;
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    RedSliderPrimary.Text = $"Red Colour ({RedPrimary})";
+
+
+                }
+                if (sliderItem == GreenSliderPrimary)
+                {
+                    GreenPrimary = newPosition;
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.Text = $"Green Colour ({GreenPrimary})";
+
+                }
+                if (sliderItem == BlueSliderPrimary)
+                {
+                    BluePrimary = newPosition;
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.Text = $"Blue Colour ({BluePrimary})";
+
+                }
+
+                if (sliderItem == FinishSliderPrimary)
+                {
+                    FinishPrimary = newPosition;
+                    RedSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    GreenSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    BlueSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.BarColor = System.Drawing.Color.FromArgb(255, RedPrimary, GreenPrimary, BluePrimary);
+                    FinishSliderPrimary.Text = $"Colour Finish ({ColorFInishes[FinishPrimary]})";
+
+                }
+                if ((sliderItem == RedSliderPrimary) || (sliderItem == GreenSliderPrimary) || (sliderItem == BlueSliderPrimary) || (sliderItem == FinishSliderPrimary))
+                {
+                    var veh = GetVehicle();
+                    string hexValue = RedPrimary.ToString("X2") + GreenPrimary.ToString("X2") + BluePrimary.ToString("X2");
+                    HexColorPrimary.Label = $"#{hexValue}";
+                  
+                    SetMaterial.SetPrimaryMaterial(veh.Handle, FinishPrimary);
+            
+                    SetVehicleCustomPrimaryColour(veh.Handle, RedPrimary, GreenPrimary, BluePrimary);
+
+                }
+            };
+            var SecondaryColorsMenuRGB = Lm.GetMenu(new Menu("Secondary RGB Colours", "Secondary RGB Colours"));
+            MenuController.AddSubmenu(secondaryColorsMenu, SecondaryColorsMenuRGB);
+
+            var SecondaryColorsRGBBtn = new MenuItem("Secondary Colour RGB") { Label = "→→→" };
+            secondaryColorsMenu.AddMenuItem(SecondaryColorsRGBBtn);
+            MenuController.BindMenuItem(secondaryColorsMenu, SecondaryColorsMenuRGB, SecondaryColorsRGBBtn);
+            MenuSliderItem RedSliderSecondary = new MenuSliderItem($"Red Colour ({RedSecondary})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~r~Red~r~ ~w~colour.~w~",
+
+            };
+
+            MenuSliderItem GreenSliderSecondary = new MenuSliderItem($"Green Colour ({GreenSecondary})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~g~Green~g~ ~w~colour.~w~",
+
+            };
+
+            MenuSliderItem BlueSliderSecondary = new MenuSliderItem($"Blue Colour ({BlueSecondary})", 0, 255, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Use the slider to pick a ~b~Blue~b~ ~w~colour.~w~",
+
+            };
+            var HexColorSecondary = new MenuItem("Secondary Hex", "Set secondary colour with hex code.");
+            MenuSliderItem FinishSliderSecondary = new MenuSliderItem($"Colour Finish (Normal)", 0, 5, 0, false)
+            {
+                BarColor = System.Drawing.Color.FromArgb(155, 0, 0, 0),
+                BackgroundColor = System.Drawing.Color.FromArgb(200, 79, 79, 79),
+                Description = "Select a paint finish for your Secondary paint job.",
+
+            };
+            var PrimaryMatchColorSecondary = new MenuItem("Match from Primary Colour", "Copies the Primary Colour's colour data.");
+
+            secondaryColorsMenu.OnItemSelect += async (sender, item, index) =>
+            {
+                var veh = GetVehicle();
+                var secondaryColorred = 0;
+                var secondaryColorgreen = 0;
+                var secondaryColorblue = 0;
+                var secondaryFinish = await GetMaterial.GetSecondaryMaterialAsync(veh.Handle);
+                
+               
+                GetVehicleCustomSecondaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
+               
+                if (secondaryFinish > 5)
+                    secondaryFinish = 0;
+                RedSliderSecondary.Position = secondaryColorred;
+                GreenSliderSecondary.Position = secondaryColorgreen;
+                BlueSliderSecondary.Position = secondaryColorblue;
+                FinishSliderSecondary.Position = secondaryFinish;
+                RedSecondary = secondaryColorred;
+                GreenSecondary = secondaryColorgreen;
+                BlueSecondary = secondaryColorblue;
+                FinishSecondary = secondaryFinish;
+                RedSliderSecondary.Text = $"Red Colour ({RedSecondary})";
+                GreenSliderSecondary.Text = $"Green Colour ({GreenSecondary})";
+                BlueSliderSecondary.Text = $"Blue Colour ({BlueSecondary})";
+                FinishSliderSecondary.Text = $"Colour Finish ({ColorFInishes[FinishSecondary]})";
+                RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");
+                HexColorSecondary.Label = $"#{hexValue}";
+            };
+            SecondaryColorsMenuRGB.OnItemSelect += async (sender, item, index) =>
+            {
+                if (item == HexColorSecondary)
+                {
+                    var result = await GetUserInput(windowTitle: "Enter Colour Hex", defaultText: (HexColorSecondary.Label).Replace("#", ""), maxInputLength: 6);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        if (IsHex(result))
+                        {
+                            int RGBint = Convert.ToInt32(result, 16);
+                            byte Red = (byte)((RGBint >> 16) & 255);
+                            byte Green = (byte)((RGBint >> 8) & 255);
+                            byte Blue = (byte)(RGBint & 255);
+
+                            RedSliderSecondary.Text = $"Red Colour ({Red})";
+                            GreenSliderSecondary.Text = $"Green Colour ({Green})";
+                            BlueSliderSecondary.Text = $"Blue Colour ({Blue})";
+                            RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            RedSliderSecondary.Position = Red;
+                            GreenSliderSecondary.Position = Green;
+                            BlueSliderSecondary.Position = Blue;
+                            RedSecondary = Red;
+                            GreenSecondary = Green;
+                            BlueSecondary = Blue;
+                            string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");
+                            HexColorSecondary.Label = $"#{hexValue}";
+                            var veh = GetVehicle();
+                          
+                            SetVehicleCustomSecondaryColour(veh.Handle, Red, Green, Blue);
+                        }
+                        else
+                            Notify.Error($"{result} is not a valid hex code!");
+
+                    }
+
+                }
+                if (item == PrimaryMatchColorSecondary)
+                {
+                    var veh = GetVehicle();
+                    var secondaryColorred = 0;
+                    var secondaryColorgreen = 0;
+                    var secondaryColorblue = 0;
+                    var primaryFinish2 = await GetMaterial.GetPrimaryMaterialAsync(veh.Handle);
+
+                
+                    GetVehicleCustomPrimaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
+                    
+
+                    if (primaryFinish2 > 5)
+                        primaryFinish2 = 0;
+                    RedSliderSecondary.Position = secondaryColorred;
+                    GreenSliderSecondary.Position = secondaryColorgreen;
+                    BlueSliderSecondary.Position = secondaryColorblue;
+                    FinishSliderSecondary.Position = primaryFinish2;
+                    RedSecondary = secondaryColorred;
+                    GreenSecondary = secondaryColorgreen;
+                    BlueSecondary = secondaryColorblue;
+                    FinishSecondary = primaryFinish2;
+                    RedSliderSecondary.Text = $"Red Colour ({RedSecondary})";
+                    GreenSliderSecondary.Text = $"Green Colour ({GreenSecondary})";
+                    BlueSliderSecondary.Text = $"Blue Colour ({BlueSecondary})";
+                    FinishSliderSecondary.Text = $"Colour Finish ({ColorFInishes[primaryFinish2]})";
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");
+                    HexColorSecondary.Label = $"#{hexValue}";
+                    
+                    SetMaterial.SetSecondaryMaterial(veh.Handle, primaryFinish2);
+
+                    SetVehicleCustomSecondaryColour(veh.Handle, RedSecondary, GreenSecondary, BlueSecondary);
+
+                }
+            };
+
+            SecondaryColorsMenuRGB.AddMenuItem(RedSliderSecondary);
+            SecondaryColorsMenuRGB.AddMenuItem(GreenSliderSecondary);
+            SecondaryColorsMenuRGB.AddMenuItem(BlueSliderSecondary);
+            SecondaryColorsMenuRGB.AddMenuItem(HexColorSecondary);
+            SecondaryColorsMenuRGB.AddMenuItem(FinishSliderSecondary);
+
+            SecondaryColorsMenuRGB.AddMenuItem(PrimaryMatchColorSecondary);
+
+            SecondaryColorsMenuRGB.OnSliderPositionChange += (m, sliderItem, oldPosition, newPosition, itemIndex) =>
+            {
+                if (sliderItem == RedSliderSecondary)
+                {
+                    RedSecondary = newPosition;
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    RedSliderSecondary.Text = $"Red Colour ({RedSecondary})";
+
+
+                }
+                if (sliderItem == GreenSliderSecondary)
+                {
+                    GreenSecondary = newPosition;
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.Text = $"Green Colour ({GreenSecondary})";
+
+                }
+                if (sliderItem == BlueSliderSecondary)
+                {
+                    BlueSecondary = newPosition;
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.Text = $"Blue Colour ({BlueSecondary})";
+
+                }
+
+                if (sliderItem == FinishSliderSecondary)
+                {
+                    FinishSecondary = newPosition;
+                    RedSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    GreenSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    BlueSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.BarColor = System.Drawing.Color.FromArgb(255, RedSecondary, GreenSecondary, BlueSecondary);
+                    FinishSliderSecondary.Text = $"Colour Finish ({ColorFInishes[FinishSecondary]})";
+
+                }
+                if ((sliderItem == RedSliderSecondary) || (sliderItem == GreenSliderSecondary) || (sliderItem == BlueSliderSecondary) || (sliderItem == FinishSliderSecondary))
+                {
+                    var veh = GetVehicle();
+                    SetMaterial.SetSecondaryMaterial(veh.Handle, FinishSecondary);
+                    
+                    SetVehicleCustomSecondaryColour(veh.Handle, RedSecondary, GreenSecondary, BlueSecondary);
+                    string hexValue = RedSecondary.ToString("X2") + GreenSecondary.ToString("X2") + BlueSecondary.ToString("X2");
+                    HexColorSecondary.Label = $"#{hexValue}";
+                }
+
+            };
             #endregion
 
             #region Vehicle Doors Submenu Stuff
@@ -1611,21 +2117,118 @@ namespace vMenuClient.menus
             {
                 underglowColorsList.Add(GetLabelText($"CMOD_NEONCOL_{i}"));
             }
-            var underglowColor = new MenuListItem(GetLabelText("CMOD_NEON_1"), underglowColorsList, 0, "Select the color of the neon underglow.");
+            var underglowColor = new MenuListItem("Underglow preset", underglowColorsList, 0, "Preset underglow colors.");
+            var HexColorUnderglow = new MenuItem("Underglow Hex", "Set Underglow colour with hex code.");
+            var syncprimaryUnderglow = new MenuItem("Sync With Primary", "Sync Underglow colour with Secondary Paint.");
+            var syncsecondaryUnderglow = new MenuItem("Sync With Secondary", "Sync Underglow colour with Secondary Paint.");
+            UnderglowColorsMenu.AddMenuItem(underglowFront);
+            UnderglowColorsMenu.AddMenuItem(underglowBack);
+            UnderglowColorsMenu.AddMenuItem(underglowLeft);
+            UnderglowColorsMenu.AddMenuItem(underglowRight);
 
-            VehicleUnderglowMenu.AddMenuItem(underglowFront);
-            VehicleUnderglowMenu.AddMenuItem(underglowBack);
-            VehicleUnderglowMenu.AddMenuItem(underglowLeft);
-            VehicleUnderglowMenu.AddMenuItem(underglowRight);
+            UnderglowColorsMenu.AddMenuItem(underglowColor);
 
-            VehicleUnderglowMenu.AddMenuItem(underglowColor);
+            UnderglowColorsMenu.AddMenuItem(RedSliderUnderglow);
+            UnderglowColorsMenu.AddMenuItem(GreenSliderUnderglow);
+            UnderglowColorsMenu.AddMenuItem(BlueSliderUnderglow);
+            UnderglowColorsMenu.AddMenuItem(HexColorUnderglow);
+            UnderglowColorsMenu.AddMenuItem(syncprimaryUnderglow);
+            UnderglowColorsMenu.AddMenuItem(syncsecondaryUnderglow);
+            UnderglowColorsMenu.OnItemSelect += async (sender, item, index) =>
+            {
+                if (item == HexColorUnderglow)
+                {
+                    var result = await GetUserInput(windowTitle: "Enter Colour Hex", defaultText: (HexColorUnderglow.Label).Replace("#", ""), maxInputLength: 6);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        if (IsHex(result))
+                        {
+                            int RGBint = Convert.ToInt32(result, 16);
+                            byte Red = (byte)((RGBint >> 16) & 255);
+                            byte Green = (byte)((RGBint >> 8) & 255);
+                            byte Blue = (byte)(RGBint & 255);
 
-            menu.OnItemSelect += (sender, item, index) =>
+
+                            var veh = GetVehicle();
+                            RedSliderUnderglow.Position = Red;
+                            GreenSliderUnderglow.Position = Green;
+                            BlueSliderUnderglow.Position = Blue;
+                            RedSliderUnderglow.Text = $"Red Colour ({Red})";
+                            GreenSliderUnderglow.Text = $"Green Colour ({Green})";
+                            BlueSliderUnderglow.Text = $"Blue Colour ({Blue})";
+                            RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                            string hexValue = Red.ToString("X2") + Green.ToString("X2") + Blue.ToString("X2");
+                            HexColorUnderglow.Label = $"#{hexValue}";   
+                            SetVehicleNeonLightsColour(veh.Handle, RedSliderUnderglow.Position, GreenSliderUnderglow.Position, BlueSliderUnderglow.Position);                       
+
+                        }
+                        else
+                            Notify.Error($"#{result} is not a valid hex code!");
+                    }
+                }
+                if (item == syncprimaryUnderglow)
+                {
+                    var Red = 0;
+                    var Green = 0;
+                    var Blue = 0; 
+                    var veh = GetVehicle();
+                    GetVehicleCustomPrimaryColour(veh.Handle, ref Red, ref Green, ref Blue);
+                    RedSliderUnderglow.Position = Red;
+                    GreenSliderUnderglow.Position = Green;
+                    BlueSliderUnderglow.Position = Blue;
+                    RedSliderUnderglow.Text = $"Red Colour ({Red})";
+                    GreenSliderUnderglow.Text = $"Green Colour ({Green})";
+                    BlueSliderUnderglow.Text = $"Blue Colour ({Blue})";
+                    RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                    GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                    BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                    string hexValue = Red.ToString("X2") + Green.ToString("X2") + Blue.ToString("X2");
+                    HexColorUnderglow.Label = $"#{hexValue}";   
+                    SetVehicleNeonLightsColour(veh.Handle, RedSliderUnderglow.Position, GreenSliderUnderglow.Position, BlueSliderUnderglow.Position);                       
+                }
+                if (item == syncsecondaryUnderglow)
+                {
+                    var Red = 0;
+                    var Green = 0;
+                    var Blue = 0; 
+                    var veh = GetVehicle();
+                    GetVehicleCustomSecondaryColour(veh.Handle, ref Red, ref Green, ref Blue);
+                    RedSliderUnderglow.Position = Red;
+                    GreenSliderUnderglow.Position = Green;
+                    BlueSliderUnderglow.Position = Blue;
+                    RedSliderUnderglow.Text = $"Red Colour ({Red})";
+                    GreenSliderUnderglow.Text = $"Green Colour ({Green})";
+                    BlueSliderUnderglow.Text = $"Blue Colour ({Blue})";
+                    RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                    GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                    BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+                    string hexValue = Red.ToString("X2") + Green.ToString("X2") + Blue.ToString("X2");
+                    HexColorUnderglow.Label = $"#{hexValue}";   
+                    SetVehicleNeonLightsColour(veh.Handle, RedSliderUnderglow.Position, GreenSliderUnderglow.Position, BlueSliderUnderglow.Position);                       
+                }
+            };
+
+            VehicleColorsMenu.OnItemSelect += (sender, item, index) =>
             {
                 #region reset checkboxes state when opening the menu.
-                if (item == underglowMenuBtn)
-                {
                     var veh = GetVehicle();
+                    var redneon = 0;
+                    var greenneon = 0;
+                    var blueneon = 0;
+                    GetVehicleNeonLightsColour(veh.Handle, ref redneon, ref greenneon, ref blueneon);
+                    RedSliderUnderglow.Position = redneon;
+                    GreenSliderUnderglow.Position = greenneon;
+                    BlueSliderUnderglow.Position = blueneon;
+                    RedSliderUnderglow.Text = $"Red Colour ({redneon})";
+                    GreenSliderUnderglow.Text = $"Green Colour ({greenneon})";
+                    BlueSliderUnderglow.Text = $"Blue Colour ({blueneon})";
+                    RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, redneon, greenneon, blueneon);
+                    GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, redneon, greenneon, blueneon);
+                    BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, redneon, greenneon, blueneon);
+                    string hexValue = redneon.ToString("X2") + greenneon.ToString("X2") + blueneon.ToString("X2");
+                    HexColorUnderglow.Label = $"#{hexValue}";                   
                     if (veh != null)
                     {
                         if (veh.Mods.HasNeonLights)
@@ -1682,11 +2285,11 @@ namespace vMenuClient.menus
                     }
 
                     underglowColor.ListIndex = GetIndexFromColor();
-                }
+             
                 #endregion
             };
             // handle item selections
-            VehicleUnderglowMenu.OnCheckboxChange += (sender, item, index, _checked) =>
+            UnderglowColorsMenu.OnCheckboxChange += (sender, item, index, _checked) =>
             {
                 if (Game.PlayerPed.IsInVehicle())
                 {
@@ -1714,7 +2317,7 @@ namespace vMenuClient.menus
                 }
             };
 
-            VehicleUnderglowMenu.OnListIndexChange += (sender, item, oldIndex, newIndex, itemIndex) =>
+            UnderglowColorsMenu.OnListIndexChange += (sender, item, oldIndex, newIndex, itemIndex) =>
             {
                 if (item == underglowColor)
                 {
@@ -1724,9 +2327,68 @@ namespace vMenuClient.menus
                         if (veh.Mods.HasNeonLights)
                         {
                             veh.Mods.NeonLightsColor = GetColorFromIndex(newIndex);
+                                var redneon = 0;
+                                var greenneon = 0;
+                                var blueneon = 0;
+                            GetVehicleNeonLightsColour(veh.Handle, ref redneon, ref greenneon, ref blueneon);
+
+                                RedSliderUnderglow.Position = redneon;
+                                GreenSliderUnderglow.Position = greenneon;
+                                BlueSliderUnderglow.Position = blueneon;
+                                RedSliderUnderglow.Text = $"Red Colour ({redneon})";
+                                GreenSliderUnderglow.Text = $"Green Colour ({greenneon})";
+                                BlueSliderUnderglow.Text = $"Blue Colour ({blueneon})";
+                                RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, redneon, greenneon, blueneon);
+                                GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, redneon, greenneon, blueneon);
+                                BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, redneon, greenneon, blueneon);
+                                string hexValue = redneon.ToString("X2") + greenneon.ToString("X2") + blueneon.ToString("X2");
+                                HexColorUnderglow.Label = $"#{hexValue}";   
                         }
                     }
                 }
+            };
+            UnderglowColorsMenu.OnSliderPositionChange += (m, sliderItem, oldPosition, newPosition, itemIndex) =>
+            {
+                    var red = 0;
+                    var green = 0;
+                    var blue = 0; 
+                if (sliderItem == RedSliderUnderglow)
+                {
+                    //RedSliderUnderglow.Position;
+                    RedSliderUnderglow.Text = $"Red Colour ({newPosition})";
+                    red = newPosition;
+                    green = GreenSliderUnderglow.Position;
+                    blue = BlueSliderUnderglow.Position; 
+                    RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, newPosition, GreenSliderUnderglow.Position, BlueSliderUnderglow.Position);
+                    GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, newPosition, GreenSliderUnderglow.Position, BlueSliderUnderglow.Position);
+                    BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, newPosition, GreenSliderUnderglow.Position, BlueSliderUnderglow.Position);                  
+                }
+                if (sliderItem == GreenSliderUnderglow)
+                {
+                    red = RedSliderUnderglow.Position;
+                    green = newPosition;
+                    blue = BlueSliderUnderglow.Position; 
+                    //GreenSliderUnderglow.Position = newPosition;
+                    GreenSliderUnderglow.Text = $"Green Colour ({newPosition})";  
+                    RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, RedSliderUnderglow.Position, newPosition, BlueSliderUnderglow.Position);
+                    GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, RedSliderUnderglow.Position, newPosition, BlueSliderUnderglow.Position);
+                    BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, RedSliderUnderglow.Position, newPosition, BlueSliderUnderglow.Position);                  
+                }
+                if (sliderItem == BlueSliderUnderglow)
+                {
+                    red = RedSliderUnderglow.Position;
+                    green = GreenSliderUnderglow.Position;
+                    blue = newPosition; 
+                   // BlueSliderUnderglow.Position = newPosition;
+                    BlueSliderUnderglow.Text = $"Blue Colour ({newPosition})";  
+                    RedSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, RedSliderUnderglow.Position, GreenSliderUnderglow.Position, newPosition);
+                    GreenSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, RedSliderUnderglow.Position, GreenSliderUnderglow.Position, newPosition);
+                    BlueSliderUnderglow.BarColor = System.Drawing.Color.FromArgb(255, RedSliderUnderglow.Position, GreenSliderUnderglow.Position, newPosition);                  
+                }
+                Vehicle veh = GetVehicle();
+                    string hexValue = red.ToString("X2") + green.ToString("X2") + blue.ToString("X2");
+                    HexColorUnderglow.Label = $"#{hexValue}";   
+                SetVehicleNeonLightsColour(veh.Handle, red, green, blue);
             };
             #endregion
 
@@ -1847,7 +2509,11 @@ namespace vMenuClient.menus
 
                         // Create the name (again, converting to proper case), then add the name.
                         name = mod.GetLocalizedModName(x) != "" ? $"{ToProperString(mod.GetLocalizedModName(x))} {currentItem}" : $"{typeName} #{x} {currentItem}";
-                        modlist.Add(name);
+
+                        if (name == "Engine #4 [6/6]")
+                            modlist.Add("EMS Upgrade, Level 5 [6/6]");
+                        else
+                            modlist.Add(name);
                     }
 
                     // Create the MenuListItem for this mod type.
@@ -2076,7 +2742,7 @@ namespace vMenuClient.menus
                     else if (item2 == vehicleWheelType)
                     {
                         var vehicleClass = GetVehicleClass(veh.Handle);
-                        var isBikeOrOpenWheel = (newIndex == 6 && veh.Model.IsBike) ;
+                        var isBikeOrOpenWheel = (newIndex == 6 && veh.Model.IsBike);
                         var isNotBikeNorOpenWheel = newIndex != 6 && !veh.Model.IsBike;
                         var isCorrectVehicleType = isBikeOrOpenWheel || isNotBikeNorOpenWheel;
                         if (!isCorrectVehicleType)
@@ -2210,7 +2876,20 @@ namespace vMenuClient.menus
                 }
             }
         }
+        private bool IsHex(IEnumerable<char> chars)
+        {
+            bool isHex;
+            foreach (var c in chars)
+            {
+                isHex = ((c >= '0' && c <= '9') ||
+                         (c >= 'a' && c <= 'f') ||
+                         (c >= 'A' && c <= 'F'));
 
+                if (!isHex)
+                    return false;
+            }
+            return true;
+        }
         internal static int GetHeadlightsColorForVehicle(Vehicle vehicle)
         {
             if (vehicle != null && vehicle.Exists())
@@ -2295,4 +2974,104 @@ namespace vMenuClient.menus
         }
         #endregion
     }
-}
+    public static class SetMaterial
+    {
+        public static int lastSecondaryMaterial { get; private set; }
+        public static int lastSecondaryVehicle { get; private set; }
+
+        public static void SetSecondaryMaterial(int vehicle, int material)
+        {
+            var pearlColorReset = 0;
+            var wheelColorReset = 0;
+            GetVehicleExtraColours(vehicle, ref pearlColorReset, ref wheelColorReset);
+            SetVehicleModColor_2(vehicle, material, 0);
+            SetVehicleExtraColours(vehicle, pearlColorReset, wheelColorReset);
+
+            if (!(material == lastSecondaryMaterial) || !(vehicle == lastSecondaryVehicle))
+            {
+            TriggerServerEvent("vMenu:SetSecondaryMaterial_Sync", VehToNet(vehicle), material);
+            lastSecondaryMaterial = material;
+            lastSecondaryVehicle = vehicle;
+            }
+        }
+        public static int lastPrimaryMaterial { get; private set; }
+        public static int lastPrimaryVehicle { get; private set; }
+
+        public static void SetPrimaryMaterial(int vehicle, int material)
+        {
+            var pearlColorReset = 0;
+            var wheelColorReset = 0;
+            GetVehicleExtraColours(vehicle, ref pearlColorReset, ref wheelColorReset);
+            SetVehicleModColor_1(vehicle, material, 0, 0);
+            SetVehicleExtraColours(vehicle, pearlColorReset, wheelColorReset);
+  
+            if (!(material == lastPrimaryMaterial) || !(vehicle == lastPrimaryVehicle))
+            {
+            TriggerServerEvent("vMenu:SetPrimaryMaterial_Sync", VehToNet(vehicle), material);
+            lastPrimaryMaterial = material;
+            lastPrimaryVehicle = vehicle;
+            }
+        }
+    };
+    public static class GetMaterial 
+    {
+        public static int argSecondary { get; private set; }
+        
+        public static bool EventSecondaryran { get; private set; }
+
+        public static async Task<int> GetSecondaryMaterialAsync(int vehicle)
+        {
+            
+
+            return await GetSecondaryMaterial_1Async(vehicle);
+        }
+        public static async Task<int> GetSecondaryMaterial_1Async(int vehicle)
+        {
+            EventSecondaryran = false;
+            TriggerServerEvent("vMenu:GetSecondaryMaterial_Sync", VehToNet(vehicle), new Action<int>((matargSecondary) =>
+            {
+                argSecondary = matargSecondary;
+          
+               
+                EventSecondaryran = true;
+
+            }));
+            while (!EventSecondaryran)
+            {
+                
+                await Delay(0);
+            }
+
+            return argSecondary;
+
+        }
+
+        public static int argPrimary { get; private set; }
+        public static bool EventPrimaryran { get; private set; }
+
+        public static async Task<int> GetPrimaryMaterialAsync(int vehicle)
+        {
+            
+
+            return await GetPrimaryMaterial_1Async(vehicle);
+        }
+        public static async Task<int> GetPrimaryMaterial_1Async(int vehicle)
+        {
+            EventPrimaryran = false;
+            TriggerServerEvent("vMenu:GetPrimaryMaterial_Sync", VehToNet(vehicle), new Action<int>((matargPrimary) =>
+            {
+                argPrimary = matargPrimary;
+
+               
+                EventPrimaryran = true;
+
+            }));
+            while (!EventPrimaryran)
+            {
+                
+                await Delay(0);
+            }
+            return argPrimary;
+
+        }
+    }}

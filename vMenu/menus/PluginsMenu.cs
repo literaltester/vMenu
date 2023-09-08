@@ -21,7 +21,7 @@ namespace vMenuClient
 
         public bool EDPBool { get; private set; }
         public bool WMBool { get; private set; }
-
+        public bool FH4Bool { get; private set; }
 
         private static readonly LanguageManager Lm = new LanguageManager();
 
@@ -35,9 +35,14 @@ namespace vMenuClient
                 Label = "(~g~Plugin~s~) →→→"
             };
 
-            menu = new Menu(Game.Player.Name, "Plugins Menu");
+
 
             MenuItem wmstatus = new MenuItem("Wheelie Manager", "Wheelie Manager Status.")
+            {
+                Label = "(~g~Plugin~s~)"
+            };
+
+            MenuItem fh4status = new MenuItem("FH4 Speed O' Meter", "FH4 Speed O' Meter Status.")
             {
                 Label = "(~g~Plugin~s~)"
             };
@@ -106,8 +111,26 @@ namespace vMenuClient
                     wmstatus.Label = "(~r~Plugin~s~)";
     
                 }  
+                
+            TriggerEvent("vMenu:FH4SpeedOMeter", new Action<bool>((Bool) =>
+            {
+                FH4Bool = Bool;
+            }));
+                if (FH4Bool)
+                {
+                    menu.AddMenuItem(fh4status);
+                } 
+                else
+                {
+                    menu.AddMenuItem(fh4status);
+    
+                    fh4status.Enabled = false;
+                    fh4status.LeftIcon = MenuItem.Icon.LOCK;
+                    fh4status.Description = "This plugin isn't enabled.";
+                    fh4status.Label = "(~r~Plugin~s~)";
+    
+                }  
             
-
 
             #endregion
 
