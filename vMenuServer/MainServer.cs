@@ -567,6 +567,17 @@ namespace vMenuServer
         /// <param name="source"></param>
         /// <param name="vehicleNetId"></param>
         /// <param name="playerOwner"></param>
+        [EventHandler("vMenu:DelAllVehServ")]
+        public void DelAllVehServ()
+        {     
+            foreach (int veh in GetAllVehicles())
+            {
+                if (!IsPedAPlayer(GetPedInVehicleSeat(veh, -1)))
+                {
+                    DeleteEntity(veh);
+                }
+            }  
+        }
         [EventHandler("vMenu:GetOutOfCar")]
         internal void GetOutOfCar([FromSource] Player source, int vehicleNetId, int playerOwner)
         {

@@ -20,6 +20,7 @@ namespace vMenuShared
             NoClip,
             Staff,
             DumpLang,
+            DVAll,
             #endregion
 
             // Online Players

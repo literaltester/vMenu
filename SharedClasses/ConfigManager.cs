@@ -76,6 +76,11 @@ namespace vMenuShared
             vmenu_discord_small_image,
             vmenu_discord_small_image_text,
             vmenu_discord_large_image_text,
+
+            // DV Script
+            vmenu_disable_dv_command,
+            vmenu_dv_retries,
+            vmenu_dv_distance,
         }
 
         /// <summary>

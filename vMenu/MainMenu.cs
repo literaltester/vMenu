@@ -155,6 +155,127 @@ namespace vMenuClient
                 }), false);
             }
 
+
+            if (!GetSettingsBool(Setting.vmenu_disable_dv_command))
+            {
+                RegisterCommand("dv", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+                {
+                    var player = Game.PlayerPed.Handle;
+                    if (DoesEntityExist(player) && !IsEntityDead(player))
+                    {
+                        var position = GetEntityCoords(player, true);
+                        if (IsPedSittingInAnyVehicle(player))
+                        {
+                            var veh = GetVehicle();
+                            if ( GetPedInVehicleSeat(veh.Handle, -1) == player)
+                            {
+                                DelVeh(veh, 5, veh.Handle);
+                            }
+                            else
+                            {
+                                Notify.Error("You Must be in the driver's seat for this to work");
+                            }
+                        }
+                        else
+                        {
+                            var inFrontOfPlayer = GetOffsetFromEntityInWorldCoords(player, (float)0.0, (float)GetSettingsFloat(Setting.vmenu_dv_distance), (float)0.0);
+                            var vehicle = GetVehInDirection(player, position, inFrontOfPlayer);
+                            if (!(vehicle == 0))
+                            {
+                                Vehicle veh = (Vehicle)Entity.FromHandle(vehicle);
+                                DelVeh(veh, GetSettingsInt(Setting.vmenu_dv_retries), vehicle);
+                            }
+                            else
+                            {
+                                Notify.Error("No Vehicle Found");
+                            }
+                        }
+                    } 
+                }), false);
+                TriggerEvent("chat:addSuggestion", "/dv", "Deletes the vehicle you are in or near");
+            }
+
+            RegisterCommand("dvall", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+            {
+            
+
+                if (IsAllowed(Permission.DVAll))
+                {
+                    TriggerServerEvent("vMenu:DelAllVehServ");
+                }
+                else
+                {
+                    Notify.Error("You dont have permission to use this command");
+                }
+            }), false);
+
+            
+            TriggerEvent("chat:addSuggestion", "/dvall", "Deletes all vehicles");
+            static async void DelVeh(Vehicle veh, int maxtimeout, int vehicle)
+            {
+                var timeout = 0;
+                if (NetworkHasControlOfEntity(vehicle))
+                {
+                    veh.Delete();
+                }
+                if ( DoesEntityExist(vehicle) && timeout < maxtimeout)            
+                {
+                    while (DoesEntityExist(vehicle) && timeout < maxtimeout)
+                    {
+                        NetworkRequestControlOfEntity(vehicle);
+                        var retry = 0;
+                        while (!(NetworkHasControlOfEntity(vehicle) || (retry > 10)))
+                        {
+                            retry++;                       
+                            await Delay(10);
+                            NetworkRequestControlOfEntity(vehicle);
+                        }
+
+                        var vehval = (Vehicle)Entity.FromHandle(vehicle);
+                        if (!(GetPedInVehicleSeat(vehicle, -1) == 0))
+                        {
+                            Notify.Error("Someone is driving this vehicle");
+                            return;
+                        }
+                        vehval.Delete();
+                        if (!DoesEntityExist(vehicle))
+                        {
+                           Notify.Success("Vehicle Deleted!"); 
+                        }
+                        timeout++;
+                        await Delay(1000);
+                        if ( DoesEntityExist(vehicle) && timeout == maxtimeout -1)            
+                        {
+                           Notify.Error($"Vehicle failed to delete retries: {maxtimeout}"); 
+                        }
+                    }
+                }
+                else
+                {
+                    Notify.Success("Vehicle Deleted!");
+                }
+                return;
+            }
+
+            static int GetVehInDirection(int ped, Vector3 pos, Vector3 posinfront)
+            {
+                var ray = StartShapeTestCapsule(pos.X, pos.Y, pos.Z, posinfront.X, posinfront.Y, posinfront.Z, (float)5.0, (int)10, ped, (int)7);
+                bool hit = false;
+                Vector3 endCoords = Vector3.Zero;
+                Vector3 surfaceNormal = Vector3.Zero;
+                var vehicle = 0;
+                GetShapeTestResult(ray, ref hit, ref endCoords, ref surfaceNormal, ref vehicle);
+                if (IsEntityAVehicle(vehicle))
+                {
+
+                    return vehicle; 
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
             RegisterCommand("vmenuclient", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
             {
                 if (args != null)
