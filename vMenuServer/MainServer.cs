@@ -568,15 +568,23 @@ namespace vMenuServer
         /// <param name="vehicleNetId"></param>
         /// <param name="playerOwner"></param>
         [EventHandler("vMenu:DelAllVehServ")]
-        public void DelAllVehServ()
+        public void DelAllVehServ([FromSource] Player source)
         {     
+            var vehdelnum = 0;
             foreach (int veh in GetAllVehicles())
             {
                 if (!IsPedAPlayer(GetPedInVehicleSeat(veh, -1)))
                 {
+                    vehdelnum ++;
                     DeleteEntity(veh);
                 }
-            }  
+            }
+            if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+            {
+                source.TriggerEvent("mosh_notify:notify", "SUCCESS", $"<span class=\"text-white\">{vehdelnum} Vehicles Have Been Deleted!</span>", "success", "success", 5000);
+            }
+            source.TriggerEvent("vMenu:Notify", $"~g~Success:~s~ {vehdelnum} Vehicles Have Been Deleted!.");
+
         }
         [EventHandler("vMenu:GetOutOfCar")]
         internal void GetOutOfCar([FromSource] Player source, int vehicleNetId, int playerOwner)

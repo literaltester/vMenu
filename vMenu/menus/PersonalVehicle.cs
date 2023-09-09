@@ -262,6 +262,7 @@ namespace vMenuClient.menus
                             {
                                 name = veh.DisplayName;
                             }
+                            setVehice.Label = $"Current Vehicle: {name}";
                             MainMenu.RecreateMenus();
                         }
                         else

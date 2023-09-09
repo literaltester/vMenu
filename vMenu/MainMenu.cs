@@ -234,6 +234,15 @@ namespace vMenuClient
                 {
                     while (DoesEntityExist(vehicle) && timeout < maxtimeout)
                     {
+                        if (!(GetPedInVehicleSeat(vehicle, -1) == 0))
+                        {
+                            Notify.Error("You can't delete this vehicle, someone else is driving it!");
+                            if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                            {
+                                TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You can't delete this vehicle, someone else is driving it!</span>", "darkred", "error", 5000);
+                            }
+                            return;
+                        }
                         NetworkRequestControlOfEntity(vehicle);
                         var retry = 0;
                         while (!(NetworkHasControlOfEntity(vehicle) || (retry > 10)))
@@ -244,15 +253,6 @@ namespace vMenuClient
                         }
 
                         var vehval = (Vehicle)Entity.FromHandle(vehicle);
-                        if (!(GetPedInVehicleSeat(vehicle, -1) == 0))
-                        {
-                            Notify.Error("You can't delete this vehicle, someone else is driving it!");
-                            if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
-                            {
-                                TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You can't delete this vehicle, someone else is driving it!</span>", "darkred", "error", 5000);
-                            }
-                            return;
-                        }
                         vehval.Delete();
                         if (!DoesEntityExist(vehicle))
                         {
