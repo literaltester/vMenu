@@ -234,7 +234,7 @@ namespace vMenuClient
                 {
                     while (DoesEntityExist(vehicle) && timeout < maxtimeout)
                     {
-                        if (!(GetPedInVehicleSeat(vehicle, -1) == 0))
+                        if (IsPedAPlayer(GetPedInVehicleSeat(vehicle, -1)))
                         {
                             Notify.Error("You can't delete this vehicle, someone else is driving it!");
                             if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
