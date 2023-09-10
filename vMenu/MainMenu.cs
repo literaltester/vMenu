@@ -130,6 +130,59 @@ namespace vMenuClient
             }
             #endregion
 
+            #region keymapping stuff
+            RegisterCommand($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:NoClip", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+               {
+                    if ( IsAllowed(Permission.NoClip) )
+                    {
+                        if (Game.PlayerPed.IsInVehicle())
+                        {
+                            var veh = GetVehicle();
+                            if (veh != null && veh.Exists() && veh.Driver == Game.PlayerPed)
+                            {
+                                NoClipEnabled = !NoClipEnabled;
+                            }
+                            else
+                            {
+                                NoClipEnabled = false;
+                                Notify.Error("This vehicle does not exist (somehow) or you need to be the driver of this vehicle to enable noclip!");
+                            }
+                        }
+                        else
+                        {
+                            NoClipEnabled = !NoClipEnabled;
+                        }
+                    }
+               }), false);
+
+            RegisterCommand($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:toggle", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+               {
+                   if (vMenuEnabled)
+                   {
+                       if (!MenuController.IsAnyMenuOpen())
+                       {
+                           Menu.OpenMenu();
+                       }
+                       else
+                       {
+                           MenuController.CloseAllMenus();
+                       }
+                   }
+               }), false);
+            if (!(GetSettingsString(Setting.vmenu_menu_toggle_key) == null))
+            {
+                vMenuKey = GetSettingsString(Setting.vmenu_menu_toggle_key);
+            }
+            else
+            {
+                vMenuKey = "M";
+            }
+
+            RegisterKeyMapping($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:NoClip", "vMenu NoClip Toggle Button", "keyboard", NoClipKey);
+
+            RegisterKeyMapping($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:toggle", "vMenu Toggle Button", "keyboard", vMenuKey);
+            #endregion
+            
             if (EnableExperimentalFeatures)
             {
                 RegisterCommand("testped", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
@@ -652,56 +705,7 @@ namespace vMenuClient
         /// <returns></returns>
         private async Task OnTick()
         {
-            RegisterCommand($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:NoClip", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
-               {
-                    if ( IsAllowed(Permission.NoClip) )
-                    {
-                        if (Game.PlayerPed.IsInVehicle())
-                        {
-                            var veh = GetVehicle();
-                            if (veh != null && veh.Exists() && veh.Driver == Game.PlayerPed)
-                            {
-                                NoClipEnabled = !NoClipEnabled;
-                            }
-                            else
-                            {
-                                NoClipEnabled = false;
-                                Notify.Error("This vehicle does not exist (somehow) or you need to be the driver of this vehicle to enable noclip!");
-                            }
-                        }
-                        else
-                        {
-                            NoClipEnabled = !NoClipEnabled;
-                        }
-                    }
-               }), false);
 
-            RegisterCommand($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:toggle", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
-               {
-                   if (vMenuEnabled)
-                   {
-                       if (!MenuController.IsAnyMenuOpen())
-                       {
-                           Menu.OpenMenu();
-                       }
-                       else
-                       {
-                           MenuController.CloseAllMenus();
-                       }
-                   }
-               }), false);
-            if (!(GetSettingsString(Setting.vmenu_menu_toggle_key) == null))
-            {
-                vMenuKey = GetSettingsString(Setting.vmenu_menu_toggle_key);
-            }
-            else
-            {
-                vMenuKey = "M";
-            }
-
-            RegisterKeyMapping($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:NoClip", "vMenu NoClip Toggle Button", "keyboard", NoClipKey);
-
-            RegisterKeyMapping($"{GetSettingsString(Setting.vmenu_individual_server_id)}vMenu:toggle", "vMenu Toggle Button", "keyboard", vMenuKey);
             // If the setup (permissions) is done, and it's not the first tick, then do this:
             if (ConfigOptionsSetupComplete)
             {
