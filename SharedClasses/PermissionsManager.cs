@@ -21,6 +21,7 @@ namespace vMenuShared
             Staff,
             DumpLang,
             DVAll,
+            Freecam,
             #endregion
 
             // Online Players

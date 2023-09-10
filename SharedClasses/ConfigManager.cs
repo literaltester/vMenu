@@ -81,6 +81,7 @@ namespace vMenuShared
             vmenu_disable_dv_command,
             vmenu_dv_retries,
             vmenu_dv_distance,
+            vmenu_freecam_toggle_key,
         }
 
         /// <summary>
