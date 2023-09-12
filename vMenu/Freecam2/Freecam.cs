@@ -53,8 +53,8 @@ namespace Freecam2
                 scaleform.CallFunction("TOGGLE_MOUSE_BUTTONS", 0);
 
                 // Movement/Rotation
-                scaleform.CallFunction("SET_DATA_SLOT", 0, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.ScaledLookUpDown, 0), "Forward/Back");
-                scaleform.CallFunction("SET_DATA_SLOT", 1, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.ScaledLookLeftRight, 0), "Left/Right");
+                scaleform.CallFunction("SET_DATA_SLOT", 0, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.ParachutePitchUpDown, 0), "Forward/Back");
+                scaleform.CallFunction("SET_DATA_SLOT", 1, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.ParachuteTurnLeftRight, 0), "Left/Right");
                 scaleform.CallFunction("SET_DATA_SLOT", 2, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.LookLeftRight, 0), "Look");
                 scaleform.CallFunction("SET_DATA_SLOT", 3, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.Pickup, 0), "");
                 scaleform.CallFunction("SET_DATA_SLOT", 4, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.Cover, 0), "Roll");
@@ -71,7 +71,7 @@ namespace Freecam2
                 else scaleform.CallFunction("SET_DATA_SLOT", 13, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.CursorCancel, 0), "Detach");
 
                 // HUD Toggle
-                scaleform.CallFunction("SET_DATA_SLOT", 14, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, 74, 0), "Toggle HUD");
+                scaleform.CallFunction("SET_DATA_SLOT", 14, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, 236, 0), "Toggle HUD");
 
                 // Drawing
                 scaleform.CallFunction("DRAW_INSTRUCTIONAL_BUTTONS", -1);
@@ -107,7 +107,7 @@ namespace Freecam2
             SetFocusArea(NewPos.X, NewPos.Y, NewPos.Z, 0.0f, 0.0f, 0.0f);
 
             // Misc controls
-            if (IsDisabledControlJustPressed(1, (int)Control.VehicleHeadlight))
+            if (IsDisabledControlJustPressed(1, (int)Control.ScriptSelect))
                 HUD = !HUD;
             if (IsDisabledControlPressed(1, (int)Control.FrontendUp))
                 SetCamFov(FCamera.Handle, FCamera.FieldOfView - 1);
@@ -141,7 +141,7 @@ namespace Freecam2
             if (IsInputDisabled(0))
             {
                 // Basic movement--- WASD
-                if (IsDisabledControlPressed(1, (int)Control.MoveUpOnly)) // Forwards
+                if (IsDisabledControlPressed(1, (int)Control.ParachutePitchUpOnly)) // Forwards
                 {
                     float multX = Sin(OffsetRotZ);
                     float multY = Cos(OffsetRotZ);
@@ -151,7 +151,7 @@ namespace Freecam2
                     Return.Y += (float)(0.1 * Speed * multY);
                     Return.Z += (float)(0.1 * Speed * multZ);
                 }
-                if (IsDisabledControlPressed(1, (int)Control.MoveDownOnly)) // Backwards
+                if (IsDisabledControlPressed(1, (int)Control.ParachutePitchDownOnly)) // Backwards
                 {
                     float multX = Sin(OffsetRotZ);
                     float multY = Cos(OffsetRotZ);
