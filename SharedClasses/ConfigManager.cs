@@ -82,7 +82,14 @@ namespace vMenuShared
             vmenu_dv_retries,
             vmenu_dv_distance,
             vmenu_freecam_toggle_key,
+
+            // notification
             vmenu_notification_type,
+
+
+            // osd settings
+            vmenu_showlocationblips_on_default,
+            vmenu_showlocation_on_default,
         }
 
         /// <summary>

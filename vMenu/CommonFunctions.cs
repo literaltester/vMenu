@@ -2246,16 +2246,20 @@ namespace vMenuClient
             if (IsHudPreferenceSwitchedOn() && Hud.IsVisible && !MainMenu.MiscSettingsMenu.HideHud && !IsPlayerSwitchInProgress() && IsScreenFadedIn() && !IsPauseMenuActive() && !IsFrontendFading() && !IsPauseMenuRestarting() && !IsHudHidden())
             {
                 SetTextFont(font);
+                SetTextProportional(true);
                 SetTextScale(1.0f, size);
+                SetTextDropshadow(0, 0, 0, 0, 255);
+                SetTextEdge(4, 0, 0, 0, 255);
+                SetTextDropShadow();
                 if (justification == CitizenFX.Core.UI.Alignment.Right)
                 {
                     SetTextWrap(0f, xPosition);
                 }
                 SetTextJustification((int)justification);
                 if (!disableTextOutline) { SetTextOutline(); }
-                BeginTextCommandDisplayText("STRING");
-                AddTextComponentSubstringPlayerName(text);
-                EndTextCommandDisplayText(xPosition, yPosition);
+                SetTextEntry("STRING");
+                AddTextComponentString(text);
+                DrawText(xPosition, yPosition);w
             }
         }
         #endregion
