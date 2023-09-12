@@ -40,7 +40,7 @@ namespace vMenuClient
             EventHandlers.Add("vMenu:SetPermissions", new Action<string>(MainMenu.SetPermissions));
             EventHandlers.Add("vMenu:GoToPlayer", new Action<string>(SummonPlayer));
             EventHandlers.Add("vMenu:KillMe", new Action<string>(KillMe));
-            EventHandlers.Add("vMenu:Notify", new Action<string>(NotifyPlayer));
+            EventHandlers.Add("vMenu:Notify", new Action<string, string>(NotifyPlayer));
             EventHandlers.Add("vMenu:SetClouds", new Action<float, string>(SetClouds));
             EventHandlers.Add("vMenu:GoodBye", new Action(GoodBye));
             EventHandlers.Add("vMenu:SetBanList", new Action<string>(UpdateBanList));
@@ -339,9 +339,29 @@ namespace vMenuClient
         /// Used by events triggered from the server to notify a user.
         /// </summary>
         /// <param name="message"></param>
-        private void NotifyPlayer(string message)
+        private void NotifyPlayer(string message, string type)
         {
-            Notify.Custom(message, true, true);
+            if (type.ToLower() == "alert")
+            {
+                 Notify.Alert(message, true, true);
+            }
+            else if (type.ToLower() == "error") 
+            {
+                 Notify.Error(message, true, true);
+            }
+            else if (type.ToLower() == "info") 
+            {
+                 Notify.Info(message, true, true);
+            }
+            else if (type.ToLower() == "success") 
+            {
+                 Notify.Success(message, true, true);
+            }
+            else
+            {
+                 Notify.Custom(message, true, true, type);
+            }
+
         }
 
         /// <summary>

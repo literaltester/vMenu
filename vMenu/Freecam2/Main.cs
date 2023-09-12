@@ -42,7 +42,7 @@ namespace Freecam2
                     IsInFreecam = !IsInFreecam;
                     if (IsInFreecam)
                     {
-                        TriggerEvent("mosh_notify:notify", "INFO", "<span class=\"text-black\">You are now using Freecam²!</span>", "info", "info", 5000);
+                        //TriggerEvent("mosh_notify:notify", "INFO", "<span class=\"text-black\">You are now using Freecam²!</span>", "info", "info", 5000);
                         Notify.Success("You are now using Freecam²!");
                         Freecam.Enable();
                     }
@@ -51,7 +51,7 @@ namespace Freecam2
                 }
                 else
                 {
-                    TriggerEvent("mosh_notify:notify", "Error", "<span class=\"text-black\">You are not allowed to use Freecam²!</span>", "error", "error", 5000);
+                    //TriggerEvent("mosh_notify:notify", "Error", "<span class=\"text-black\">You are not allowed to use Freecam²!</span>", "error", "error", 5000);
                     Notify.Error("You are not allowed to use Freecam²!");
                 }
             }), false);

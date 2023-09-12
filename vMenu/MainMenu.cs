@@ -229,7 +229,7 @@ namespace vMenuClient
                                 Notify.Error("You must be in the driver's seat to delete this vehicle!");
                                 if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                                 {
-                                    TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You must be in the driver's seat to delete this vehicle!</span>", "darkred", "error", 5000);
+                                    //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You must be in the driver's seat to delete this vehicle!</span>", "darkred", "error", 5000);
                                 }
                             }
                         }
@@ -247,7 +247,7 @@ namespace vMenuClient
                                 Notify.Error("No vehicle found. Maybe it's not close to you?");
                                 if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                                 {
-                                    TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">No vehicle found. Maybe it's not close to you?</span>", "darkred", "error", 5000);
+                                    //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">No vehicle found. Maybe it's not close to you?</span>", "darkred", "error", 5000);
                                 }
                             }
                         }
@@ -269,7 +269,7 @@ namespace vMenuClient
                     Notify.Error("You do NOT have permission to use this command.");
                     if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                     {
-                        TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You do NOT have permission to use this command.</span>", "darkred", "error", 5000);
+                        //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You do NOT have permission to use this command.</span>", "darkred", "error", 5000);
                     }
                 }
             }), false);
@@ -292,7 +292,7 @@ namespace vMenuClient
                             Notify.Error("You can't delete this vehicle, someone else is driving it!");
                             if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                             {
-                                TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You can't delete this vehicle, someone else is driving it!</span>", "darkred", "error", 5000);
+                                //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You can't delete this vehicle, someone else is driving it!</span>", "darkred", "error", 5000);
                             }
                             return;
                         }
@@ -312,7 +312,7 @@ namespace vMenuClient
                            Notify.Success("The vehicle has been deleted!");
                            if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                            {
-                               TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">The vehicle has been deleted!</span>", "success", "success", 5000);
+                               //TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">The vehicle has been deleted!</span>", "success", "success", 5000);
                            }
                         }
                         timeout++;
@@ -322,7 +322,7 @@ namespace vMenuClient
                            Notify.Error($"Failed to delete vehicle, after {maxtimeout} retries.");
                            if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                            {
-                               TriggerEvent("mosh_notify:notify", "ERROR", $"<span class=\"text-white\">Failed to delete vehicle, after {maxtimeout} retries.</span>", "darkred", "error", 5000);
+                               //TriggerEvent("mosh_notify:notify", "ERROR", $"<span class=\"text-white\">Failed to delete vehicle, after {maxtimeout} retries.</span>", "darkred", "error", 5000);
                            }
                         }
                     }
@@ -332,7 +332,7 @@ namespace vMenuClient
                     Notify.Success("The vehicle has been deleted!");
                     if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                     {
-                        TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">The vehicle has been deleted!</span>", "success", "success", 5000);
+                        //TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">The vehicle has been deleted!</span>", "success", "success", 5000);
                     }
                 }
                 return;
