@@ -44,7 +44,7 @@ namespace vMenuClient
             {
                 var tptowp = new MenuItem("Teleport To Waypoint", "Teleport to the waypoint on your map.");
                 var tpToCoord = new MenuItem("Teleport To Coords", "Enter the X, Y, Z coordinates and you will be teleported to that location.");
-                var saveLocationBtn = new MenuItem("Save Teleport Location", "Adds your current location to the teleport locations menu and saves it on the server.");
+                var saveLocationBtn = new MenuItem("Save Teleport Location", "Adds your current location to the teleport locations menu and saves it on the server ~r~~h~(script restart required after adding new location(s)).");
                 menu.OnItemSelect += async (sender, item, index) =>
                 {
                     // Teleport to waypoint.
@@ -147,7 +147,7 @@ namespace vMenuClient
                                 Debug.WriteLine(location.JsonName);
 
                                 var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + location.JsonName);
-                                var data = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locations>(jsonFile);
+                                var data = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locationsteleport>(jsonFile);
                                 Menu teleportSubMenu = new Menu(location.name, location.name);
                                 MenuItem teleportSubMenuBtn = new MenuItem(location.name, $"Teleport to ~b~{location.name}~w~, added by the server owner.") { Label = "→→→" };
                                 teleportMenu.AddMenuItem(teleportSubMenuBtn);

@@ -222,6 +222,10 @@ namespace vMenuShared
         /// <summary>
         /// Struct used for deserializing json only.
         /// </summary>
+        public struct Locationsteleport
+        {
+            public List<TeleportLocation> teleports;
+        }
         public struct Locations
         {
             public List<TeleportLocation> teleports;

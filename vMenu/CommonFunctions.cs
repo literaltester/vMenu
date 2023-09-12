@@ -3557,22 +3557,34 @@ namespace vMenuClient
         /// Saves the player's location as a new teleport location in the teleport options menu.
         /// </summary>
         public static async void SavePlayerLocationToLocationsFile()
-        {
-            var pos = Game.PlayerPed.Position;
-            var heading = Game.PlayerPed.Heading;
-            var locationName = await GetUserInput("Enter location save name", 30);
-            if (string.IsNullOrEmpty(locationName))
+        {                   
+            var result = await GetUserInput(windowTitle: "Enter json file you wish to add location too", defaultText: "", maxInputLength: 100);
+            if (!string.IsNullOrEmpty(result))
             {
-                Notify.Error(CommonErrors.InvalidInput);
-                return;
+                var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + result);
+                if (!string.IsNullOrEmpty(jsonFile))
+                {
+                    var pos = Game.PlayerPed.Position;
+                    var heading = Game.PlayerPed.Heading;
+                    var locationName = await GetUserInput("Enter location save name", 30);
+                    if (string.IsNullOrEmpty(locationName))
+                    {
+                        Notify.Error(CommonErrors.InvalidInput);
+                        return;
+                    }
+                    if (vMenuShared.ConfigManager.GetTeleportLocationsData().Any(loc => loc.name == locationName))
+                    {
+                        Notify.Error("This location name is already used, please use a different name.");
+                        return;
+                    }
+                    TriggerServerEvent("vMenu:SaveTeleportLocation", JsonConvert.SerializeObject(new vMenuShared.ConfigManager.TeleportLocation(locationName, pos, heading)), result);
+                    Notify.Success("The location was successfully saved.");
+                }
+                else
+                {
+                    Notify.Error(result + " does not exist.");
+                }
             }
-            if (vMenuShared.ConfigManager.GetTeleportLocationsData().Any(loc => loc.name == locationName))
-            {
-                Notify.Error("This location name is already used, please use a different name.");
-                return;
-            }
-            TriggerServerEvent("vMenu:SaveTeleportLocation", JsonConvert.SerializeObject(new vMenuShared.ConfigManager.TeleportLocation(locationName, pos, heading)));
-            Notify.Success("The location was successfully saved.");
         }
         #endregion
     }

@@ -963,21 +963,24 @@ namespace vMenuServer
 
         #region Add teleport location
         [EventHandler("vMenu:SaveTeleportLocation")]
-        internal void AddTeleportLocation([FromSource] Player _, string locationJson)
+        internal void AddTeleportLocation([FromSource] Player _, string locationJson, string jsonname)
         {
             var location = JsonConvert.DeserializeObject<TeleportLocation>(locationJson);
-            if (GetTeleportLocationsData().Any(loc => loc.name == location.name))
+            var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + jsonname);
+            var locs = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locationsteleport>(jsonFile);
+            if (locs.teleports.Any(loc => loc.name == location.name))
             {
                 Log("A teleport location with this name already exists, location was not saved.", LogLevel.error);
                 return;
             }
-            var locs = GetLocations();
+
+            //var locs = GetLocations();
             locs.teleports.Add(location);
-            if (!SaveResourceFile(GetCurrentResourceName(), "config/locations.json", JsonConvert.SerializeObject(locs, Formatting.Indented), -1))
+            if (!SaveResourceFile(GetCurrentResourceName(), "config/locations/" + jsonname, JsonConvert.SerializeObject(locs, Formatting.Indented), -1))
             {
                 Log("Could not save locations.json file, reason unknown.", LogLevel.error);
             }
-            TriggerClientEvent("vMenu:UpdateTeleportLocations", JsonConvert.SerializeObject(locs.teleports));
+            //TriggerClientEvent("vMenu:UpdateTeleportLocations", JsonConvert.SerializeObject(locs.teleports));
         }
         #endregion
 
