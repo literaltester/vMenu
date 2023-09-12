@@ -244,7 +244,20 @@ namespace vMenuShared
                 this.heading = heading;
             }
         }
-
+        public struct LocationsSubMenu
+        {
+            public List<TeleportLocationSubMenu> teleports;
+        }
+        public struct TeleportLocationSubMenu
+        {
+            public string JsonName;
+            public string name;
+            public TeleportLocationSubMenu(string JsonName, string name)
+            {
+                this.JsonName = JsonName;
+                this.name = name;
+            }
+        }
         /// <summary>
         /// Location blip struct.
         /// </summary>

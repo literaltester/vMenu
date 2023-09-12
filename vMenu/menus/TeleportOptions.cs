@@ -136,30 +136,53 @@ namespace vMenuClient
 
                     teleportMenu.OnMenuOpen += (sender) =>
                     {
-                        if (teleportMenu.Size != TpLocations.Count())
+                        var jsonFile2 = LoadResourceFile(GetCurrentResourceName(), "config/TeleportCategories.json");
+                        var data2 = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.LocationsSubMenu>(jsonFile2);
+
+                        if (teleportMenu.Size != data2.teleports.Count())
                         {
                             teleportMenu.ClearMenuItems();
-                            foreach (var location in TpLocations)
+                            foreach (var location in data2.teleports)
                             {
-                                var x = Math.Round(location.coordinates.X, 2);
-                                var y = Math.Round(location.coordinates.Y, 2);
-                                var z = Math.Round(location.coordinates.Z, 2);
-                                var heading = Math.Round(location.heading, 2);
-                                var tpBtn = new MenuItem(location.name, $"Teleport to ~y~{location.name}~n~~s~x: ~y~{x}~n~~s~y: ~y~{y}~n~~s~z: ~y~{z}~n~~s~heading: ~y~{heading}") { ItemData = location };
-                                teleportMenu.AddMenuItem(tpBtn);
+                                Debug.WriteLine(location.JsonName);
+
+                                var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + location.JsonName);
+                                var data = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locations>(jsonFile);
+                                Menu teleportSubMenu = new Menu(location.name, location.name);
+                                MenuItem teleportSubMenuBtn = new MenuItem(location.name, $"Teleport Submenu.") { Label = "→→→" };
+                                teleportMenu.AddMenuItem(teleportSubMenuBtn);
+
+                                
+                                foreach (var tplocations in data.teleports)
+                                {
+                                    var x = Math.Round(tplocations.coordinates.X, 2);
+                                    var y = Math.Round(tplocations.coordinates.Y, 2);
+                                    var z = Math.Round(tplocations.coordinates.Z, 2);
+                                    var heading = Math.Round(tplocations.heading, 2);
+                                    var tpBtn = new MenuItem(tplocations.name, $"Teleport to ~y~{tplocations.name}~n~~s~x: ~y~{x}~n~~s~y: ~y~{y}~n~~s~z: ~y~{z}~n~~s~heading: ~y~{heading}") { ItemData = tplocations };
+                                    teleportSubMenu.AddMenuItem(tpBtn);
+                                }
+
+                                if (teleportSubMenu.Size > 0)
+                                {
+                                    MenuController.AddSubmenu(teleportMenu, teleportSubMenu);
+                                    MenuController.BindMenuItem(teleportMenu, teleportSubMenu, teleportSubMenuBtn);
+                                }
+                                teleportSubMenu.OnItemSelect += async (sender, item, index) =>
+                                {
+                                    if (item.ItemData is vMenuShared.ConfigManager.TeleportLocation tl)
+                                    {
+                                        await TeleportToCoords(tl.coordinates, true);
+                                        SetEntityHeading(Game.PlayerPed.Handle, tl.heading);
+                                        SetGameplayCamRelativeHeading(0f);
+                                    }
+                                };
                             }
+
                         }
                     };
 
-                    teleportMenu.OnItemSelect += async (sender, item, index) =>
-                    {
-                        if (item.ItemData is vMenuShared.ConfigManager.TeleportLocation tl)
-                        {
-                            await TeleportToCoords(tl.coordinates, true);
-                            SetEntityHeading(Game.PlayerPed.Handle, tl.heading);
-                            SetGameplayCamRelativeHeading(0f);
-                        }
-                    };
+
 
                     if (IsAllowed(Permission.TPTeleportSaveLocation))
                     {

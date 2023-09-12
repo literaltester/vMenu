@@ -31,9 +31,15 @@ files {
     'MenuAPI.dll',
     'config/*.json',
     'config/languages/*.json',
+    'config/locations/*.json',
     'storage.html'
 }
 client_script {'plugin-config.lua', 'plugins/***/*.lua', 'plugins/*.lua'}
 
+
 client_script 'vMenuClient.net.dll'
 server_script 'vMenuServer.net.dll'
+exports {
+"PluginAddMenuItem",
+"PluginMenuItem"
+}
