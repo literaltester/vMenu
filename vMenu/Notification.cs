@@ -84,33 +84,44 @@ namespace vMenuClient
         public static void Custom(string message, bool blink = true, bool saveToBrief = true, string type = "Custom")
         {
             string notiftype = vMenuShared.ConfigManager.GetSettingsString(vMenuShared.ConfigManager.Setting.vmenu_notification_type);
-
-            if (notiftype.ToLower() == "native")
+            if (type == "death")
             {
-                SetNotificationTextEntry("CELL_EMAIL_BCON"); // 10x ~a~
-                foreach (var s in CitizenFX.Core.UI.Screen.StringToArray(message))
-                {
-                    AddTextComponentSubstringPlayerName(s);
-                }
-                DrawNotification(blink, saveToBrief);
-            }
-            else if (notiftype.ToLower() == "mosh")
-            {
-                if (!((type.ToLower()=="alert")||(type.ToLower()=="error")||(type.ToLower()=="info")||(type.ToLower()=="success")))
-                TriggerEvent("mosh_notify:notify", type, $"<span class=\"text-black\">{message}</span>", "info", "info", 5000);
-            }
-            else if (notiftype.ToLower() == "none")
-            {
-
+                    SetNotificationTextEntry("CELL_EMAIL_BCON"); // 10x ~a~
+                    foreach (var s in CitizenFX.Core.UI.Screen.StringToArray(message))
+                    {
+                        AddTextComponentSubstringPlayerName(s);
+                    }
+                    DrawNotification(blink, saveToBrief);
             }
             else
             {
-                SetNotificationTextEntry("CELL_EMAIL_BCON"); // 10x ~a~
-                foreach (var s in CitizenFX.Core.UI.Screen.StringToArray(message))
+                if (notiftype.ToLower() == "native")
                 {
-                    AddTextComponentSubstringPlayerName(s);
+                    SetNotificationTextEntry("CELL_EMAIL_BCON"); // 10x ~a~
+                    foreach (var s in CitizenFX.Core.UI.Screen.StringToArray(message))
+                    {
+                        AddTextComponentSubstringPlayerName(s);
+                    }
+                    DrawNotification(blink, saveToBrief);
                 }
-                DrawNotification(blink, saveToBrief);
+                else if (notiftype.ToLower() == "mosh")
+                {
+                    if (!((type.ToLower()=="alert")||(type.ToLower()=="error")||(type.ToLower()=="info")||(type.ToLower()=="success")))
+                    TriggerEvent("mosh_notify:notify", type, $"<span class=\"text-black\">{message}</span>", "info", "info", 5000);
+                }
+                else if (notiftype.ToLower() == "none")
+                {
+    
+                }
+                else
+                {
+                    SetNotificationTextEntry("CELL_EMAIL_BCON"); // 10x ~a~
+                    foreach (var s in CitizenFX.Core.UI.Screen.StringToArray(message))
+                    {
+                        AddTextComponentSubstringPlayerName(s);
+                    }
+                    DrawNotification(blink, saveToBrief);
+                }
             }
         }
 
@@ -237,7 +248,7 @@ namespace vMenuClient
         public static void Success(string message, bool blink = true, bool saveToBrief = true)
         {
             string notiftype = vMenuShared.ConfigManager.GetSettingsString(vMenuShared.ConfigManager.Setting.vmenu_notification_type);
-            
+
             if (notiftype.ToLower() == "native")
             {
             Custom("~g~~h~Success~h~~s~: " + message, blink, saveToBrief, "success");
