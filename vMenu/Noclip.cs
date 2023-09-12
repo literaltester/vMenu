@@ -78,7 +78,7 @@ namespace vMenuClient
             {
                 if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                 {
-                    //TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">You are now in NoClip! Press F2 to turn off NoClip.</span>", "success", "success", 5000);
+                    TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">You are now in NoClip! Press F2 to turn off NoClip.</span>", "success", "success", 5000);
                 }
                 Scale = RequestScaleformMovie("INSTRUCTIONAL_BUTTONS");
                 while (!HasScaleformMovieLoaded(Scale))
@@ -229,7 +229,7 @@ namespace vMenuClient
                         }
                         if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
                         {
-                            //TriggerEvent("mosh_notify:notify", "SUCCESS", $"<span class=\"text-white\">Your NoClip speed is: {speeds[MovingSpeed]}.</span>", "success", "success", 3000);
+                            TriggerEvent("mosh_notify:notify", "SUCCESS", $"<span class=\"text-white\">Your NoClip speed is: {speeds[MovingSpeed]}.</span>", "success", "success", 3000);
                         }
                     }
 
