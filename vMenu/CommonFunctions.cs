@@ -3564,6 +3564,7 @@ namespace vMenuClient
                 var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + result);
                 if (!string.IsNullOrEmpty(jsonFile))
                 {
+                    var locs = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locationsteleport>(jsonFile);
                     var pos = Game.PlayerPed.Position;
                     var heading = Game.PlayerPed.Heading;
                     var locationName = await GetUserInput("Enter location save name", 30);
@@ -3572,7 +3573,7 @@ namespace vMenuClient
                         Notify.Error(CommonErrors.InvalidInput);
                         return;
                     }
-                    if (vMenuShared.ConfigManager.GetTeleportLocationsData().Any(loc => loc.name == locationName))
+                    if (locs.teleports.Any(loc => loc.name == locationName))
                     {
                         Notify.Error("This location name is already used, please use a different name.");
                         return;

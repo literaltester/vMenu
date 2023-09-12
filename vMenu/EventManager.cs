@@ -50,7 +50,6 @@ namespace vMenuClient
             EventHandlers.Add("vMenu:GetOutOfCar", new Action<int, int>(GetOutOfCar));
             EventHandlers.Add("vMenu:SetDriftSuspension", new Action<int, bool>(SetDriftSuspension));
             EventHandlers.Add("vMenu:PrivateMessage", new Action<string, string>(PrivateMessage));
-            EventHandlers.Add("vMenu:UpdateTeleportLocations", new Action<string>(UpdateTeleportLocations));
 
             if (!((!GetSettingsBool(Setting.vmenu_enable_weather_sync))||( false )))
             {
@@ -467,16 +466,6 @@ namespace vMenuClient
             PlayerAppearance.ClothingAnimationType = -1;
             await Delay(100);
             PlayerAppearance.ClothingAnimationType = backup;
-        }
-
-        /// <summary>
-        /// Updates the teleports locations data from the server side locations.json, because that doesn't update client side on change.
-        /// </summary>
-        /// <param name="jsonData"></param>
-        private void UpdateTeleportLocations(string jsonData)
-        {
-            TeleportOptions.TpLocations = JsonConvert.DeserializeObject<List<vMenuShared.ConfigManager.TeleportLocation>>(jsonData);
-            MiscSettings.TpLocations = JsonConvert.DeserializeObject<List<vMenuShared.ConfigManager.TeleportLocation>>(jsonData);
         }
     }
 }

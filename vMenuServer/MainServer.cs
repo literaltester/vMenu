@@ -978,9 +978,8 @@ namespace vMenuServer
             locs.teleports.Add(location);
             if (!SaveResourceFile(GetCurrentResourceName(), "config/locations/" + jsonname, JsonConvert.SerializeObject(locs, Formatting.Indented), -1))
             {
-                Log("Could not save locations.json file, reason unknown.", LogLevel.error);
+                Log($"Could not save {jsonname} file, reason unknown.", LogLevel.error);
             }
-            //TriggerClientEvent("vMenu:UpdateTeleportLocations", JsonConvert.SerializeObject(locs.teleports));
         }
         #endregion
 

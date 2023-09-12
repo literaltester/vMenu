@@ -169,25 +169,25 @@ namespace vMenuShared
         /// Gets the locations.json data.
         /// </summary>
         /// <returns></returns>
-        public static Locations GetLocations()
+        public static Blips GetBlips()
         {
-            var data = new Locations();
+            var data = new Blips();
 
-            var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations.json");
+            var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/blips.json");
             try
             {
                 if (string.IsNullOrEmpty(jsonFile))
                 {
 #if CLIENT
-                    vMenuClient.Notify.Error("The locations.json file is empty or does not exist, please tell the server owner to fix this.");
+                    vMenuClient.Notify.Error("The blips.json file is empty or does not exist, please tell the server owner to fix this.");
 #endif
 #if SERVER
-                    vMenuServer.DebugLog.Log("The locations.json file is empty or does not exist, please fix this.", vMenuServer.DebugLog.LogLevel.error);
+                    vMenuServer.DebugLog.Log("The blips.json file is empty or does not exist, please fix this.", vMenuServer.DebugLog.LogLevel.error);
 #endif
                 }
                 else
                 {
-                    data = JsonConvert.DeserializeObject<Locations>(jsonFile);
+                    data = JsonConvert.DeserializeObject<Blips>(jsonFile);
                 }
             }
             catch (Exception e)
@@ -201,14 +201,6 @@ namespace vMenuShared
             return data;
         }
 
-        /// <summary>
-        /// Gets just the teleport locations data from the locations.json.
-        /// </summary>
-        /// <returns></returns>
-        public static List<TeleportLocation> GetTeleportLocationsData()
-        {
-            return GetLocations().teleports;
-        }
 
         /// <summary>
         /// Gets just the blips data from the locations.json.
@@ -216,7 +208,7 @@ namespace vMenuShared
         /// <returns></returns>
         public static List<LocationBlip> GetLocationBlipsData()
         {
-            return GetLocations().blips;
+            return GetBlips().blips;
         }
 
         /// <summary>
@@ -226,9 +218,8 @@ namespace vMenuShared
         {
             public List<TeleportLocation> teleports;
         }
-        public struct Locations
+        public struct Blips
         {
-            public List<TeleportLocation> teleports;
             public List<LocationBlip> blips;
         }
 
