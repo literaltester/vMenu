@@ -149,7 +149,7 @@ namespace vMenuClient
                                 var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + location.JsonName);
                                 var data = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locations>(jsonFile);
                                 Menu teleportSubMenu = new Menu(location.name, location.name);
-                                MenuItem teleportSubMenuBtn = new MenuItem(location.name, $"Teleport Submenu.") { Label = "→→→" };
+                                MenuItem teleportSubMenuBtn = new MenuItem(location.name, $"Teleport to ~b~{location.name}~w~, added by the server owner.") { Label = "→→→" };
                                 teleportMenu.AddMenuItem(teleportSubMenuBtn);
 
                                 
