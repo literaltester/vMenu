@@ -71,6 +71,8 @@ namespace Freecam2
                 scaleform.CallFunction("SET_DATA_SLOT", 11, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.Reload, 0), $"Reset Filter");
                 if (!Attached) scaleform.CallFunction("SET_DATA_SLOT", 12, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.CursorAccept, 0), "Attach");
                 else scaleform.CallFunction("SET_DATA_SLOT", 13, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.CursorCancel, 0), "Detach");
+                scaleform.CallFunction("SET_DATA_SLOT", 15, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, Control.WeaponWheelNext, 0), $"Speed: {Speed*SpeedMulti}");
+                    
 
                 // HUD Toggle
                 scaleform.CallFunction("SET_DATA_SLOT", 14, Function.Call<string>(Hash.GET_CONTROL_INSTRUCTIONAL_BUTTON, 2, 236, 0), "Toggle HUD");

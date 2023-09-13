@@ -90,6 +90,20 @@ namespace vMenuShared
             // osd settings
             vmenu_showlocationblips_on_default,
             vmenu_showlocation_on_default,
+
+
+            // world related
+            vmenu_set_vehicle_density_multiplier,
+            vmenu_set_ped_density_multiplier,
+            vmenu_set_random_vehicle_density_multiplier,
+            vmenu_set_parked_vehicle_density_multiplier,
+            vmenu_set_scenario_ped_density_multiplier,
+            vmenu_set_garbage_trucks,
+            vmenu_set_random_boats,
+            vmenu_set_create_random_cops,
+            vmenu_set_create_random_cops_not_onscenarios,
+            vmenu_set_create_random_cops_on_scenarios,
+            vmenu_disable_npc_density,
         }
 
         /// <summary>

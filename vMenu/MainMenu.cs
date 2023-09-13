@@ -44,6 +44,7 @@ namespace vMenuClient
         public static TeleportOptions TeleportOptionsMenu { get; private set; }
         public static TimeOptions TimeOptionsMenu { get; private set; }
         public static WeatherOptions WeatherOptionsMenu { get; private set; }
+        public static NPCDensityMenu DensityOptions { get; private set; }
         public static WeaponOptions WeaponOptionsMenu { get; private set; }
         public static WeaponLoadouts WeaponLoadoutsMenu { get; private set; }
         public static Recording RecordingMenu { get; private set; }
@@ -1155,6 +1156,27 @@ namespace vMenuClient
                     Label = "→→→"
                 };
                 AddMenu(WorldSubmenu, menu, button);
+            }
+
+            if (IsAllowed(Permission.WRONPCDensity) && !GetSettingsBool(Setting.vmenu_disable_npc_density)) 
+            {
+                DensityOptions = new NPCDensityMenu();
+                var menu = DensityOptions.GetMenu();
+                var button = new MenuItem("NPC Density Options (Experimental)", "Change all NPC Density related options here.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(WorldSubmenu, menu, button);
+                WorldSubmenu.OnItemSelect += (sender, item, index) =>
+                {
+                    if (item == button)
+                    {
+                        PlayersList.RequestPlayerList();
+
+                        DensityOptions.RefreshMenu();
+                        menu.RefreshIndex();
+                    }
+                };
             }
 
             // Add the weapons menu.

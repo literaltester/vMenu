@@ -405,6 +405,10 @@ namespace vMenuShared
             ResetIndex,
             #endregion
 
+            #region world related options
+            WRONPCDensity,
+            #endregion
+
         }
         public static Dictionary<Permission, bool> Permissions { get; private set; } = new Dictionary<Permission, bool>();
         public static bool ArePermissionsSetup { get; set; } = false;
@@ -677,6 +681,9 @@ namespace vMenuShared
                     break;
                 case "EC":
                     prefix += "EnhancedCamera";
+                    break;
+                case "WRO":
+                    prefix += "WorldRelatedOptions";
                     break;
                 default:
                     return prefix + name;

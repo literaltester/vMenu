@@ -114,7 +114,11 @@ namespace vMenuClient
             if (!GetSettingsBool(Setting.vmenu_disable_richpresence))
             {
                 Tick += DiscordRichPresence;
-            }            
+            }
+            if (!GetSettingsBool(Setting.vmenu_disable_npc_density))
+            {
+                Tick += NPCDensity;
+            }              
             if (!GetSettingsBool(Setting.vmenu_disable_entity_outlines_tool))
             {
                 Tick += SlowMiscTick;
@@ -3347,6 +3351,40 @@ namespace vMenuClient
         }
         #endregion
 
+        #region NPC Density
+        public async Task NPCDensity()
+        {
+            float valsvdm = GetSettingsFloat(Setting.vmenu_set_vehicle_density_multiplier)+0.0f;
+            float valspdm = GetSettingsFloat(Setting.vmenu_set_ped_density_multiplier)+0.0f;
+            float valsrvdm = GetSettingsFloat(Setting.vmenu_set_random_vehicle_density_multiplier)+0.0f;
+            float valspvdm = GetSettingsFloat(Setting.vmenu_set_parked_vehicle_density_multiplier)+0.0f;
+            float valsdpdm = GetSettingsFloat(Setting.vmenu_set_scenario_ped_density_multiplier)+0.0f;
+            var valsgt = GetSettingsBool(Setting.vmenu_set_garbage_trucks);
+            var valsrb = GetSettingsBool(Setting.vmenu_set_random_boats);
+            var valscrc = GetSettingsBool(Setting.vmenu_set_create_random_cops);
+            var valscrcno = GetSettingsBool(Setting.vmenu_set_create_random_cops_not_onscenarios);
+            var valscrcos = GetSettingsBool(Setting.vmenu_set_create_random_cops_on_scenarios);
+
+            SetVehicleDensityMultiplierThisFrame(valsvdm); 
+            SetPedDensityMultiplierThisFrame(valspdm);
+            SetRandomVehicleDensityMultiplierThisFrame(valsrvdm); 
+            SetParkedVehicleDensityMultiplierThisFrame(valspvdm);
+            SetScenarioPedDensityMultiplierThisFrame(valsdpdm, valsdpdm);
+            SetGarbageTrucks(valsgt);
+            SetRandomBoats(valsrb); 
+            SetCreateRandomCops(valscrc);
+            SetCreateRandomCopsNotOnScenarios(valscrcno); 
+            SetCreateRandomCopsOnScenarios(valscrcos);
+
+            if (((valsgt && valsrb && valscrc && valscrcno && valscrcos) == false) && (((valsvdm + valspdm + valsrvdm + valspvdm + valsdpdm) == 0.0f)))
+            {
+                
+                ClearAreaOfVehicles(GetEntityCoords(PlayerPedId(), false).X, GetEntityCoords(PlayerPedId(), false).Y, GetEntityCoords(PlayerPedId(), false).Z, 1000, false, false, false, false, false);
+                RemoveVehiclesFromGeneratorsInArea((float)(GetEntityCoords(PlayerPedId(), false).X - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Y - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Z - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).X+ 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Y + 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Z + 500.0), 0);
+            }
+            await Delay(0);
+        }
+        #endregion
         public async Task TeleportOptions()
         {
             await Delay(100);
