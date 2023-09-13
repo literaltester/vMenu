@@ -25,6 +25,8 @@ namespace Freecam2
         static float OffsetRotY = 0.0f;
         static float OffsetRotZ = 0.0f;
         static float Speed = 2.0f;
+        static float currspeed = 2.0f;
+        static float SpeedMulti = 1;
 
         static int FilterIndex = 0; // 0 == None
 
@@ -138,6 +140,35 @@ namespace Freecam2
         {
             Vector3 Return = CurrentPos;
 
+            if (IsDisabledControlPressed(1, 14))
+            {
+                currspeed = Speed - 0.5f;
+                Speed = Speed - 0.5f;
+                if (currspeed < 0.5)
+                {
+                    Speed = 0.5f;
+                    currspeed = 0.5f;
+                }
+            }
+            
+            if (IsDisabledControlPressed(1, 15))
+            {
+                currspeed = Speed + 0.5f;
+                Speed = Speed + 0.5f;
+                if (currspeed > Config.MaxSpeed)
+                {
+                    Speed = Config.MaxSpeed;
+                    currspeed = Config.MaxSpeed;
+                }
+            }
+            
+            if (IsDisabledControlPressed(1, 21))
+                SpeedMulti = Config.ShiftSpeed;
+            else
+                SpeedMulti = 1;
+           
+            Speed = Speed * SpeedMulti;
+
             if (IsInputDisabled(0))
             {
                 // Basic movement--- WASD
@@ -188,11 +219,6 @@ namespace Freecam2
                 if (IsDisabledControlPressed(1, (int)Control.Duck)) // Down
                     Return.Z -= (float)(0.1 * Speed);
 
-                // Speed-- Shift
-                if (IsDisabledControlPressed(1, 21))
-                    Speed = Config.ShiftSpeed;
-                else
-                    Speed = Config.DefaultSpeed;
 
                 // Rotation-- Q/E
                 OffsetRotX -= (GetDisabledControlNormal(1, (int)Control.LookUpDown) * Config.Precision * 8.0f);
@@ -210,6 +236,7 @@ namespace Freecam2
 
             if (OffsetRotY > 90.0) OffsetRotY = 90.0f;
             else if (OffsetRotY < -90.0f) OffsetRotY = -90.0f;
+            Speed = currspeed;
             return Return;
         }
 

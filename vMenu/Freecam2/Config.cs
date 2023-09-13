@@ -5,7 +5,8 @@ namespace Freecam2
     public class Config
     {
         public static float DefaultSpeed = 5.0f;
-        public static float ShiftSpeed = 20.0f;
+        public static float ShiftSpeed = 2;
+        public static float MaxSpeed = 20.0f;
         public static float Precision = 1.0f;
         public static float FilterIntensity = 1.0f;
 

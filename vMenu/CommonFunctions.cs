@@ -2259,7 +2259,7 @@ namespace vMenuClient
                 if (!disableTextOutline) { SetTextOutline(); }
                 SetTextEntry("STRING");
                 AddTextComponentString(text);
-                DrawText(xPosition, yPosition);w
+                DrawText(xPosition, yPosition);
             }
         }
         #endregion
