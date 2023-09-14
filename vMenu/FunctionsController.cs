@@ -115,6 +115,10 @@ namespace vMenuClient
             {
                 Tick += DiscordRichPresence;
             }
+            if (!GetSettingsBool(Setting.vmenu_disable_replace_plates))
+            {
+                SetPlates();
+            }
             if (!GetSettingsBool(Setting.vmenu_disable_npc_density))
             {
                 Tick += NPCDensity;
@@ -1500,6 +1504,7 @@ namespace vMenuClient
             // Full arms
             new KeyValuePair<Vector3, Vector3>(new Vector3(0f, 1.3f, 0.35f), new Vector3(0f, 0f, 0.15f)),
         };
+        public bool PlatesSet { get; private set; }
 
         private async Task UpdateCamera(Camera oldCamera, Vector3 pos, Vector3 pointAt)
         {
@@ -3383,6 +3388,51 @@ namespace vMenuClient
                 RemoveVehiclesFromGeneratorsInArea((float)(GetEntityCoords(PlayerPedId(), false).X - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Y - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Z - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).X+ 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Y + 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Z + 500.0), 0);
             }
             await Delay(0);
+        }
+        #endregion
+
+        #region Vehicle Plates 
+        public void SetPlates()
+        {
+            if (!PlatesSet)
+            {
+                var runtimeTexture = "customPlates";
+                var plateTxd = CreateRuntimeTxd(runtimeTexture);
+                var vehShare = "vehshare";
+
+                var PlateList = new Dictionary<int, string>() 
+                {
+                    {3, "plate01"},
+                    {0, "plate02"},
+                    {4, "plate03"},
+                    {2, "plate04"},
+                    {1, "plate05"},
+                    {5, "yankton_plate"},
+                };
+    
+                foreach ( var Plates in new Dictionary<int, string>(PlateList))
+                {
+
+                    var stuff = GetConvar("plate_override_"+Plates.Value, "false");
+    
+                    if (!(stuff == "false" || stuff == null || stuff == "") )
+                    {
+                        var data2 = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.PlateStruct>(stuff);
+                        if (!(data2.fileName == null))
+                        {
+                            CreateRuntimeTextureFromImage(plateTxd, Plates.Value, data2.fileName);
+                            AddReplaceTexture(vehShare, Plates.Value, runtimeTexture, Plates.Value);
+                        }
+                        if (!(data2.normalName == null))
+                        {
+                            CreateRuntimeTextureFromImage(plateTxd, Plates.Value + "_n", data2.normalName);
+                            AddReplaceTexture(vehShare, Plates.Value + "_n", runtimeTexture, Plates.Value + "_n");
+                        }
+                        SetDefaultVehicleNumberPlateTextPattern(Plates.Key, data2.pattern);
+                    }
+                }
+                PlatesSet = true;
+            }
         }
         #endregion
         public async Task TeleportOptions()

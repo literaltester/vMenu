@@ -31,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="plates\*.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="config\locations\*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

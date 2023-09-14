@@ -104,6 +104,7 @@ namespace vMenuShared
             vmenu_set_create_random_cops_not_onscenarios,
             vmenu_set_create_random_cops_on_scenarios,
             vmenu_disable_npc_density,
+            vmenu_disable_replace_plates,
         }
 
         /// <summary>
@@ -273,6 +274,21 @@ namespace vMenuShared
             {
                 this.JsonName = JsonName;
                 this.name = name;
+            }
+        }
+        public struct PlateStruct
+        {
+            public string fileName;
+            public string normalName;
+            public string vMenuPlateName;
+            public string pattern;
+
+            public PlateStruct(string fileName, string normalName, string vMenuPlateName, string pattern)
+            {
+                this.fileName = fileName;
+                this.normalName = normalName;
+                this.vMenuPlateName = vMenuPlateName;
+                this.pattern = pattern;
             }
         }
         /// <summary>
