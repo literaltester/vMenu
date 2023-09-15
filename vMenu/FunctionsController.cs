@@ -3399,6 +3399,8 @@ namespace vMenuClient
                 var runtimeTexture = "customPlates";
                 var plateTxd = CreateRuntimeTxd(runtimeTexture);
                 var vehShare = "vehshare";
+                var defaultNormal = "defaultNormalTexture";
+                CreateRuntimeTextureFromImage(plateTxd, defaultNormal, "plates/plateNormals.png");
 
                 var PlateList = new Dictionary<int, string>() 
                 {
