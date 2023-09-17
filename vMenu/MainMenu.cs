@@ -1147,7 +1147,7 @@ namespace vMenuClient
                 AddMenu(WorldSubmenu, menu, button);
             }
 
-            if (IsAllowed(Permission.WRONPCOptions) && !GetSettingsBool(Setting.vmenu_disable_npc_density)) 
+            if (IsAllowed(Permission.WRNPCOptions, true) && !GetSettingsBool(Setting.vmenu_disable_npc_density)) 
             {
                 DensityOptions = new NPCDensityMenu();
                 var menu = DensityOptions.GetMenu();

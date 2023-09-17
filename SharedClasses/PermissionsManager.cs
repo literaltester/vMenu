@@ -219,6 +219,10 @@ namespace vMenuShared
             WPSetAllAmmo,
             #endregion
 
+            #region world related options
+            WRNPCOptions,
+            #endregion
+
             //Weapons Permissions
             #region weapon specific permissions
             WPAPPistol,
@@ -396,9 +400,6 @@ namespace vMenuShared
             ResetIndex,
             #endregion
 
-            #region world related options
-            WRONPCOptions,
-            #endregion
 
         }
         public static Dictionary<Permission, bool> Permissions { get; private set; } = new Dictionary<Permission, bool>();
@@ -673,8 +674,8 @@ namespace vMenuShared
                 case "EC":
                     prefix += "EnhancedCamera";
                     break;
-                case "WRO":
-                    prefix += "WorldRelatedOptions";
+                case "WR":
+                    prefix += "WorldRelated";
                     break;
                 default:
                     return prefix + name;
