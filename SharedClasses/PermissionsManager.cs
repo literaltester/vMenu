@@ -379,15 +379,6 @@ namespace vMenuShared
             MSDevTools,
             #endregion
 
-            // Voice Chat
-            #region voice chat
-            VCMenu,
-            VCAll,
-            VCEnable,
-            VCShowSpeaker,
-            VCStaffChannel,
-            #endregion
-
             // Plugin Menu
             #region plugin menu
             PNMenu,
@@ -406,7 +397,7 @@ namespace vMenuShared
             #endregion
 
             #region world related options
-            WRONPCDensity,
+            WRONPCOptions,
             #endregion
 
         }

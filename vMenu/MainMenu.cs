@@ -51,7 +51,6 @@ namespace vMenuClient
         public static EnhancedCamera EnhancedCameraMenu { get; private set; }
         public static PluginSettings PluginSettingsMenu { get; private set; }
         public static MiscSettings MiscSettingsMenu { get; private set; }
-        public static VoiceChat VoiceChatSettingsMenu { get; private set; }
         public static About AboutMenu { get; private set; }
         public static bool NoClipEnabled { get { return NoClip.IsNoclipActive(); } set { NoClip.SetNoclipActive(value); } }
         public static IPlayerList PlayersList;
@@ -866,16 +865,6 @@ namespace vMenuClient
             }
 
 
-            // Add Voice Chat Menu.
-            if (IsAllowed(Permission.VCMenu))
-            {
-                var menu = VoiceChatSettingsMenu.GetMenu();
-                var button = new MenuItem("Voice Chat Settings", "Change Voice Chat options here.")
-                {
-                    Label = "→→→"
-                };
-                AddMenu(Menu, menu, button);
-            }
 
             {
                 var menu = RecordingMenu.GetMenu();
@@ -1158,7 +1147,7 @@ namespace vMenuClient
                 AddMenu(WorldSubmenu, menu, button);
             }
 
-            if (IsAllowed(Permission.WRONPCDensity) && !GetSettingsBool(Setting.vmenu_disable_npc_density)) 
+            if (IsAllowed(Permission.WRONPCOptions) && !GetSettingsBool(Setting.vmenu_disable_npc_density)) 
             {
                 DensityOptions = new NPCDensityMenu();
                 var menu = DensityOptions.GetMenu();
@@ -1239,17 +1228,6 @@ namespace vMenuClient
             }
 
 
-            // Add Voice Chat Menu.
-            if (IsAllowed(Permission.VCMenu))
-            {
-                VoiceChatSettingsMenu = new VoiceChat();
-                var menu = VoiceChatSettingsMenu.GetMenu();
-                var button = new MenuItem("Voice Chat Settings", "Change Voice Chat options here.")
-                {
-                    Label = "→→→"
-                };
-                AddMenu(Menu, menu, button);
-            }
 
             {
                 RecordingMenu = new Recording();
