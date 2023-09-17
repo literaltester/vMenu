@@ -659,9 +659,6 @@ namespace vMenuShared
                 case "MS":
                     prefix += "MiscSettings";
                     break;
-                case "VC":
-                    prefix += "VoiceChat";
-                    break;
                 case "TP":
                     prefix += "TeleportOptions";
                     break;

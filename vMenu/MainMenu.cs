@@ -411,11 +411,7 @@ namespace vMenuClient
                                 var type = 0; // 0 = string, 1 = float, 2 = int.
                                 if (kvp.StartsWith("settings_"))
                                 {
-                                    if (kvp == "settings_voiceChatProximity") // float
-                                    {
-                                        type = 1;
-                                    }
-                                    else if (kvp == "settings_clothingAnimationType") // int
+                                    if (kvp == "settings_clothingAnimationType") // int
                                     {
                                         type = 2;
                                     }

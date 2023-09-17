@@ -40,9 +40,6 @@ namespace vMenuClient
         private string headingDisplay = "";
 
         private readonly List<int> waypointPlayerIdsToRemove = new();
-        private const float voiceIndicatorWidth = 0.02f;
-        private const float voiceIndicatorHeight = 0.041f;
-        private const float voiceIndicatorMutedWidth = voiceIndicatorWidth + 0.0021f;
         public const string clothingAnimationDecor = "clothing_animation_type";
         private bool clothingAnimationReverse = false;
         private float clothingOpacity = 1f;
