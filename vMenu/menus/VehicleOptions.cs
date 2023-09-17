@@ -214,7 +214,7 @@ namespace vMenuClient.menus
                 };
                 foreach ( var Plates in new Dictionary<int, string>(PlateList))
                 {
-                    var stuff = GetConvar("plate_override_"+Plates.Value, "false");
+                    var stuff = GetConvar("vmenu_plate_override_"+Plates.Value, "false");
                     if (!(stuff == "false" || stuff == null || stuff == "") )
                     {
                         var data2 = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.PlateStruct>(stuff);
