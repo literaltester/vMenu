@@ -238,6 +238,7 @@ namespace vMenuClient.menus
             // Personal Vehicle Command
             RegisterCommand("pv", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
             {
+                TriggerEvent("chat:addSuggestion", "/pv", "Sets the vehicle you're currently driving as a Personal Vehicle.");
                 if (Game.PlayerPed.IsInVehicle())
                 {
                     var veh = GetVehicle();
@@ -279,7 +280,6 @@ namespace vMenuClient.menus
                 {
                     Notify.Error(CommonErrors.NoVehicle);
                 }
-                TriggerEvent("chat:addSuggestion", "/pv", "Sets the vehicle you're currently driving as a Personal Vehicle.");
             }), false);
 
             // Handle button presses.
