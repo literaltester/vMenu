@@ -209,7 +209,7 @@ namespace vMenuClient
             }
 
 
-            if (!GetSettingsBool(Setting.vmenu_disable_dv_command))
+            if (GetSettingsBool(Setting.vmenu_enable_dv_command))
             {
                 RegisterCommand("dv", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
                 {
@@ -1143,7 +1143,7 @@ namespace vMenuClient
                 AddMenu(WorldSubmenu, menu, button);
             }
 
-            if (IsAllowed(Permission.WRNPCOptions, true) && !GetSettingsBool(Setting.vmenu_disable_npc_density)) 
+            if (IsAllowed(Permission.WRNPCOptions, true) && GetSettingsBool(Setting.vmenu_enable_npc_density)) 
             {
                 DensityOptions = new NPCDensityMenu();
                 var menu = DensityOptions.GetMenu();

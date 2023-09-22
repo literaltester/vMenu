@@ -78,7 +78,7 @@ namespace vMenuShared
             vmenu_discord_large_image_text,
 
             // DV Script
-            vmenu_disable_dv_command,
+            vmenu_enable_dv_command,
             vmenu_dv_retries,
             vmenu_dv_distance,
             vmenu_freecam_toggle_key,
@@ -103,8 +103,8 @@ namespace vMenuShared
             vmenu_set_create_random_cops,
             vmenu_set_create_random_cops_not_onscenarios,
             vmenu_set_create_random_cops_on_scenarios,
-            vmenu_disable_npc_density,
-            vmenu_disable_replace_plates,
+            vmenu_enable_npc_density,
+            vmenu_enable_replace_plates,
         }
 
         /// <summary>
