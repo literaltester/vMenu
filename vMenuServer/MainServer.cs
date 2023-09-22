@@ -188,8 +188,30 @@ namespace vMenuServer
         /// </summary>
         public MainServer()
         {
-            // name check
-            Debug.WriteLine($"Server ID: {GetSettingsString(Setting.vmenu_individual_server_id)}");
+        var gamebuild = 2372;
+        // build check
+        if (GetGameBuildNumber() > gamebuild)
+        {
+            var InvalidServerId = new Exception($"\r\n\r\n^1 Wrong Game Build: {GetGameBuildNumber()}!. You need atleast Game Build {gamebuild} to use PF-vMenu. Tutorial on how to change this: https://forum.cfx.re/t/tutorial-forcing-gamebuilds-on-fivem/4784977\r\n\r\n\r\n^7");
+            try
+            {
+                throw InvalidServerId;
+            }
+            catch (Exception e)
+            {
+                for (int i = 0; i < 5; i++) 
+                {
+                    Debug.Write(e.Message);
+                    System.Threading.Thread.Sleep(5000);
+                
+                }    
+                return;               
+            }
+        }
+        else
+        {
+            Debug.WriteLine($"Game Build: {GetGameBuildNumber()}");
+            // id check
             if (GetSettingsString(Setting.vmenu_individual_server_id) == "" || GetSettingsString(Setting.vmenu_individual_server_id) == null || GetSettingsString(Setting.vmenu_individual_server_id) == "null")
             {
                 var InvalidServerId = new Exception("\r\n\r\n^1 Invalid Server Id! change or add 'setr vmenu_individual_server_id' to your server cfg or permission cfg \r\n\r\n\r\n^7");
@@ -210,6 +232,7 @@ namespace vMenuServer
             }
             else
             {
+            Debug.WriteLine($"Server ID: {GetSettingsString(Setting.vmenu_individual_server_id)}");
             if (GetCurrentResourceName() != "vMenu")
             {
                 var InvalidNameException = new Exception("\r\n\r\n^1[vMenu] INSTALLATION ERROR!\r\nThe name of the resource is not valid. " +
@@ -309,6 +332,7 @@ namespace vMenuServer
                 }
             }
         }
+    }
         }
         #endregion
 

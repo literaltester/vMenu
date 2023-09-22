@@ -32,7 +32,8 @@ files {
     'config/*.json',
     'config/languages/*.json',
     'config/locations/*.json',
-    'storage.html'
+    'storage.html',
+    'plates/*.png'
 }
 client_script {'plugin-config.lua', 'plugins/***/*.lua', 'plugins/*.lua'}
 
