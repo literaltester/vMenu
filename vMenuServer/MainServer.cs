@@ -189,10 +189,11 @@ namespace vMenuServer
         public MainServer()
         {
         var gamebuild = 2372;
+        var gamebuildcurr = GetConvarInt("sv_enforcegamebuild", 0);
         // build check
-        if (GetGameBuildNumber() > gamebuild)
+        if (gamebuildcurr < gamebuild)
         {
-            var InvalidServerId = new Exception($"\r\n\r\n^1 Wrong Game Build: {GetGameBuildNumber()}!. You need atleast Game Build {gamebuild} to use PF-vMenu. Tutorial on how to change this: https://forum.cfx.re/t/tutorial-forcing-gamebuilds-on-fivem/4784977\r\n\r\n\r\n^7");
+            var InvalidServerId = new Exception($"\r\n\r\n^1 Wrong Game Build: {gamebuildcurr}!. You need atleast Game Build {gamebuild} to use PF-vMenu. Tutorial on how to change this: https://forum.cfx.re/t/tutorial-forcing-gamebuilds-on-fivem/4784977\r\n\r\n\r\n^7");
             try
             {
                 throw InvalidServerId;
@@ -210,7 +211,7 @@ namespace vMenuServer
         }
         else
         {
-            Debug.WriteLine($"Game Build: {GetGameBuildNumber()}");
+            Debug.WriteLine($"Game Build: {gamebuildcurr}");
             // id check
             if (GetSettingsString(Setting.vmenu_individual_server_id) == "" || GetSettingsString(Setting.vmenu_individual_server_id) == null || GetSettingsString(Setting.vmenu_individual_server_id) == "null")
             {
