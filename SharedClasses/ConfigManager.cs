@@ -105,6 +105,8 @@ namespace vMenuShared
             vmenu_set_create_random_cops_on_scenarios,
             vmenu_enable_npc_density,
             vmenu_enable_replace_plates,
+
+            vmenu_enable_client_time_weather,
         }
 
         /// <summary>

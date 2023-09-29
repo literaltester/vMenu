@@ -835,19 +835,19 @@ namespace vMenuClient
             Menu.AddMenuItem(vehicleSubmenuBtn);
             // Add the vehicle options Menu.
 
-
             var worldSubmenuBtn = new MenuItem("World Related Options", "Open this submenu for world related subcategories.") { Label = "→→→" };
-            Menu.AddMenuItem(worldSubmenuBtn);
-
+            if (GetSettingsBool(Setting.vmenu_enable_client_time_weather))
             {
-                var menu2 = PlayerTimeWeatherOptionsMenu.GetMenu();
-                var button2 = new MenuItem("Time & Weather Options", "Change all time & weather related options here.")
+                Menu.AddMenuItem(worldSubmenuBtn);
                 {
-                    Label = "→→→"
-                };
-                AddMenu(Menu, menu2, button2);
+                    var menu2 = PlayerTimeWeatherOptionsMenu.GetMenu();
+                    var button2 = new MenuItem("Time & Weather Options", "Change all time & weather related options here.")
+                    {
+                        Label = "→→→"
+                    };
+                    AddMenu(Menu, menu2, button2);
+                }
             }
-
             // Add Teleport Menu.
             if (IsAllowed(Permission.TPMenu))
             {
