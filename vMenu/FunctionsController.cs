@@ -110,11 +110,11 @@ namespace vMenuClient
             {
                 Tick += DiscordRichPresence;
             }
-            if (!GetSettingsBool(Setting.vmenu_disable_replace_plates))
+            if (GetSettingsBool(Setting.vmenu_enable_replace_plates))
             {
                 SetPlates();
             }
-            if (!GetSettingsBool(Setting.vmenu_disable_npc_density))
+            if (GetSettingsBool(Setting.vmenu_enable_npc_density))
             {
                 Tick += NPCDensity;
             }              
