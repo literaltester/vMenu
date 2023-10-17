@@ -10,7 +10,7 @@ The original vMenu was lacking on options and new content. I made this version a
 - This release is also based on the v3.6.0 release of vMenu. We had to do a whole bunch of porting from our v3.5.1 pre-release into this.
 
 # What's New
-- Chameleon Color by Wildbrick142 - [Download Chameleon Colors](https://discord.gg/D7cVc8TzPN) [here](https://discord.com/channels/948321761429184584/1055750916080422922/1089373135331151872), [Source](https://www.gta5-mods.com/misc/chameleon-paint-add-on)
+- Chameleon Color by Wildbrick142 - [Download Chameleon Colors here](https://cdn.discordapp.com/attachments/1099903046701559828/1102708906234478712/pzn_chameleoncolor.7z), [Source](https://www.gta5-mods.com/misc/chameleon-paint-add-on)
 - Content Updated up to v2802 & v2944
 - Mosh_Notify embedded Support for vMenu's NoClip - [Download Mosh_Notify here](https://forum.cfx.re/t/release-free-mosh-notify-fivem-custom-notifications-with-loadbar/2614951)
 - Los Santos Tuners goodies such as Vehicle Stance and Drift Tires (it's useless since we have vStancer and Handling Editor, but hey, it works)
@@ -137,7 +137,7 @@ vMenu v2.0.0 and earlier was [using a modified version of NativeUI](https://gith
 
 Tom Grobbe - https://www.vespura.com/
 
-Copyright © 2017-2023
+Copyright © 2017-2022
 
 You can use and edit this code to your liking as long as you don't ever claim it to be your own code and always provide proper credit. 
 You're **not** allowed to sell vMenu or any code you take from it.

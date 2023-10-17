@@ -197,6 +197,10 @@ namespace vMenuServer
             try
             {
                 throw InvalidGameBuild;
+            var InvalidServerId = new Exception($"\r\n\r\n^1 Wrong Game Build: {gamebuildcurr}!. You need atleast Game Build {gamebuild} to use PF-vMenu. Tutorial on how to change this: https://forum.cfx.re/t/tutorial-forcing-gamebuilds-on-fivem/4784977\r\n\r\n\r\n^7");
+            try
+            {
+                throw InvalidServerId;
             }
             catch (Exception e)
             {
@@ -212,6 +216,7 @@ namespace vMenuServer
         else
         {
             Debug.WriteLine($"Game build is: v{gamebuildcurr}");
+            Debug.WriteLine($"Game Build: {gamebuildcurr}");
             // id check
             if (GetSettingsString(Setting.vmenu_individual_server_id) == "" || GetSettingsString(Setting.vmenu_individual_server_id) == null || GetSettingsString(Setting.vmenu_individual_server_id) == "null")
             {
