@@ -206,6 +206,11 @@ namespace vMenuShared
             WORandomizeClouds,
             #endregion
 
+            // Client Time/Weather Options
+            #region
+            CTWMenu,
+            #endregion
+
             // Weapon Options
             #region weapon options
             WPMenu,
@@ -219,6 +224,7 @@ namespace vMenuShared
             WPSetAllAmmo,
             #endregion
 
+            // World Related Options
             #region world related options
             WRNPCOptions,
             #endregion
