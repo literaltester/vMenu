@@ -19,6 +19,7 @@ namespace vMenuShared
             vmenu_menu_staff_only,
             vmenu_menu_toggle_key,
             vmenu_noclip_toggle_key,
+            vmenu_noclip_ghosting_enabled,
             vmenu_keep_spawned_vehicles_persistent,
             vmenu_use_els_compatibility_mode,
             vmenu_handle_invisibility,

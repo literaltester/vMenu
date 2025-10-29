@@ -231,9 +231,12 @@ namespace vMenuClient
                 SetEntityCollision(noclipEntity, false, false);
                 SetEntityCoordsNoOffset(noclipEntity, newPos.X, newPos.Y, newPos.Z, true, true, true);
 
-                SetEntityVisible(noclipEntity, false, false);
-                SetLocalPlayerVisibleLocally(true);
-                SetEntityAlpha(noclipEntity, (int)(255 * 0.2), 0);
+                if (GetSettingsBool(Setting.vmenu_noclip_ghosting_enabled))
+                {
+                    SetEntityVisible(noclipEntity, false, false);
+                    SetLocalPlayerVisibleLocally(true);
+                    SetEntityAlpha(noclipEntity, (int)(255 * 0.2), 0);
+                }
 
                 SetEveryoneIgnorePlayer(Game.PlayerPed.Handle, true);
                 SetPoliceIgnorePlayer(Game.PlayerPed.Handle, true);
