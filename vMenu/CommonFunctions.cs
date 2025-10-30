@@ -1239,7 +1239,28 @@ namespace vMenuClient
                 speed = GetEntitySpeedVector(tmpOldVehicle.Handle, true).Y; // get forward/backward speed only
                 rpm = tmpOldVehicle.CurrentRPM;
             }
+            string jsonData = LoadResourceFile(GetCurrentResourceName(), "config/addons.json") ?? "{}";
+            var addons = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(jsonData);
 
+
+            foreach (string addon in addons["vehicleblacklist"])
+            {
+                uint vehicleblackist = (uint)GetHashKey(addon);
+                if ((vehicleHash == vehicleblackist) && !IsAllowed(Permission.VOVehiclesBlacklist))
+                    {
+                        Notify.Alert("You are not allowed to spawn this vehicle, because it is restricted.");
+                        return 0;     
+                    }
+                }
+            foreach (string addon in addons["disablefromdefaultlist"])
+            {
+                uint removedefaultlist = (uint)GetHashKey(addon.ToLower());
+                if ((vehicleHash == removedefaultlist) && !IsAllowed(Permission.VODisableFromDefaultList))
+                    {
+                        Notify.Alert("You are not allowed to spawn this vehicle, because it is restricted.");
+                        return 0;     
+                    }
+                }
             var modelClass = GetVehicleClassFromName(vehicleHash);
             if (!VehicleSpawner.allowedCategories[modelClass])
             {
@@ -1374,7 +1395,10 @@ namespace vMenuClient
             if (!vehicle.Model.IsTrain) // to be extra fucking safe
             {
                 // workaround of retarded feature above:
+                if (spawnInside || IsAllowed(Permission.BPCarlaunch))
+                {
                 SetVehicleForwardSpeed(vehicle.Handle, speed);
+                }
             }
             vehicle.CurrentRPM = rpm;
 
@@ -1419,6 +1443,35 @@ namespace vMenuClient
                 ToggleVehicleMod(vehicle.Handle, 20, vehicleInfo.tyreSmoke);
                 ToggleVehicleMod(vehicle.Handle, 22, vehicleInfo.xenonHeadlights);
                 SetVehicleLivery(vehicle.Handle, vehicleInfo.livery);
+                
+                if (!(vehicleInfo.colors["primary"] == 1100110))
+                {
+                if (vehicleInfo.colors["secondary"] == 1100110)
+                {
+                SetVehicleColours(vehicle.Handle, vehicleInfo.colors["primary"], 0);
+                SetVehicleCustomSecondaryColour(vehicle.Handle, vehicleInfo.colors["secondaryr"], vehicleInfo.colors["secondaryg"] , vehicleInfo.colors["secondaryb"]);
+                SetMaterial.SetSecondaryMaterial(vehicle.Handle, vehicleInfo.colors["secondaryf"]);
+                }
+                else
+                SetVehicleColours(vehicle.Handle, vehicleInfo.colors["primary"], vehicleInfo.colors["secondary"]);
+                }
+                else
+                {
+                if (vehicleInfo.colors["secondary"] == 1100110)
+                {
+                SetVehicleColours(vehicle.Handle, 0, 0);
+                SetVehicleCustomSecondaryColour(vehicle.Handle, vehicleInfo.colors["secondaryr"], vehicleInfo.colors["secondaryg"] , vehicleInfo.colors["secondaryb"]);
+                 SetMaterial.SetSecondaryMaterial(vehicle.Handle, vehicleInfo.colors["secondaryf"]);
+
+                }
+                else
+                SetVehicleColours(vehicle.Handle, 0, vehicleInfo.colors["secondary"]);
+
+                    SetMaterial.SetPrimaryMaterial(vehicle.Handle, vehicleInfo.colors["primaryf"]);
+                
+                SetVehicleCustomPrimaryColour(vehicle.Handle, vehicleInfo.colors["primaryr"], vehicleInfo.colors["primaryg"] , vehicleInfo.colors["primaryb"]);
+                }
+
 
                 bool useCustomRgbPrimary = vehicleInfo.colors.ContainsKey("customPrimaryR") && vehicleInfo.colors.ContainsKey("customPrimaryG") && vehicleInfo.colors.ContainsKey("customPrimaryB");
                 if (useCustomRgbPrimary && vehicleInfo.colors["customPrimaryR"] > 0 && vehicleInfo.colors["customPrimaryG"] > 0 && vehicleInfo.colors["customPrimaryB"] > 0)
@@ -1542,17 +1595,74 @@ namespace vMenuClient
                     #region colors
                     var colors = new Dictionary<string, int>();
                     var primaryColor = 0;
+                    var primaryColorred = 0;
+                    var primaryColorgreen = 0;
+                    var primaryColorblue = 0;
+                    var primaryFinish = await GetMaterial.GetPrimaryMaterialAsync(veh.Handle);
+
                     var secondaryColor = 0;
+                    var secondaryColorred = 0;
+                    var secondaryColorgreen = 0;
+                    var secondaryColorblue = 0;
+                    var secondaryFinish = await GetMaterial.GetSecondaryMaterialAsync(veh.Handle);
+
+
                     var pearlescentColor = 0;
                     var wheelColor = 0;
                     var dashColor = 0;
                     var trimColor = 0;
+     
                     GetVehicleExtraColours(veh.Handle, ref pearlescentColor, ref wheelColor);
+                    GetVehicleCustomPrimaryColour(veh.Handle, ref primaryColorred, ref primaryColorgreen, ref primaryColorblue);
+                   
+                   
+                    if (!(!((primaryColorred +primaryColorgreen + primaryColorblue ) == 0 ) ||  !(primaryFinish == 0)))
+                    {
                     GetVehicleColours(veh.Handle, ref primaryColor, ref secondaryColor);
+                    }
+                    else
+                    {
+                        GetVehicleColours(veh.Handle, ref primaryColor, ref secondaryColor);
+                        primaryColor = 1100110;
+                    }
+
+                    GetVehicleCustomSecondaryColour(veh.Handle, ref secondaryColorred, ref secondaryColorgreen, ref secondaryColorblue);
+                   
+                   
+                    if (!(!((secondaryColorred +secondaryColorgreen + secondaryColorblue ) == 0 ) ||  !(secondaryFinish == 0)))
+                    {
+                    GetVehicleColours(veh.Handle, ref secondaryColor, ref secondaryColor);
+                    }
+                    else
+                    {   
+                        if (primaryColor == 1100110)
+                        {
+                        secondaryColor = 1100110;   
+                        primaryColor = 1100110;                           
+                        }
+                        else
+                        {
+                        GetVehicleColours(veh.Handle, ref secondaryColor, ref secondaryColor);
+                        secondaryColor = 1100110;                            
+                        }
+                    }
+          
+                   
+                    
                     GetVehicleDashboardColour(veh.Handle, ref dashColor);
                     GetVehicleInteriorColour(veh.Handle, ref trimColor);
                     colors.Add("primary", primaryColor);
+                    colors.Add("primaryr", primaryColorred);
+                    colors.Add("primaryg", primaryColorgreen);
+                    colors.Add("primaryb", primaryColorblue);
+                    colors.Add("primaryf", primaryFinish);
+
                     colors.Add("secondary", secondaryColor);
+                    colors.Add("secondaryr", secondaryColorred);
+                    colors.Add("secondaryg", secondaryColorgreen);
+                    colors.Add("secondaryb", secondaryColorblue);
+                    colors.Add("secondaryf", secondaryFinish);
+
                     colors.Add("pearlescent", pearlescentColor);
                     colors.Add("wheels", wheelColor);
                     colors.Add("dash", dashColor);
@@ -1688,8 +1798,39 @@ namespace vMenuClient
             }
 
             // update the saved vehicles menu list to reflect the new saved car.
-            MainMenu.SavedVehiclesMenu?.UpdateMenuAvailableCategories();
+            if (MainMenu.SavedVehiclesMenu != null)
+            {
+                MainMenu.SavedVehiclesMenu?.UpdateMenuAvailableCategories();
+            }
 
+        }
+        #endregion
+
+        #region Set Reduce Drift Suspension
+        public static void SetVehicleDriftSuspension()
+        {
+            // Only continue if the player is in a vehicle.
+            if (Game.PlayerPed.IsInVehicle())
+            {
+                // Get the vehicle.
+                Vehicle veh = GetVehicle();
+
+                // If the vehicle as the requirement to do this.
+                var StrAdvancedFlags = GetVehicleHandlingInt( veh.Handle, "CCarHandlingData", "strAdvancedFlags" );
+                if (StrAdvancedFlags == 0) 
+                {
+                    Notify.Error("This vehicle doesn't have the requirement to do this.", true, false);
+                    return;
+                }
+
+                // We send to all client
+                BaseScript.TriggerServerEvent("vMenu:SetDriftSuspension", veh.NetworkId);
+            }
+            // The player is not inside a vehicle.
+            else
+            {
+                Notify.Error(CommonErrors.NoVehicle);
+            }
         }
         #endregion
 
@@ -1731,8 +1872,21 @@ namespace vMenuClient
             // and add it to the dictionary above, with the vehicle save name as the key.
             foreach (var saveName in savedVehicleNames)
             {
-                vehiclesList.Add(saveName, StorageManager.GetSavedVehicleInfo(saveName));
+            string jsonData = LoadResourceFile(GetCurrentResourceName(), "config/addons.json") ?? "{}";
+            var addons = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(jsonData); 
+            var vehicleblacklist = new List<string>();
+            foreach (string addon in addons["vehicleblacklist"])
+            {
+                    uint veh = (uint)GetHashKey(addon);
+                    vehicleblacklist.Add(veh.ToString());
             }
+                if (!vehicleblacklist.Any(x => x == StorageManager.GetSavedVehicleInfo(saveName).model.ToString() && !IsAllowed(Permission.VOVehiclesBlacklist)) )
+                    {
+
+                        vehiclesList.Add(saveName, StorageManager.GetSavedVehicleInfo(saveName));
+                        
+                    }
+                }                                
             // Return the vehicle dictionary containing all vehicle save names (keys) linked to the correct vehicle
             // including all vehicle mods/customization parts.
             return vehiclesList;
@@ -3466,22 +3620,35 @@ namespace vMenuClient
         /// Saves the player's location as a new teleport location in the teleport options menu.
         /// </summary>
         public static async void SavePlayerLocationToLocationsFile()
-        {
-            var pos = Game.PlayerPed.Position;
-            var heading = Game.PlayerPed.Heading;
-            var locationName = await GetUserInput("Enter location save name", 30);
-            if (string.IsNullOrEmpty(locationName))
+        {                   
+            var result = await GetUserInput(windowTitle: "Enter json file you wish to add location too", defaultText: "", maxInputLength: 100);
+            if (!string.IsNullOrEmpty(result))
             {
-                Notify.Error(CommonErrors.InvalidInput);
-                return;
+                var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + result);
+                if (!string.IsNullOrEmpty(jsonFile))
+                {
+                    var locs = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locationsteleport>(jsonFile);
+                    var pos = Game.PlayerPed.Position;
+                    var heading = Game.PlayerPed.Heading;
+                    var locationName = await GetUserInput("Enter location save name", 30);
+                    if (string.IsNullOrEmpty(locationName))
+                    {
+                        Notify.Error(CommonErrors.InvalidInput);
+                        return;
+                    }
+                    if (locs.teleports.Any(loc => loc.name == locationName))
+                    {
+                        Notify.Error("This location name is already used, please use a different name.");
+                        return;
+                    }
+                    TriggerServerEvent("vMenu:SaveTeleportLocation", JsonConvert.SerializeObject(new vMenuShared.ConfigManager.TeleportLocation(locationName, pos, heading)), result);
+                    Notify.Success("The location was successfully saved.");
+                }
+                else
+                {
+                    Notify.Error(result + " does not exist.");
+                }
             }
-            if (vMenuShared.ConfigManager.GetTeleportLocationsData().Any(loc => loc.name == locationName))
-            {
-                Notify.Error("This location name is already used, please use a different name.");
-                return;
-            }
-            TriggerServerEvent("vMenu:SaveTeleportLocation", JsonConvert.SerializeObject(new vMenuShared.ConfigManager.TeleportLocation(locationName, pos, heading)));
-            Notify.Success("The location was successfully saved.");
         }
         #endregion
 

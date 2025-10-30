@@ -187,8 +187,8 @@ namespace vMenuClient.menus
 
                 if (savedVehicles.Count > 0)
                 {
-                    List<MenuItem> spawnableVehicles = [];   
-                    List<MenuItem> unspawnableVehicles = [];   
+                    List<MenuItem> spawnableVehicles = [];
+                    List<MenuItem> unspawnableVehicles = [];
 
                     foreach (var kvp in savedVehicles)
                     {

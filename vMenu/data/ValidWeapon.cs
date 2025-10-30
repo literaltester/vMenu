@@ -229,15 +229,16 @@ namespace vMenuClient.data
             { "weapon_unarmed", GetLabelText("WTD_UNARMED") },
             { "weapon_vintagepistol", GetLabelText("WTD_VPISTOL") },
             { "weapon_wrench", GetLabelText("WTD_WRENCH") },
+            // DLC CHRISTMAS2018 (v 1604)
             { "weapon_raypistol", GetLabelText("WTD_RAYPISTOL") },
             { "weapon_raycarbine", GetLabelText("WTD_RAYCARBINE") },
             { "weapon_rayminigun", GetLabelText("WTD_RAYMINIGUN") },
             { "weapon_stone_hatchet", GetLabelText("WTD_SHATCHET") },
-            // MPHEIST3 DLC (v 1868)
+            // DLC CHRISTMAS2019 (v 1868)
             { "weapon_ceramicpistol", GetLabelText("WTD_CERPST") },
             { "weapon_navyrevolver", GetLabelText("WTD_REV_NV") },
             { "weapon_hazardcan", GetLabelText("WTD_HAZARDCAN") },
-            // MPHEIST4 DLC (v 2189)
+            // DLC CHRISTMAS2020 (v 2189)
             { "weapon_gadgetpistol", GetLabelText("WTD_GDGTPST") },
             { "weapon_militaryrifle", GetLabelText("WTD_MLTRYRFL") },
             { "weapon_combatshotgun", GetLabelText("WTD_CMBSHGN") },
@@ -246,14 +247,15 @@ namespace vMenuClient.data
             { "weapon_heavyrifle", GetLabelText("WTD_HEAVYRIFLE") },
             { "weapon_fertilizercan", GetLabelText("WTD_FERTILIZERCAN") },
             { "weapon_stungun_mp", GetLabelText("WTD_STNGUNMP") },
-            // MPSUM2 DLC (V 2699)
+            //MPSUM2 DLC (V 2699)
             { "weapon_tacticalrifle", GetLabelText("WTD_TACRIFLE") },
             { "weapon_precisionrifle", GetLabelText("WTD_PRCSRIFLE") },
-            // MPCHRISTMAS3 DLC (V 2802)
-            { "weapon_pistolxm3", GetLabelText("WTD_PISTOLXM3") },
+            //MPCHRISTMAS3 DLC (V 2802)
+            { "weapon_acidpackage", GetLabelText("WTD_ACIDPACKAGE") },
             { "weapon_candycane", GetLabelText("WTD_CANDYCANE") },
-            { "weapon_railgunxm3", GetLabelText("WTD_RAILGUNXM3") },
-            // MP2023_01 DLC (V 2944)
+            { "weapon_pistolxm3", GetLabelText("WTD_PISTOLXM3") },
+            { "weapon_railgunxm3", GetLabelText("WTD_RAILGUN") },
+            //MP2023_01 DLC (V 2944)
             { "weapon_tecpistol", GetLabelText("WTD_TECPISTOL") },
             // MP2023_02 DLC (V 3095)
             { "weapon_battlerifle", GetLabelText("WTD_BATTLERIFLE") },
@@ -350,15 +352,16 @@ namespace vMenuClient.data
             { "weapon_unarmed", GetLabelText("WT_UNARMED") },
             { "weapon_vintagepistol", GetLabelText("WT_VPISTOL") },
             { "weapon_wrench", GetLabelText("WT_WRENCH") },
+            // DLC CHRISTMAS2018 (v 1604)
             { "weapon_raypistol", GetLabelText("WT_RAYPISTOL") },
             { "weapon_raycarbine", GetLabelText("WT_RAYCARBINE") },
             { "weapon_rayminigun", GetLabelText("WT_RAYMINIGUN") },
             { "weapon_stone_hatchet", GetLabelText("WT_SHATCHET") },
-            // MPHEIST3 DLC (v 1868)
+            // DLC CHRISTMAS2019 (v 1868)
             { "weapon_ceramicpistol", GetLabelText("WT_CERPST") },
             { "weapon_navyrevolver", GetLabelText("WT_REV_NV") },
             { "weapon_hazardcan", GetLabelText("WT_HAZARDCAN") },
-            // MPHEIST4 DLC (v 2189)
+            // DLC CHRISTMAS2020 (v 2189)
             { "weapon_gadgetpistol", GetLabelText("WT_GDGTPST") },
             { "weapon_militaryrifle", GetLabelText("WT_MLTRYRFL") },
             { "weapon_combatshotgun", GetLabelText("WT_CMBSHGN") },
@@ -367,15 +370,15 @@ namespace vMenuClient.data
             { "weapon_heavyrifle", GetLabelText("WT_HEAVYRIFLE") },
             { "weapon_fertilizercan", GetLabelText("WT_FERTILIZERCAN") },
             { "weapon_stungun_mp", GetLabelText("WT_STNGUNMP") },
-            // MPSUM2 DLC (V 2699)
+            //MPSUM2 DLC (V 2699)
             { "weapon_tacticalrifle", GetLabelText("WT_TACRIFLE") },
             { "weapon_precisionrifle", GetLabelText("WT_PRCSRIFLE") },
-            // MPCHRISTMAS3 DLC (V 2802)
-            { "weapon_pistolxm3", GetLabelText("WT_PISTOLXM3") },
-            { "weapon_candycane", GetLabelText("WT_CANDYCANE") },
-            { "weapon_railgunxm3", GetLabelText("WT_RAILGUNXM3") },
+            //MPCHRISTMAS3 DLC (V 2802)
             { "weapon_acidpackage", GetLabelText("WT_ACIDPACKAGE") },
-            // MP2023_01 DLC (V 2944)
+            { "weapon_candycane", GetLabelText("WT_CANDYCANE") },
+            { "weapon_pistolxm3", GetLabelText("WT_PISTOLXM3") },
+            { "weapon_railgunxm3", GetLabelText("WT_RAILGUN") },
+            //MP2023_01 DLC (V 2944)
             { "weapon_tecpistol", GetLabelText("WT_TECPISTOL") },
             // MP2023_02 DLC (V 3095)
             { "weapon_battlerifle", GetLabelText("WT_BATTLERIFLE") },
@@ -475,15 +478,16 @@ namespace vMenuClient.data
             ["weapon_unarmed"] = Permission.WPUnarmed,
             ["weapon_vintagepistol"] = Permission.WPVintagePistol,
             ["weapon_wrench"] = Permission.WPWrench,
+            // DLC CHRISTMAS2018 (v 1604)
             ["weapon_raypistol"] = Permission.WPPlasmaPistol,
             ["weapon_raycarbine"] = Permission.WPPlasmaCarbine,
             ["weapon_rayminigun"] = Permission.WPPlasmaMinigun,
             ["weapon_stone_hatchet"] = Permission.WPStoneHatchet,
-            // MPHEIST3 DLC (v 1868)
+            // DLC CHRISTMAS2019 (v 1868)
             ["weapon_ceramicpistol"] = Permission.WPCeramicPistol,
             ["weapon_navyrevolver"] = Permission.WPNavyRevolver,
             ["weapon_hazardcan"] = Permission.WPHazardCan,
-            // MPHEIST4 DLC (v 2189)
+            // DLC CHRISTMAS2020 (v 2189)
             ["weapon_gadgetpistol"] = Permission.WPPericoPistol,
             ["weapon_militaryrifle"] = Permission.WPMilitaryRifle,
             ["weapon_combatshotgun"] = Permission.WPCombatShotgun,
@@ -492,15 +496,15 @@ namespace vMenuClient.data
             ["weapon_heavyrifle"] = Permission.WPHeavyRifle,
             ["weapon_fertilizercan"] = Permission.WPFertilizerCan,
             ["weapon_stungun_mp"] = Permission.WPStunGunMP,
-            // MPSUM2 DLC (V 2699)
+            //MPSUM2 DLC (V 2699)
             ["weapon_tacticalrifle"] = Permission.WPTacticalRifle,
             ["weapon_precisionrifle"] = Permission.WPPrecisionRifle,
-            // MPCHRISTMAS3 DLC (V 2802)
-            ["weapon_pistolxm3"] = Permission.WPPistolXM3,
-            ["weapon_candycane"] = Permission.WPCandyCane,
-            ["weapon_railgunxm3"] = Permission.WPRailgunXM3,
+            //MPCHRISTMAS3 DLC (V 2802)
             ["weapon_acidpackage"] = Permission.WPAcidPackage,
-            // MP2023_01 DLC (V 2944)
+            ["weapon_candycane"] = Permission.WPCandyCane,
+            ["weapon_pistolxm3"] = Permission.WPPistolXM3,
+            ["weapon_railgunxm3"] = Permission.WPRailgunXM3,
+            //MP2023_01 DLC (V 2944)
             ["weapon_tecpistol"] = Permission.WPTecPistol,
             // MP2023_02 DLC (V 3095)
             ["weapon_battlerifle"] = Permission.WPBattleRifle,
@@ -870,6 +874,7 @@ namespace vMenuClient.data
             ["COMPONENT_SWITCHBLADE_VARMOD_VAR2"] = GetLabelText("WCT_SB_VAR2"),
             ["COMPONENT_VINTAGEPISTOL_CLIP_01"] = GetLabelText("WCT_CLIP1"),
             ["COMPONENT_VINTAGEPISTOL_CLIP_02"] = GetLabelText("WCT_CLIP2"),
+            // CHRISTMAS 2018 DLC (v 1604)
             ["COMPONENT_RAYPISTOL_VARMOD_XMAS18"] = GetLabelText("WCT_VAR_RAY18"),
             // MPHEIST3 DLC (v 1868)
             ["COMPONENT_CERAMICPISTOL_CLIP_01"] = GetLabelText("WCT_CLIP1"),
@@ -887,12 +892,12 @@ namespace vMenuClient.data
             ["COMPONENT_HEAVYRIFLE_CLIP_02"] = GetLabelText("WCT_CLIP2"),
             ["COMPONENT_HEAVYRIFLE_SIGHT_01"] = GetLabelText("WCT_HVYRFLE_SIG"),
             ["COMPONENT_HEAVYRIFLE_CAMO1"] = GetLabelText("WCT_VAR_FAM"),
-            // MPSUM2 DLC (V 2699)
+            //MPSUM2 DLC (v 2699)
             ["COMPONENT_TACTICALRIFLE_CLIP_01"] = GetLabelText("WCT_CLIP1"),
             ["COMPONENT_TACTICALRIFLE_CLIP_02"] = GetLabelText("WCT_CLIP2"),
             ["COMPONENT_PRECISIONRIFLE_CLIP_01"] = GetLabelText("WCT_CLIP1"),
             ["COMPONENT_AT_AR_FLSH_REH"] = GetLabelText("WCT_FLASH"),
-            // MPCHRISTMAS3 DLC (V 2802)
+            // MPCHRISTMAS3 DLC (v 2802)
             ["COMPONENT_PISTOLXM3_CLIP_01"] = GetLabelText("WCT_CLIP1"),
             ["COMPONENT_PISTOLXM3_SUPP"] = GetLabelText("WCT_SUPP"),
             ["COMPONENT_MICROSMG_VARMOD_XM3"] = GetLabelText("WCT_MSMG_XM3"),
@@ -919,7 +924,7 @@ namespace vMenuClient.data
             ["COMPONENT_KNIFE_VARMOD_XM3_07"] = GetLabelText("WCT_KNIFE_XM307"),
             ["COMPONENT_KNIFE_VARMOD_XM3_08"] = GetLabelText("WCT_KNIFE_XM308"),
             ["COMPONENT_KNIFE_VARMOD_XM3_09"] = GetLabelText("WCT_KNIFE_XM309"),
-            // MP2023_01 DLC (V 2944)
+            //MP2023_01 DLC (v 2944)
             ["COMPONENT_TECPISTOL_CLIP_01"] = GetLabelText("WCT_CLIP1"),
             ["COMPONENT_TECPISTOL_CLIP_02"] = GetLabelText("WCT_CLIP2"),
             ["COMPONENT_MICROSMG_VARMOD_FRN"] = GetLabelText("WCT_MSMGFRN_VAR"),

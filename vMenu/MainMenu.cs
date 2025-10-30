@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 
 using CitizenFX.Core;
@@ -40,11 +41,14 @@ namespace vMenuClient
         public static VehicleSpawner VehicleSpawnerMenu { get; private set; }
         public static PlayerAppearance PlayerAppearanceMenu { get; private set; }
         public static MpPedCustomization MpPedCustomizationMenu { get; private set; }
+        public static TeleportOptions TeleportOptionsMenu { get; private set; }
         public static TimeOptions TimeOptionsMenu { get; private set; }
         public static WeatherOptions WeatherOptionsMenu { get; private set; }
         public static WeaponOptions WeaponOptionsMenu { get; private set; }
         public static WeaponLoadouts WeaponLoadoutsMenu { get; private set; }
         public static Recording RecordingMenu { get; private set; }
+        public static EnhancedCamera EnhancedCameraMenu { get; private set; }
+        public static PluginSettings PluginSettingsMenu { get; private set; }
         public static MiscSettings MiscSettingsMenu { get; private set; }
         public static VoiceChat VoiceChatSettingsMenu { get; private set; }
         public static About AboutMenu { get; private set; }
@@ -53,6 +57,8 @@ namespace vMenuClient
 
         public static bool DebugMode = GetResourceMetadata(GetCurrentResourceName(), "client_debug_mode", 0) == "true";
         public static bool EnableExperimentalFeatures = (GetResourceMetadata(GetCurrentResourceName(), "experimental_features_enabled", 0) ?? "0") == "1";
+        private string vMenuKey;
+
         public static string Version { get { return GetResourceMetadata(GetCurrentResourceName(), "version", 0); } }
 
         public static bool DontOpenMenus { get { return MenuController.DontOpenAnyMenu; } set { MenuController.DontOpenAnyMenu = value; } }
@@ -204,6 +210,155 @@ namespace vMenuClient
                 {
                     SetNuiFocus(false, false);
                 }), false);
+            }
+
+
+            if (GetSettingsBool(Setting.vmenu_enable_dv_command))
+            {
+                RegisterCommand("dv", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+                {
+                    var player = Game.PlayerPed.Handle;
+                    if (DoesEntityExist(player) && !IsEntityDead(player))
+                    {
+                        var position = GetEntityCoords(player, true);
+                        if (IsPedSittingInAnyVehicle(player))
+                        {
+                            var veh = GetVehicle();
+                            if ( GetPedInVehicleSeat(veh.Handle, -1) == player)
+                            {
+                                DelVeh(veh, 5, veh.Handle);
+                            }
+                            else
+                            {
+                                Notify.Error("You must be in the driver's seat to delete this vehicle!");
+                                if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                                {
+                                    //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You must be in the driver's seat to delete this vehicle!</span>", "darkred", "error", 5000);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var inFrontOfPlayer = GetOffsetFromEntityInWorldCoords(player, (float)0.0, (float)GetSettingsFloat(Setting.vmenu_dv_distance), (float)0.0);
+                            var vehicle = GetVehInDirection(player, position, inFrontOfPlayer);
+                            if (!(vehicle == 0))
+                            {
+                                Vehicle veh = (Vehicle)Entity.FromHandle(vehicle);
+                                DelVeh(veh, GetSettingsInt(Setting.vmenu_dv_retries), vehicle);
+                            }
+                            else
+                            {
+                                Notify.Error("No vehicle found. Maybe it's not close to you?");
+                                if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                                {
+                                    //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">No vehicle found. Maybe it's not close to you?</span>", "darkred", "error", 5000);
+                                }
+                            }
+                        }
+                    } 
+                }), false);
+                TriggerEvent("chat:addSuggestion", "/dv", "Deletes the vehicle you're sat in, or standing next to.");
+            }
+
+            RegisterCommand("dvall", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
+            {
+            
+
+                if (IsAllowed(Permission.DVAll))
+                {
+                    TriggerServerEvent("vMenu:DelAllVehServ");
+                }
+                else
+                {
+                    Notify.Error("You do NOT have permission to use this command.");
+                    if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                    {
+                        //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You do NOT have permission to use this command.</span>", "darkred", "error", 5000);
+                    }
+                }
+            }), false);
+
+            
+            TriggerEvent("chat:addSuggestion", "/dvall", "Deletes all vehicles");
+            static async void DelVeh(Vehicle veh, int maxtimeout, int vehicle)
+            {
+                var timeout = 0;
+                if (NetworkHasControlOfEntity(vehicle))
+                {
+                    veh.Delete();
+                }
+                if ( DoesEntityExist(vehicle) && timeout < maxtimeout)            
+                {
+                    while (DoesEntityExist(vehicle) && timeout < maxtimeout)
+                    {
+                        if (IsPedAPlayer(GetPedInVehicleSeat(vehicle, -1)))
+                        {
+                            Notify.Error("You can't delete this vehicle, someone else is driving it!");
+                            if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                            {
+                                //TriggerEvent("mosh_notify:notify", "ERROR", "<span class=\"text-white\">You can't delete this vehicle, someone else is driving it!</span>", "darkred", "error", 5000);
+                            }
+                            return;
+                        }
+                        NetworkRequestControlOfEntity(vehicle);
+                        var retry = 0;
+                        while (!(NetworkHasControlOfEntity(vehicle) || (retry > 10)))
+                        {
+                            retry++;                       
+                            await Delay(10);
+                            NetworkRequestControlOfEntity(vehicle);
+                        }
+
+                        var vehval = (Vehicle)Entity.FromHandle(vehicle);
+                        vehval.Delete();
+                        if (!DoesEntityExist(vehicle))
+                        {
+                           Notify.Success("The vehicle has been deleted!");
+                           if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                           {
+                               //TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">The vehicle has been deleted!</span>", "success", "success", 5000);
+                           }
+                        }
+                        timeout++;
+                        await Delay(1000);
+                        if ( DoesEntityExist(vehicle) && timeout == maxtimeout -1)            
+                        {
+                           Notify.Error($"Failed to delete vehicle, after {maxtimeout} retries.");
+                           if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                           {
+                               //TriggerEvent("mosh_notify:notify", "ERROR", $"<span class=\"text-white\">Failed to delete vehicle, after {maxtimeout} retries.</span>", "darkred", "error", 5000);
+                           }
+                        }
+                    }
+                }
+                else
+                {
+                    Notify.Success("The vehicle has been deleted!");
+                    if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+                    {
+                        //TriggerEvent("mosh_notify:notify", "SUCCESS", "<span class=\"text-white\">The vehicle has been deleted!</span>", "success", "success", 5000);
+                    }
+                }
+                return;
+            }
+
+            static int GetVehInDirection(int ped, Vector3 pos, Vector3 posinfront)
+            {
+                var ray = StartShapeTestCapsule(pos.X, pos.Y, pos.Z, posinfront.X, posinfront.Y, posinfront.Z, (float)5.0, (int)10, ped, (int)7);
+                bool hit = false;
+                Vector3 endCoords = Vector3.Zero;
+                Vector3 surfaceNormal = Vector3.Zero;
+                var vehicle = 0;
+                GetShapeTestResult(ray, ref hit, ref endCoords, ref surfaceNormal, ref vehicle);
+                if (IsEntityAVehicle(vehicle))
+                {
+
+                    return vehicle; 
+                }
+                else
+                {
+                    return 0;
+                }
             }
 
             RegisterCommand("vmenuclient", new Action<dynamic, List<dynamic>, string>((dynamic source, List<dynamic> args, string rawCommand) =>
@@ -837,6 +992,20 @@ namespace vMenuClient
                 };
             }
 
+            // Add Teleport Menu.
+            if (IsAllowed(Permission.TPMenu))
+            {
+                TeleportOptionsMenu = new TeleportOptions();
+                var menu = TeleportOptionsMenu.GetMenu();
+                var button = new MenuItem("Teleport Related Options", "Open this submenu for teleport options.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+
+
             // Add Voice Chat Menu.
             if (IsAllowed(Permission.VCMenu))
             {
@@ -853,6 +1022,34 @@ namespace vMenuClient
                 RecordingMenu = new Recording();
                 var menu = RecordingMenu.GetMenu();
                 var button = new MenuItem("Recording Options", "In-game recording options.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+            // Add a Spacer Here
+            var spacer = GetSpacerMenuItem("~y~↓ Miscellaneous ↓");
+            Menu.AddMenuItem(spacer);
+
+            // Add enhanced camera menu.
+            if (IsAllowed(Permission.ECMenu))
+            {
+                EnhancedCameraMenu = new EnhancedCamera();
+                var menu = EnhancedCameraMenu.GetMenu();
+                var button = new MenuItem("Enhanced Camera", "Opens the enhanced camera menu.")
+                {
+                    Label = "→→→"
+                };
+                AddMenu(Menu, menu, button);
+            }
+
+            // Add Plugin Settings Menu
+            if (IsAllowed(Permission.PNMenu))
+            {
+                PluginSettingsMenu = new PluginSettings();
+                var menu = PluginSettingsMenu.GetMenu();
+                var button = new MenuItem("Plugins Menu", "Plugins settings/status.")
                 {
                     Label = "→→→"
                 };

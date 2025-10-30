@@ -713,6 +713,11 @@ namespace vMenuClient
                 prefs.Add("pvEnableVehicleBlip", PVEnableVehicleBlip);
             }
 
+            if (MainMenu.TeleportOptionsMenu != null)
+            {
+                KbTpToWaypoint = MainMenu.TeleportOptionsMenu.KbTpToWaypoint;
+            }
+
             Notify.Success("Your settings have been saved.");
 
             Log($"Saving preferences:\n{JsonConvert.SerializeObject(prefs)}");

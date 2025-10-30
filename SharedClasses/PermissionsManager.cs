@@ -19,6 +19,8 @@ namespace vMenuShared
             DontBanMe,
             NoClip,
             Staff,
+            DVAll,
+            Freecam,
             #endregion
 
             // Online Players
@@ -103,8 +105,11 @@ namespace vMenuShared
             VODisableTurbulence,
             VOAnchorBoat,
             VOInfiniteFuel,
+            VOReduceDriftSuspension,
             VOFlares,
             VOPlaneBombs,
+            VOVehiclesBlacklist,
+            VODisableFromDefaultList,
             VOBypassExtraDamage,
             #endregion
 
@@ -171,6 +176,18 @@ namespace vMenuShared
             PASpawnSaved,
             PASpawnNew,
             PAAddonPeds,
+            PAAnimalPeds,
+            PASpawnAsDefault,
+            #endregion
+
+            // Teleport Options
+            #region teleport options
+            TPMenu,
+            TPAll,
+            TPTeleportToWp,
+            TPTeleportToCoord,
+            TPTeleportLocations,
+            TPTeleportSaveLocation,
             #endregion
 
             // Time Options
@@ -322,7 +339,6 @@ namespace vMenuShared
             WPCandyCane,
             WPRailgunXM3,
             WPAcidPackage,
-            // MP2023_01 DLC (V 2944)
             WPTecPistol,
             // MP2023_02 DLC (V 3095)
             WPBattleRifle,
@@ -338,6 +354,15 @@ namespace vMenuShared
             WLAll,
             WLEquip,
             WLEquipOnRespawn,
+            #endregion
+
+            // Enhanced Camera Menu
+            #region enhanced camera
+            ECMenu,
+            ECAll,
+            ECLeadCamera,
+            ECChaseCamera,
+            ECDroneCamera,
             #endregion
 
             // Misc Settings
@@ -365,6 +390,18 @@ namespace vMenuShared
             MSDevTools,
             #endregion
 
+            // Plugin Menu
+            #region plugin menu
+            PNMenu,
+            PNAll,
+            PNEasyDrift,
+            #endregion
+
+            // Bug Prevention
+            #region bug prevention
+            BPCarlaunch,
+            #endregion
+
             // Voice Chat
             #region voice chat
             VCMenu,
@@ -373,7 +410,11 @@ namespace vMenuShared
             VCShowSpeaker,
             VCStaffChannel,
             #endregion
+
         };
+            // ResetIndex Permission
+            ResetIndex,
+            #endregion
 
         public static Dictionary<Permission, bool> Permissions { get; private set; } = new Dictionary<Permission, bool>();
         public static bool ArePermissionsSetup { get; set; } = false;
@@ -485,7 +526,7 @@ namespace vMenuShared
                 // if the first 2 characters are both uppercase
                 if (permStr.Substring(0, 2).ToUpper() == permStr.Substring(0, 2))
                 {
-                    if (permStr.Substring(2) is not ("All" or "Menu"))
+                    if (permStr.Substring(2) is not ("All" or "Menu" or "VehiclesBlacklist" or "DisableFromDefaultList" or "AllowOpenWheel"))
                     {
                         list.AddRange(Enum.GetValues(typeof(Permission)).Cast<Permission>().Where(a => a.ToString() == permStr.Substring(0, 2) + "All"));
                     }
@@ -563,8 +604,8 @@ namespace vMenuShared
             player.TriggerEvent("vMenu:SetPermissions", Newtonsoft.Json.JsonConvert.SerializeObject(perms));
 
             // Also tell the client to do the addons setup.
-            player.TriggerEvent("vMenu:SetConfigOptions");
-            player.TriggerEvent("vMenu:UpdateTeleportLocations", Newtonsoft.Json.JsonConvert.SerializeObject(ConfigManager.GetTeleportLocationsData()));
+            player.TriggerEvent("vMenu:SetAddons");
+            player.TriggerEvent("vMenu:SetExtras");
         }
 #endif
 #if CLIENT
@@ -631,6 +672,21 @@ namespace vMenuShared
                     break;
                 case "MS":
                     prefix += "MiscSettings";
+                    break;
+                case "TP":
+                    prefix += "TeleportOptions";
+                    break;
+                case "PN":
+                    prefix += "PluginMenu";
+                    break;
+                case "BP":
+                    prefix += "BugPrevention";
+                    break;
+                case "EC":
+                    prefix += "EnhancedCamera";
+                    break;
+                case "WR":
+                    prefix += "WorldRelated";
                     break;
                 case "VC":
                     prefix += "VoiceChat";

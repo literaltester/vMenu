@@ -50,6 +50,7 @@ namespace vMenuClient
             EventHandlers.Add("vMenu:updatePedDecors", new Action(UpdatePedDecors));
             EventHandlers.Add("playerSpawned", new Action(SetAppearanceOnFirstSpawn));
             EventHandlers.Add("vMenu:GetOutOfCar", new Action<int, int>(GetOutOfCar));
+            EventHandlers.Add("vMenu:SetDriftSuspension", new Action<int, bool>(SetDriftSuspension));
             EventHandlers.Add("vMenu:PrivateMessage", new Action<string, string>(PrivateMessage));
             EventHandlers.Add("vMenu:UpdateTeleportLocations", new Action<string>(UpdateTeleportLocations));
 
@@ -191,7 +192,6 @@ namespace vMenuClient
             {
                 Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your addons.json file contains a problem! Error details: {ex.Message}\n\n");
             }
-        }
 
         /// <summary>
         /// Sets the extras labels from the extras.json file.
@@ -218,9 +218,9 @@ namespace vMenuClient
                             VehicleOptions.VehicleExtras.Add(modelHash, extras[model]);
                         else
                         {
-                            foreach(int extra in extras[model].Keys)
+                            foreach (int extra in extras[model].Keys)
                             {
-                                if(!VehicleOptions.VehicleExtras[modelHash].ContainsKey(extra))
+                                if (!VehicleOptions.VehicleExtras[modelHash].ContainsKey(extra))
                                     VehicleOptions.VehicleExtras[modelHash].Add(extra, extras[model][extra]);
                                 else
                                     Debug.WriteLine($"[vMenu] [Warning] Your extras.json file contains 2 or more entries with the same extra index! ({model}, Extra {extra}) Please remove duplicate!");
@@ -233,6 +233,8 @@ namespace vMenuClient
             {
                 Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your extras.json file contains a problem! Error details: {ex.Message}\n\n");
             }
+
+            MainMenu.ConfigOptionsSetupComplete = true;
         }
 
         /// <summary>
@@ -298,7 +300,6 @@ namespace vMenuClient
 
             await Delay(1000);
         }
-
 
         /// <summary>
         /// This function will take care of time sync. It'll be called once, and never stop.
@@ -440,6 +441,22 @@ namespace vMenuClient
             }
         }
 
+        private void SetDriftSuspension(int vehNetId, bool status)
+        {
+            int veh = NetToVeh(vehNetId);
+
+            // We apply thes flags
+            SetVehicleHandlingField( veh, "CCarHandlingData", "fBackEndPopUpCarImpulseMult", (int)0.100000 );
+            SetVehicleHandlingField( veh, "CCarHandlingData", "fBackEndPopUpBuildingImpulseMult", (int)0.030000 );
+            SetVehicleHandlingField( veh, "CCarHandlingData", "fBackEndPopUpMaxDeltaSpeed", (int)0.600000 );
+
+            SetVehicleHandlingField( veh, "CCarHandlingData", "strAdvancedFlags", 0x8000 + 0x4000000 );
+
+            // We enable or disable the suspension
+            SetReduceDriftVehicleSuspension( veh, status );
+
+        }
+
         /// <summary>
         /// Updates ped decorators for the clothing animation when players have joined.
         /// </summary>
@@ -450,15 +467,6 @@ namespace vMenuClient
             PlayerAppearance.ClothingAnimationType = -1;
             await Delay(100);
             PlayerAppearance.ClothingAnimationType = backup;
-        }
-
-        /// <summary>
-        /// Updates the teleports locations data from the server side locations.json, because that doesn't update client side on change.
-        /// </summary>
-        /// <param name="jsonData"></param>
-        private void UpdateTeleportLocations(string jsonData)
-        {
-            MiscSettings.TpLocations = JsonConvert.DeserializeObject<List<vMenuShared.ConfigManager.TeleportLocation>>(jsonData);
         }
     }
 }

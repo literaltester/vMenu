@@ -659,7 +659,7 @@ namespace vMenuClient.menus
                 string collectionName = item.ItemData;
 
                 if (drawablesMenuListItems.ContainsKey(item))
-                {                    
+                {
                     int currentDrawableID = drawablesMenuListItems[item];
                     bool isValid = IsPedCollectionComponentVariationValid(pedHandle, currentDrawableID, collectionName, listIndex, 0) && !IsPedCollectionComponentVariationGen9Exclusive(pedHandle, currentDrawableID, collectionName, listIndex);
 
@@ -825,7 +825,7 @@ namespace vMenuClient.menus
             }
 
             for (int drawable = 0; drawable < 12; drawable++)
-            {               
+            {
                 int totalVariations = GetNumberOfPedCollectionDrawableVariations(pedHandle, drawable, collectionName);
 
                 if (totalVariations == 0)

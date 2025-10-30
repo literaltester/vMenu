@@ -40,11 +40,6 @@ namespace vMenuClient
         private string headingDisplay = "";
 
         private readonly List<int> waypointPlayerIdsToRemove = new();
-        private int voiceTimer = 0;
-        private int voiceCycle = 1;
-        private const float voiceIndicatorWidth = 0.02f;
-        private const float voiceIndicatorHeight = 0.041f;
-        private const float voiceIndicatorMutedWidth = voiceIndicatorWidth + 0.0021f;
         public const string clothingAnimationDecor = "clothing_animation_type";
         private bool clothingAnimationReverse = false;
         private float clothingOpacity = 1f;
@@ -92,16 +87,37 @@ namespace vMenuClient
             {
                 Tick += WeatherOptions;
             }
+            
             if (IsAllowed(Permission.TOMenu) && GetSettingsBool(Setting.vmenu_enable_time_sync))
             {
                 Tick += TimeOptions;
             }
 
+            Tick += PlayerTimeOptions;
+            Tick += PlayerWeatherOptions;
+
+            if (IsAllowed(Permission.TPMenu))
+            {
+                Tick += TeleportOptions;
+            }
+
             // Configuration based
-            if (!GetSettingsBool(Setting.vmenu_disable_spawning_as_default_character))
+            if (IsAllowed(Permission.PASpawnAsDefault))
             {
                 Tick += RestorePlayerAfterBeingDead;
             }
+            if (!GetSettingsBool(Setting.vmenu_disable_richpresence))
+            {
+                Tick += DiscordRichPresence;
+            }
+            if (GetSettingsBool(Setting.vmenu_enable_replace_plates))
+            {
+                SetPlates();
+            }
+            if (GetSettingsBool(Setting.vmenu_enable_npc_density))
+            {
+                Tick += NPCDensity;
+            }              
             if (!GetSettingsBool(Setting.vmenu_disable_entity_outlines_tool))
             {
                 Tick += SlowMiscTick;
@@ -121,10 +137,6 @@ namespace vMenuClient
                 {
                     Tick += VehicleHighbeamFlashTick;
                 }
-            }
-            if (IsAllowed(Permission.VCMenu))
-            {
-                Tick += VoiceChat;
             }
             if (IsAllowed(Permission.WPMenu))
             {
@@ -167,7 +179,11 @@ namespace vMenuClient
             {
                 Tick += PersonalVehicleOptions;
             }
-            if (GetSettingsBool(Setting.vmenu_enable_animals_spawn_menu))
+            if (IsAllowed(Permission.PVAddBlip))
+            {
+                Tick += PersonalVehicleBlip;
+            }
+            if (IsAllowed(Permission.PAAnimalPeds))
             {
                 Tick += AnimalPedCameraChangeBlocker;
             }
@@ -595,8 +611,7 @@ namespace vMenuClient
                         MainMenu.VehicleOptionsMenu.VehicleComponentsMenu,
                         MainMenu.VehicleOptionsMenu.VehicleDoorsMenu,
                         MainMenu.VehicleOptionsMenu.VehicleLiveriesMenu,
-                        MainMenu.VehicleOptionsMenu.VehicleModMenu,
-                        MainMenu.VehicleOptionsMenu.VehicleUnderglowMenu,
+                        MainMenu.VehicleOptionsMenu.VehicleModMenu,              
                         MainMenu.VehicleOptionsMenu.VehicleWindowsMenu,
                     };
                 foreach (var m in subMenus)
@@ -941,27 +956,6 @@ namespace vMenuClient
             }
             #endregion
 
-            if (MainMenu.MiscSettingsMenu.KbTpToWaypoint)
-            {
-                if (IsAllowed(Permission.MSTeleportToWp))
-                {
-                    if (Game.IsControlJustReleased(0, (Control)MainMenu.MiscSettingsMenu.KbTpToWaypointKey)
-                        && Fading.IsFadedIn
-                        && !IsPlayerSwitchInProgress()
-                        && Game.CurrentInputMode == InputMode.MouseAndKeyboard)
-                    {
-                        if (Game.IsWaypointActive)
-                        {
-                            TeleportToWp();
-                            Notify.Success("Teleported to waypoint.");
-                        }
-                        else
-                        {
-                            Notify.Error("You need to set a waypoint first.");
-                        }
-                    }
-                }
-            }
             if (MainMenu.MiscSettingsMenu.KbDriftMode)
             {
                 if (IsAllowed(Permission.MSDriftMode))
@@ -974,13 +968,13 @@ namespace vMenuClient
                             if ((Game.IsControlPressed(0, Control.Sprint) && Game.CurrentInputMode == InputMode.MouseAndKeyboard) ||
                                 (Game.IsControlPressed(0, Control.Jump) && Game.CurrentInputMode == InputMode.GamePad))
                             {
-                                SetVehicleReduceGrip(veh.Handle, true);
+                                SetDriftTyresEnabled(veh.Handle, true);
                             }
                             else
                             if ((Game.IsControlJustReleased(0, Control.Sprint) && Game.CurrentInputMode == InputMode.MouseAndKeyboard) ||
                                 (Game.IsControlJustReleased(0, Control.Jump) && Game.CurrentInputMode == InputMode.GamePad))
                             {
-                                SetVehicleReduceGrip(veh.Handle, false);
+                                SetDriftTyresEnabled(veh.Handle, false);
                             }
                         }
                     }
@@ -1260,14 +1254,14 @@ namespace vMenuClient
                                         {
                                             if (playerKiller.Character.Handle == killer.Handle)
                                             {
-                                                Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered by ~y~<C>{GetSafePlayerName(playerKiller.Name)}</C>~s~.");
+                                                Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered by ~y~<C>{GetSafePlayerName(playerKiller.Name)}</C>~s~.", false, false, "death");
                                                 found = true;
                                                 break;
                                             }
                                         }
                                         if (!found)
                                         {
-                                            Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.");
+                                            Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.", false, false, "death");
                                         }
                                     }
                                     else if (killer.Model.IsVehicle)
@@ -1279,7 +1273,7 @@ namespace vMenuClient
                                             {
                                                 if (playerKiller.Character.CurrentVehicle.Handle == killer.Handle)
                                                 {
-                                                    Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered by ~y~<C>{GetSafePlayerName(playerKiller.Name)}</C>~s~.");
+                                                    Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered by ~y~<C>{GetSafePlayerName(playerKiller.Name)}</C>~s~.", false, false, "death");
                                                     found = true;
                                                     break;
                                                 }
@@ -1287,27 +1281,27 @@ namespace vMenuClient
                                         }
                                         if (!found)
                                         {
-                                            Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.");
+                                            Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.", false, false, "death");
                                         }
                                     }
                                     else
                                     {
-                                        Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.");
+                                        Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.", false, false, "death");
                                     }
                                 }
                                 else
                                 {
-                                    Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.");
+                                    Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~has been murdered.", false, false, "death");
                                 }
                             }
                             else
                             {
-                                Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~committed suicide.");
+                                Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~committed suicide.", false, false, "death");
                             }
                         }
                         else
                         {
-                            Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~died.");
+                            Notify.Custom($"~o~<C>{GetSafePlayerName(p.Name)}</C> ~s~died.", false, false, "death");
                         }
                         deadPlayers.Add(p.Handle);
                     }
@@ -1323,90 +1317,6 @@ namespace vMenuClient
             await Task.FromResult(0);
         }
         #endregion
-        #endregion
-
-        #region Voice Chat Tasks
-        /// <summary>
-        /// Run all voice chat options tasks
-        /// </summary>
-        /// <returns></returns>
-        private async Task VoiceChat()
-        {
-            if (MainMenu.VoiceChatSettingsMenu.EnableVoicechat && IsAllowed(Permission.VCEnable))
-            {
-                NetworkSetVoiceActive(true);
-                NetworkSetTalkerProximity(MainMenu.VoiceChatSettingsMenu.currentProximity);
-                var channel = MainMenu.VoiceChatSettingsMenu.channels.IndexOf(MainMenu.VoiceChatSettingsMenu.currentChannel);
-                if (channel < 1)
-                {
-                    NetworkClearVoiceChannel();
-                }
-                else
-                {
-                    NetworkSetVoiceChannel(channel);
-                }
-                if (MainMenu.VoiceChatSettingsMenu.ShowCurrentSpeaker && IsAllowed(Permission.VCShowSpeaker))
-                {
-                    var pl = Players;
-                    var i = 1;
-                    var currentlyTalking = false;
-                    foreach (var p in pl)
-                    {
-                        if (NetworkIsPlayerTalking(p.Handle))
-                        {
-                            if (!currentlyTalking)
-                            {
-                                DrawTextOnScreen("~s~Currently Talking", 0.5f, 0.00f, 0.5f, Alignment.Center, 6);
-                                currentlyTalking = true;
-                            }
-                            DrawTextOnScreen($"~b~{p.Name}", 0.5f, 0.00f + (i * 0.03f), 0.5f, Alignment.Center, 6);
-                            i++;
-                        }
-                    }
-                }
-                if (MainMenu.VoiceChatSettingsMenu.ShowVoiceStatus)
-                {
-
-                    if (GetGameTimer() - voiceTimer > 150)
-                    {
-                        voiceTimer = GetGameTimer();
-                        voiceCycle++;
-                        if (voiceCycle > 3)
-                        {
-                            voiceCycle = 1;
-                        }
-                    }
-                    if (!HasStreamedTextureDictLoaded("mpleaderboard"))
-                    {
-                        RequestStreamedTextureDict("mpleaderboard", false);
-                        while (!HasStreamedTextureDictLoaded("mpleaderboard"))
-                        {
-                            await Delay(0);
-                        }
-                    }
-                    if (NetworkIsPlayerTalking(Game.Player.Handle))
-                    {
-                        DrawSprite("mpleaderboard", $"leaderboard_audio_{voiceCycle}", 0.008f, 0.985f, voiceIndicatorWidth, voiceIndicatorHeight, 0f, 255, 55, 0, 255);
-                    }
-                    else
-                    {
-                        DrawSprite("mpleaderboard", "leaderboard_audio_mute", 0.008f, 0.985f, voiceIndicatorMutedWidth, voiceIndicatorHeight, 0f, 255, 55, 0, 255);
-                    }
-                }
-                else
-                {
-                    if (HasStreamedTextureDictLoaded("mpleaderboard"))
-                    {
-                        SetStreamedTextureDictAsNoLongerNeeded("mpleaderboard");
-                    }
-                }
-            }
-            else
-            {
-                NetworkSetVoiceActive(false);
-                NetworkClearVoiceChannel();
-            }
-        }
         #endregion
 
         #region Update Time Options Menu (current time display)
@@ -1538,6 +1448,7 @@ namespace vMenuClient
             // Full arms
             new KeyValuePair<Vector3, Vector3>(new Vector3(0f, 1.3f, 0.35f), new Vector3(0f, 0f, 0.15f)),
         };
+        public bool PlatesSet { get; private set; }
 
         private async Task UpdateCamera(Camera oldCamera, Vector3 pos, Vector3 pointAt)
         {
@@ -2367,12 +2278,12 @@ namespace vMenuClient
                                 }
                                 else
                                 {
-                                    gamerTags[p] = CreateMpGamerTag(p.Character.Handle, p.Name + $" [{p.ServerId}]", false, false, "", 0);
+                                    gamerTags[p] = CreateMpGamerTag(p.Character.Handle, $" #{p.ServerId} | " + p.Name, false, false, "", 0);
                                 }
                             }
                             else if (closeEnough)
                             {
-                                gamerTags.Add(p, CreateMpGamerTag(p.Character.Handle, p.Name + $" [{p.ServerId}]", false, false, "", 0));
+                                gamerTags.Add(p, CreateMpGamerTag(p.Character.Handle, $" #{p.ServerId} | " + p.Name, false, false, "", 0));
                             }
                             if (closeEnough && gamerTags.ContainsKey(p))
                             {
@@ -2843,6 +2754,94 @@ namespace vMenuClient
         }
         #endregion
 
+        #region discord rich presence
+        /// <summary>
+        /// discord rich presence
+        /// </summary>
+        /// <returns></returns>
+         static string FilterString(string tofilter)
+        {
+            var filter = new Dictionary<string, string>() 
+            {
+            {"^0", ""},
+            {"^1", ""},
+            {"^2", ""},
+            {"^3", ""},
+            {"^4", ""},
+            {"^5", ""},
+            {"^6", ""},
+            {"^7", ""},
+            {"^8", ""},
+            {"^9", ""},
+            {"^*", ""},
+            {"^_", ""},
+            {"^~", ""},
+            {"^*^", ""},
+            {"^r", ""},
+            {"/", ""},
+            {@"\", ""},
+            {"】", "]"},
+            {"【", "["},
+            };
+            foreach ( var filtervl in new Dictionary<string, string>(filter))
+            {
+            tofilter = tofilter.Replace(filtervl.Key, filtervl.Value);           
+            }
+            return tofilter;
+        }
+        static string CheckForSubstitutes(string Substitutes)
+        {
+            var streetName = new uint();
+            var crossingRoad = new uint();
+            var playerloc = GetEntityCoords(Game.PlayerPed.Handle, false);
+            GetStreetNameAtCoord(playerloc.X, playerloc.Y, playerloc.Z, ref streetName, ref crossingRoad);
+            var street = GetStreetNameFromHashKey(streetName);
+            int vehicle = GetVehiclePedIsIn(Game.PlayerPed.Handle, false);
+            var model = (uint)GetEntityModel(vehicle);           
+            string currentvehicle = GetLabelText(GetDisplayNameFromVehicleModel(model));
+
+            Substitutes = Substitutes.Replace("%playercount%", $"{GetActivePlayers().Count}/{GetConvar("sv_maxClients", "48")}");  
+            Substitutes = Substitutes.Replace("%playername%", $"{FilterString(Game.Player.Name)}"); 
+            Substitutes = Substitutes.Replace("%playerid%", $"{Game.Player.ServerId}"); 
+            Substitutes = Substitutes.Replace("%playerstreet%", $"{street}");
+            Substitutes = Substitutes.Replace("%pfversion%", $"{MainMenu.Version}");
+            Substitutes = Substitutes.Replace("%pfversion%", $"{MainMenu.Version}");
+            Substitutes = Substitutes.Replace("%newline%", "\n");
+
+            return Substitutes;
+        }
+        private async Task DiscordRichPresence()
+        {
+            if (!((GetSettingsString(Setting.vmenu_discord_appid) == "") || (GetSettingsString(Setting.vmenu_discord_appid) == null)))
+            {
+                SetDiscordAppId(GetSettingsString(Setting.vmenu_discord_appid));
+                if(!(GetSettingsString(Setting.vmenu_discord_text) == "" || GetSettingsString(Setting.vmenu_discord_text) == null))
+                {
+                    SetRichPresence(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_text)));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_link_one_text) == "" || GetSettingsString(Setting.vmenu_discord_link_one) == null)||(GetSettingsString(Setting.vmenu_discord_link_one_text) == null || GetSettingsString(Setting.vmenu_discord_link_one) == "")))
+                {
+                    SetDiscordRichPresenceAction(0, CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_link_one_text)), GetSettingsString(Setting.vmenu_discord_link_one));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_link_two_text) == "" || GetSettingsString(Setting.vmenu_discord_link_two) == null)||(GetSettingsString(Setting.vmenu_discord_link_two_text) == null || GetSettingsString(Setting.vmenu_discord_link_two) == "")))
+                {
+                    SetDiscordRichPresenceAction(1, CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_link_two_text)), GetSettingsString(Setting.vmenu_discord_link_two));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_large_image) == "" || GetSettingsString(Setting.vmenu_discord_large_image_text) == null)||(GetSettingsString(Setting.vmenu_discord_large_image) == null || GetSettingsString(Setting.vmenu_discord_large_image_text) == "")))
+                {
+                    SetDiscordRichPresenceAsset(GetSettingsString(Setting.vmenu_discord_large_image));
+                    SetDiscordRichPresenceAssetText(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_large_image_text)));
+                }
+                if(!((GetSettingsString(Setting.vmenu_discord_small_image) == "" || GetSettingsString(Setting.vmenu_discord_small_image_text) == null)||(GetSettingsString(Setting.vmenu_discord_small_image) == null || GetSettingsString(Setting.vmenu_discord_small_image_text) == "")))
+                {
+                    SetDiscordRichPresenceAssetSmall(GetSettingsString(Setting.vmenu_discord_small_image));
+                    SetDiscordRichPresenceAssetSmallText(CheckForSubstitutes(GetSettingsString(Setting.vmenu_discord_small_image_text)));
+                }
+            }
+            await Delay(15000);
+        }
+        #endregion
+
         #region Slow misc tick
         internal static float entityRange = 2000f;
         /// <summary>
@@ -2941,6 +2940,42 @@ namespace vMenuClient
             {
                 await Delay(100);
             }
+            await Task.FromResult(0);
+        }
+        #endregion
+
+        #region personal vehicle blip
+        /// <summary>
+        /// tick to check if player is in personal vehicle and remove blip
+        /// </summary>
+        /// <returns></returns>
+
+        private async Task PersonalVehicleBlip()
+        {
+            if (MainMenu.PersonalVehicleMenu.enableBlip.Checked  && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null)
+            {
+                if (DoesEntityExist(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle))
+                {
+
+                    if (Game.PlayerPed.IsInVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle))
+                    {
+                        if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Exists() && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip != null && MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                        {
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Delete();
+                        }
+                    }
+                    else
+                    {
+                        if (MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip == null || !MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Exists())
+                        {
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachBlip();
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Sprite = (BlipSprite)BlipInfo.GetBlipSpriteForVehicle(MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.Handle);
+                            MainMenu.PersonalVehicleMenu.CurrentPersonalVehicle.AttachedBlip.Name = "Personal Vehicle";
+                        }
+                    }
+                }
+            }
+            await Delay(1000);
             await Task.FromResult(0);
         }
         #endregion
@@ -3238,5 +3273,138 @@ namespace vMenuClient
             }
         }
         #endregion
+
+        // Client Time and Weather
+        #region Time & Weather Options
+        public async Task PlayerWeatherOptions()
+        {
+            await Delay(100);
+            if (MainMenu.PlayerTimeWeatherOptionsMenu != null && MainMenu.PlayerTimeWeatherOptionsMenu != null && MainMenu.PlayerTimeWeatherOptionsMenu.clientSidedEnabled.Checked)
+            {
+                ClearOverrideWeather();
+                ClearWeatherTypePersist();
+                SetWeatherTypeOverTime(MainMenu.PlayerTimeWeatherOptionsMenu.weatherList.GetCurrentSelection(), 0.0f);
+                SetWeatherTypePersist(MainMenu.PlayerTimeWeatherOptionsMenu.weatherList.GetCurrentSelection());
+                SetWeatherTypeNow(MainMenu.PlayerTimeWeatherOptionsMenu.weatherList.GetCurrentSelection());
+                SetWeatherTypeNowPersist(MainMenu.PlayerTimeWeatherOptionsMenu.weatherList.GetCurrentSelection());
+            }
+        }
+
+        public async Task PlayerTimeOptions()
+        {
+            await Delay(100);
+            if (MainMenu.PlayerTimeWeatherOptionsMenu != null && MainMenu.PlayerTimeWeatherOptionsMenu != null && MainMenu.PlayerTimeWeatherOptionsMenu.clientSidedEnabled.Checked)
+            {
+                NetworkOverrideClockTime(MainMenu.PlayerTimeWeatherOptionsMenu.timeDataList.ListIndex, 0, 0);
+            }
+        }
+        #endregion
+
+        #region NPC Density
+        public async Task NPCDensity()
+        {
+            float valsvdm = GetSettingsFloat(Setting.vmenu_set_vehicle_density_multiplier)+0.0f;
+            float valspdm = GetSettingsFloat(Setting.vmenu_set_ped_density_multiplier)+0.0f;
+            float valsrvdm = GetSettingsFloat(Setting.vmenu_set_random_vehicle_density_multiplier)+0.0f;
+            float valspvdm = GetSettingsFloat(Setting.vmenu_set_parked_vehicle_density_multiplier)+0.0f;
+            float valsdpdm = GetSettingsFloat(Setting.vmenu_set_scenario_ped_density_multiplier)+0.0f;
+            var valsgt = GetSettingsBool(Setting.vmenu_set_garbage_trucks);
+            var valsrb = GetSettingsBool(Setting.vmenu_set_random_boats);
+            var valscrc = GetSettingsBool(Setting.vmenu_set_create_random_cops);
+            var valscrcno = GetSettingsBool(Setting.vmenu_set_create_random_cops_not_onscenarios);
+            var valscrcos = GetSettingsBool(Setting.vmenu_set_create_random_cops_on_scenarios);
+
+            SetVehicleDensityMultiplierThisFrame(valsvdm); 
+            SetPedDensityMultiplierThisFrame(valspdm);
+            SetRandomVehicleDensityMultiplierThisFrame(valsrvdm); 
+            SetParkedVehicleDensityMultiplierThisFrame(valspvdm);
+            SetScenarioPedDensityMultiplierThisFrame(valsdpdm, valsdpdm);
+            SetGarbageTrucks(valsgt);
+            SetRandomBoats(valsrb); 
+            SetCreateRandomCops(valscrc);
+            SetCreateRandomCopsNotOnScenarios(valscrcno); 
+            SetCreateRandomCopsOnScenarios(valscrcos);
+
+            if (((valsgt && valsrb && valscrc && valscrcno && valscrcos) == false) && (((valsvdm + valspdm + valsrvdm + valspvdm + valsdpdm) == 0.0f)))
+            {
+                
+                ClearAreaOfVehicles(GetEntityCoords(PlayerPedId(), false).X, GetEntityCoords(PlayerPedId(), false).Y, GetEntityCoords(PlayerPedId(), false).Z, 1000, false, false, false, false, false);
+                RemoveVehiclesFromGeneratorsInArea((float)(GetEntityCoords(PlayerPedId(), false).X - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Y - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Z - 500.0), (float)(GetEntityCoords(PlayerPedId(), false).X+ 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Y + 500.0), (float)(GetEntityCoords(PlayerPedId(), false).Z + 500.0), 0);
+            }
+            await Delay(0);
+        }
+        #endregion
+
+        #region Vehicle Plates 
+        public void SetPlates()
+        {
+            if (!PlatesSet)
+            {
+                var runtimeTexture = "customPlates";
+                var plateTxd = CreateRuntimeTxd(runtimeTexture);
+                var vehShare = "vehshare";
+                var defaultNormal = "defaultNormalTexture";
+                CreateRuntimeTextureFromImage(plateTxd, defaultNormal, "plates/plateNormals.png");
+
+                var PlateList = new Dictionary<int, string>() 
+                {
+                    {3, "plate01"},
+                    {0, "plate02"},
+                    {4, "plate03"},
+                    {2, "plate04"},
+                    {1, "plate05"},
+                    {5, "yankton_plate"},
+                };
+    
+                foreach ( var Plates in new Dictionary<int, string>(PlateList))
+                {
+
+                    var stuff = GetConvar("vmenu_plate_override_"+Plates.Value, "false");
+    
+                    if (!(stuff == "false" || stuff == null || stuff == "") )
+                    {
+                        var data2 = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.PlateStruct>(stuff);
+                        if (!(data2.fileName == null))
+                        {
+                            CreateRuntimeTextureFromImage(plateTxd, Plates.Value, data2.fileName);
+                            AddReplaceTexture(vehShare, Plates.Value, runtimeTexture, Plates.Value);
+                        }
+                        if (!(data2.normalName == null))
+                        {
+                            CreateRuntimeTextureFromImage(plateTxd, Plates.Value + "_n", data2.normalName);
+                            AddReplaceTexture(vehShare, Plates.Value + "_n", runtimeTexture, Plates.Value + "_n");
+                        }
+                        SetDefaultVehicleNumberPlateTextPattern(Plates.Key, data2.pattern);
+                    }
+                }
+                PlatesSet = true;
+            }
+        }
+        #endregion
+        public async Task TeleportOptions()
+        {
+            await Delay(100);
+            if (MainMenu.TeleportOptionsMenu.KbTpToWaypoint)
+            {
+                if (IsAllowed(Permission.TPTeleportToWp))
+                {
+                    if (Game.IsControlJustReleased(0, (Control)MainMenu.TeleportOptionsMenu.KbTpToWaypointKey)
+                        && Fading.IsFadedIn
+                        && !IsPlayerSwitchInProgress()
+                        && Game.CurrentInputMode == InputMode.MouseAndKeyboard)
+                    {
+                        if (Game.IsWaypointActive)
+                        {
+                            TeleportToWp();
+                            Notify.Success("Teleported to waypoint.");
+                        }
+                        else
+                        {
+                            Notify.Error("You need to set a waypoint first.");
+                        }
+                    }
+                }
+            }
+        }
     }
 }

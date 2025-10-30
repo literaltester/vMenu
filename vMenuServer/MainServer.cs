@@ -225,17 +225,17 @@ namespace vMenuServer
                 EventHandlers.Add("vMenu:RequestPermissions", new Action<Player>(PermissionsManager.SetPermissionsForPlayer));
                 EventHandlers.Add("vMenu:RequestServerState", new Action<Player>(RequestServerStateFromPlayer));
 
-                // check addons file for errors
-                var addons = LoadResourceFile(GetCurrentResourceName(), "config/addons.json") ?? "{}";
-                try
-                {
-                    JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(addons);
-                    // If the above crashes, then the json is invalid and it'll throw warnings in the console.
-                }
-                catch (JsonReaderException ex)
-                {
-                    Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your addons.json file contains a problem! Error details: {ex.Message}\n\n");
-                }
+                        // check addons file for errors
+                        var addons = LoadResourceFile(GetCurrentResourceName(), "config/addons.json") ?? "{}";
+                        try
+                        {
+                            JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(addons);
+                            // If the above crashes, then the json is invalid and it'll throw warnings in the console.
+                        }
+                        catch (JsonReaderException ex)
+                        {
+                            Debug.WriteLine($"\n\n^1[vMenu] [ERROR] ^7Your addons.json file contains a problem! Error details: {ex.Message}\n\n");
+                        }
 
                 // check extras file for errors
                 string extras = LoadResourceFile(GetCurrentResourceName(), "config/extras.json") ?? "{}";
@@ -526,6 +526,25 @@ namespace vMenuServer
         /// <param name="source"></param>
         /// <param name="vehicleNetId"></param>
         /// <param name="playerOwner"></param>
+        [EventHandler("vMenu:DelAllVehServ")]
+        public void DelAllVehServ([FromSource] Player source)
+        {
+            var vehdelnum = 0;
+            foreach (int veh in GetAllVehicles())
+            {
+                if (!IsPedAPlayer(GetPedInVehicleSeat(veh, -1)))
+                {
+                    vehdelnum++;
+                    DeleteEntity(veh);
+                }
+            }
+            if (vMenuShared.ConfigManager.GetSettingsBool(vMenuShared.ConfigManager.Setting.pfvmenu_moshnotify_setting))
+            {
+                source.TriggerEvent("mosh_notify:notify", "SUCCESS", $"<span class=\"text-white\">{vehdelnum} Vehicles Have Been Deleted!</span>", "success", "success", 5000);
+            }
+            source.TriggerEvent("vMenu:Notify", $"{vehdelnum} Vehicles Have Been Deleted!.", "success");
+
+        }
         [EventHandler("vMenu:GetOutOfCar")]
         internal void GetOutOfCar([FromSource] Player source, int vehicleNetId, int playerOwner)
         {
@@ -941,21 +960,23 @@ namespace vMenuServer
 
         #region Add teleport location
         [EventHandler("vMenu:SaveTeleportLocation")]
-        internal void AddTeleportLocation([FromSource] Player _, string locationJson)
+        internal void AddTeleportLocation([FromSource] Player _, string locationJson, string jsonname)
         {
             var location = JsonConvert.DeserializeObject<TeleportLocation>(locationJson);
-            if (GetTeleportLocationsData().Any(loc => loc.name == location.name))
+            var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations/" + jsonname);
+            var locs = JsonConvert.DeserializeObject<vMenuShared.ConfigManager.Locationsteleport>(jsonFile);
+            if (locs.teleports.Any(loc => loc.name == location.name))
             {
                 Log("A teleport location with this name already exists, location was not saved.", LogLevel.error);
                 return;
             }
-            var locs = GetLocations();
+
+            //var locs = GetLocations();
             locs.teleports.Add(location);
-            if (!SaveResourceFile(GetCurrentResourceName(), "config/locations.json", JsonConvert.SerializeObject(locs, Formatting.Indented), -1))
+            if (!SaveResourceFile(GetCurrentResourceName(), "config/locations/" + jsonname, JsonConvert.SerializeObject(locs, Formatting.Indented), -1))
             {
-                Log("Could not save locations.json file, reason unknown.", LogLevel.error);
+                Log($"Could not save {jsonname} file, reason unknown.", LogLevel.error);
             }
-            TriggerClientEvent("vMenu:UpdateTeleportLocations", JsonConvert.SerializeObject(locs.teleports));
         }
         #endregion
 

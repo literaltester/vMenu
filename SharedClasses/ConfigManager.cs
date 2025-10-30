@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 using CitizenFX.Core;
@@ -71,6 +71,12 @@ namespace vMenuShared
             vmenu_current_hour,
             vmenu_current_minute,
             vmenu_sync_to_machine_time,
+
+            // DV Script
+            vmenu_enable_dv_command,
+            vmenu_dv_retries,
+            vmenu_dv_distance,
+            vmenu_freecam_toggle_key,
 
             // Voice Chat Settings
             vmenu_override_voicechat_default_range,
@@ -164,25 +170,25 @@ namespace vMenuShared
         /// Gets the locations.json data.
         /// </summary>
         /// <returns></returns>
-        public static Locations GetLocations()
+        public static Blips GetBlips()
         {
-            var data = new Locations();
+            var data = new Blips();
 
-            var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/locations.json");
+            var jsonFile = LoadResourceFile(GetCurrentResourceName(), "config/blips.json");
             try
             {
                 if (string.IsNullOrEmpty(jsonFile))
                 {
 #if CLIENT
-                    vMenuClient.Notify.Error("The locations.json file is empty or does not exist, please tell the server owner to fix this.");
+                    vMenuClient.Notify.Error("The blips.json file is empty or does not exist, please tell the server owner to fix this.");
 #endif
 #if SERVER
-                    vMenuServer.DebugLog.Log("The locations.json file is empty or does not exist, please fix this.", vMenuServer.DebugLog.LogLevel.error);
+                    vMenuServer.DebugLog.Log("The blips.json file is empty or does not exist, please fix this.", vMenuServer.DebugLog.LogLevel.error);
 #endif
                 }
                 else
                 {
-                    data = JsonConvert.DeserializeObject<Locations>(jsonFile);
+                    data = JsonConvert.DeserializeObject<Blips>(jsonFile);
                 }
             }
             catch (Exception e)
@@ -196,14 +202,6 @@ namespace vMenuShared
             return data;
         }
 
-        /// <summary>
-        /// Gets just the teleport locations data from the locations.json.
-        /// </summary>
-        /// <returns></returns>
-        public static List<TeleportLocation> GetTeleportLocationsData()
-        {
-            return GetLocations().teleports;
-        }
 
         /// <summary>
         /// Gets just the blips data from the locations.json.
@@ -211,15 +209,18 @@ namespace vMenuShared
         /// <returns></returns>
         public static List<LocationBlip> GetLocationBlipsData()
         {
-            return GetLocations().blips;
+            return GetBlips().blips;
         }
 
         /// <summary>
         /// Struct used for deserializing json only.
         /// </summary>
-        public struct Locations
+        public struct Locationsteleport
         {
             public List<TeleportLocation> teleports;
+        }
+        public struct Blips
+        {
             public List<LocationBlip> blips;
         }
 
@@ -239,7 +240,21 @@ namespace vMenuShared
                 this.heading = heading;
             }
         }
-
+        public struct LocationsSubMenu
+        {
+            public List<TeleportLocationSubMenu> teleports;
+        }
+        public struct TeleportLocationSubMenu
+        {
+            public string JsonName;
+            public string name;
+            public TeleportLocationSubMenu(string JsonName, string name)
+            {
+                this.JsonName = JsonName;
+                this.name = name;
+            }
+        }
+        
         /// <summary>
         /// Location blip struct.
         /// </summary>
@@ -264,4 +279,5 @@ namespace vMenuShared
 
 
 
+        
 }
